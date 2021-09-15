@@ -1,12 +1,15 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Button from "@material-ui/core/Button";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
+import {
+  Card,
+  Button,
+  Typography,
+  Grid,
+  TextField,
+  InputAdornment,
+  ButtonGroup
+} from "@material-ui/core";
+
 import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import bgImage from "../assets/login5.jpg";
@@ -43,7 +46,6 @@ const useStyles = makeStyles(theme => ({
     color: "white"
   },
   formControl: {
-    //margin: theme.spacing(50),
     minWidth: 140,
     padding: theme.spacing(8),
     backgroundColor: "Snow",
@@ -115,14 +117,6 @@ function Login() {
           <Button size="large">ENTRAR</Button>
           <Button size="small">¿Olvidaste tu contraseña?</Button>
         </ButtonGroup>
-        {/* <InputLabel htmlFor="age-native-simple">
-          <Input id="1" placeholder="correo electrónico" />
-        </InputLabel>
-      </FormControl>
-      <FormControl className={classes.formControl}>
-        <InputLabel htmlFor="password-native-simple">
-          <Input id="2" placeholder="contraseña" />
-        </InputLabel> */}
       </form>
     </div>
   );
