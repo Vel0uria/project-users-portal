@@ -8,10 +8,6 @@ html * {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.loginForm {
-  display: flex;
-}
-
 .section .wizard-card {
   min-height: inherit;
 }
