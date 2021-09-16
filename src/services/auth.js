@@ -6,7 +6,7 @@ class AuthService {
   constructor() {
     this.service = axios.create({
       baseURL,
-     // withCredentials: true,
+      withCredentials: true,
       headers:{plataforma:1}
     });
   }

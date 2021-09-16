@@ -13,6 +13,8 @@ import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import bgImage from "../assets/login5.jpg";
 import AuthService from "../services/auth";
+import useForm from "./useForm"
+
 const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
@@ -23,11 +25,11 @@ const useStyles = makeStyles(theme => ({
     backgroundSize: "cover",
     backgroundPosition: "center",
     //pendiente: ajustar
-    height: theme.spacing(106),
+    height: theme.spacing(76),
     padding: theme.spacing(1),
 
     [theme.breakpoints.between("sm", "md")]: {
-      height: theme.spacing(130)
+      height: theme.spacing(120)
     },
     [theme.breakpoints.between("lg")]: {
       height: theme.spacing(140)
@@ -37,15 +39,17 @@ const useStyles = makeStyles(theme => ({
     backgroundImage: `url(${bgImage})`
   },
   title: {
-    fontSize: 18,
-    marginBottom: theme.spacing(8),
+    fontSize:18,
+    marginBottom: theme.spacing(7),
     padding: theme.spacing(1),
     textAlign: "center",
     backgroundColor: "#FF6347",
-    color: "white"
+    color: "white",
   },
   formControl: {
+    margin:theme.spacing(1),
     minWidth: 140,
+    maxHeight:320,
     padding: theme.spacing(8),
     backgroundColor: "Snow",
     borderRadius: 10,
@@ -73,10 +77,9 @@ function Login(props) {
 
   const classes = useStyles();
   const authService = new AuthService()
+  const [form, handleInputs] = useForm();
   const handleLogin = () =>{
-  authService.login( {usuario:"jsantillan@test.com", contrasena:"Admin123"})
-  .then(res =>{
-    console.log(res.data.result);
+  authService.login(form).then(res =>{
           localStorage.setItem("USER", JSON.stringify(res.data.result));
          props.history.push("/dashboard");
   }).catch(err =>{
@@ -84,20 +87,19 @@ function Login(props) {
   })
   }
 
-  handleLogin()
   return (
     <div className={classes.root}>
-      {/* <Paper className={classes.background}> */}
       <form className={classes.formControl}>
         <Card className={classes.title} variant="outlined">
-          <Typography variant="h3">Login</Typography>
+          <Typography variant="h4">Login</Typography>
         </Card>
-
         <Grid item className={classes.textField}>
           <TextField
             className={classes.textField}
             id="1"
             label="Correo electrónico"
+            name="usuario"
+            onChange={handleInputs}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -113,6 +115,8 @@ function Login(props) {
             className={classes.textField}
             id="2"
             label="Contraseña"
+            name="contrasena"
+            onChange={handleInputs}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -129,7 +133,7 @@ function Login(props) {
           variant="text"
           fullWidth
         >
-          <Button size="large">ENTRAR</Button>
+          <Button size="large" onClick={handleLogin}>ENTRAR</Button>
           <Button size="small">¿Olvidaste tu contraseña?</Button>
         </ButtonGroup>
       </form>
