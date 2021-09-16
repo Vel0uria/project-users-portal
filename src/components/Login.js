@@ -9,10 +9,10 @@ import {
   InputAdornment,
   ButtonGroup
 } from "@material-ui/core";
-
 import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import bgImage from "../assets/login5.jpg";
+import AuthService from "../services/auth";
 const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
@@ -30,7 +30,6 @@ const useStyles = makeStyles(theme => ({
       height: theme.spacing(130)
     },
     [theme.breakpoints.between("lg")]: {
-      // marginTop: theme.spacing(3),
       height: theme.spacing(140)
     }
   },
@@ -68,8 +67,24 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "row"
   }
 }));
-function Login() {
+
+
+function Login(props) {
+
   const classes = useStyles();
+  const authService = new AuthService()
+  const handleLogin = () =>{
+  authService.login( {usuario:"jsantillan@test.com", contrasena:"Admin123"})
+  .then(res =>{
+    console.log(res.data.result);
+          localStorage.setItem("USER", JSON.stringify(res.data.result));
+         props.history.push("/dashboard");
+  }).catch(err =>{
+    console.log(err);
+  })
+  }
+
+  handleLogin()
   return (
     <div className={classes.root}>
       {/* <Paper className={classes.background}> */}
