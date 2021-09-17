@@ -32,12 +32,14 @@ const useStyles = makeStyles(theme => ({
       height: theme.spacing(120)
     },
     [theme.breakpoints.between("md","lg")]: {
-      height: theme.spacing(160)
-    }
+      height: theme.spacing(130),
+     
+    },
+         [theme.breakpoints.up('lg')]: {
+         height: theme.spacing(150)
+        },
   },
-  background: {
-    backgroundImage: `url(${bgImage})`
-  },
+
   title: {
     fontSize:18,
     marginBottom: theme.spacing(7),
@@ -50,26 +52,27 @@ const useStyles = makeStyles(theme => ({
     margin:theme.spacing(1),
     minWidth: 140,
     maxHeight:320,
-    padding: theme.spacing(8),
+    padding: theme.spacing(6),
     backgroundColor: "Snow",
     borderRadius: 10,
     position: "relative",
-    [theme.breakpoints.between("sm", "md")]: {
-      width: 480,
-      marginRight: theme.spacing(35),
-      padding: theme.spacing(10)
-    },
-    [theme.breakpoints.between("md", "lg")]: {
-      marginLeft: theme.spacing(90)
-    }
-  },
 
+    [theme.breakpoints.between("md", "lg")]: {
+      marginLeft: theme.spacing(70),
+      padding: theme.spacing(7),
+    },
+           [theme.breakpoints.up('lg')]: {
+        marginLeft: theme.spacing(100),
+         width: 340,
+        },
+  },
   textField: {
     marginBottom: theme.spacing(1),
-    minWidth: "25ch",
+   minWidth: "25ch",
     display: "flex",
-    flexDirection: "row"
-  }
+    flexDirection: "row",
+  },
+      
 }));
 
 
