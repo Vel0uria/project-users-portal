@@ -81,7 +81,7 @@ function Dashboard() {
           <Avatar
             alt="user-image"
             src={userData.avatar}
-            // sx={{ width: 160, height: 160 }}
+            sx={{ width: 56, height: 56 }}
           />
         </CardContent>
         <CardContent>
@@ -116,6 +116,9 @@ function Dashboard() {
           );
         })}
       </Menu>
+      <Button color="primary" variant="contained" size="small">
+        Mis evaluaciones
+      </Button>
     </div>
   );
 }
