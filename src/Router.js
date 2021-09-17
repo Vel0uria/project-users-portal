@@ -3,7 +3,9 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import Diagnosticos from "./components/Diagnosticos";
-function Router() {
+
+const Router = () => {
+ 
   return (
     <BrowserRouter>
       <Switch>

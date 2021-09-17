@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext, useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Card,
@@ -14,7 +14,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import bgImage from "../assets/login5.jpg";
 import AuthService from "../services/auth";
 import useForm from "./useForm"
-
+import { MyContext } from "../services/Context";
 const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
@@ -31,8 +31,8 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.between("sm", "md")]: {
       height: theme.spacing(120)
     },
-    [theme.breakpoints.between("lg")]: {
-      height: theme.spacing(140)
+    [theme.breakpoints.between("md","lg")]: {
+      height: theme.spacing(160)
     }
   },
   background: {
@@ -73,13 +73,20 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-function Login(props) {
-
+const Login = props => {
+  const { changePlace, login } = useContext(MyContext);
   const classes = useStyles();
   const authService = new AuthService()
   const [form, handleInputs] = useForm();
+
+    useEffect(() => {
+    changePlace("api");
+  }, [changePlace]);
+
   const handleLogin = () =>{
   authService.login(form).then(res =>{
+   
+    login(res.data.result)
           localStorage.setItem("USER", JSON.stringify(res.data.result));
          props.history.push("/dashboard");
   }).catch(err =>{

@@ -1,10 +1,13 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
-import { Card, Box, Menu, MenuItem, Button } from "@material-ui/core";
+import React, { useState, useEffect, useContext } from "react";
+import { Card, Box, Menu, MenuItem, Button, Typography } from "@material-ui/core";
 //import { makeStyles } from "@material-ui/core/styles";
+import { MyContext } from "../services/Context";
 function Dashboard() {
-  const [anchorEl, setAnchorEl] = useState(null);
 
+  const { state } = useContext(MyContext);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const userData = state.user.datosPerfil
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
   };
@@ -13,36 +16,13 @@ function Dashboard() {
     setAnchorEl(null);
   };
 
-  const userData = { usuario: "jsantillan@test.com", contrasena: "Admin123" };
-
-  const getCourses = id => {
-    // axios.get(
-    //   "https://impulsorintelectualhumanista.com/capacitacion/api/listadoModulosCursos/1"
-    // );
-    console.log(
-      axios.post(
-        "https://impulsorintelectualhumanista.com/capacitacion/api/login",
-        userData
-      )
-    );
-    axios
-      .post(
-        "https://impulsorintelectualhumanista.com/capacitacion/api/login",
-        JSON.stringify(userData)
-      )
-      .then(({ data }) => {
-        // localStorage.setItem("USER", JSON.stringify(data));
-        console.log(data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-  getCourses();
   return (
     <div>
-      <Box type="h1">Bienvenidx</Box>
-      <Card>Dashboard</Card>
+        <Card>Dashboard</Card>
+      <Box type="p">
+        <Typography type="h1">Bienvenido {userData.nombreUsuario} </Typography>
+       </Box>
+    
       <Button
         aria-controls="simple-menu"
         aria-haspopup="true"
