@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -9,7 +9,7 @@ import {
   Typography,
   Avatar,
 } from "@material-ui/core";
-
+import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { MyContext } from "../services/Context";
 import bgImage from "../assets/dashboard.jpg";
@@ -50,6 +50,8 @@ function Dashboard() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [courses, setCourse] = useState([]);
   const userData = state.user.datosPerfil;
+  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/api";
+  useEffect(() => {}, [baseURL, userData]);
 
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
@@ -60,10 +62,9 @@ function Dashboard() {
   };
   const getCourses = () => {
     axios
-      .get(
-        "https://impulsorintelectualhumanista.com/capacitacion/api/listadoModulosCursos/1",
-        { headers: { Authorization: state.user.token } }
-      )
+      .get(`${baseURL}/listadoModulosCursos/1`, {
+        headers: { Authorization: state.user.token },
+      })
       .then(({ data }) => {
         const courses = data.result;
         setCourse(courses);
@@ -116,9 +117,11 @@ function Dashboard() {
           );
         })}
       </Menu>
-      <Button color="primary" variant="contained" size="small">
-        Mis evaluaciones
-      </Button>
+      <Link to="/diagnosticos">
+        <Button color="primary" variant="contained" size="large">
+          Mis evaluaciones
+        </Button>
+      </Link>
     </div>
   );
 }
