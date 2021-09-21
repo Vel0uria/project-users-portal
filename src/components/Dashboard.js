@@ -58,14 +58,15 @@ function Dashboard() {
   const { state } = useContext(MyContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [categories, setCategory] = useState([]);
-  const [course, setCourse] = useState({});
-
-  const userData = state.user.datosPerfil;
-  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/api";
+  const [course, setCourse] = useState([]);
+  const [user, setUser] = useState({});
+  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
   useEffect(
     () => {
+      const userData = state.user.datosPerfil;
+      setUser(userData);
       axios
-        .get(`${baseURL}/listadoModulosCursos/1`, {
+        .get(`${baseURL}/api/listadoModulosCursos/1`, {
           headers: { Authorization: state.user.token }
         })
         .then(({ data }) => {
@@ -75,10 +76,8 @@ function Dashboard() {
         .catch(err => {
           console.log(err);
         });
-
-      getFirstCourse();
     },
-    [baseURL, userData]
+    [baseURL]
   );
 
   const handleClick = event => {
@@ -90,7 +89,7 @@ function Dashboard() {
   };
   const getCategories = () => {
     axios
-      .get(`${baseURL}/listadoModulosCursos/1`, {
+      .get(`${baseURL}/api/listadoModulosCursos/1`, {
         headers: { Authorization: state.user.token }
       })
       .then(({ data }) => {
@@ -101,24 +100,27 @@ function Dashboard() {
         console.log(err);
       });
   };
-  const getFirstCourse = () => {
-    if (categories.length !== 0) {
-      const id = categories[0].idCategoria;
-      axios
-        .get(`${baseURL}/listadoUsuariosCursos/${id}`, {
-          headers: { Authorization: state.user.token }
-        })
-        .then(({ data }) => {
-          const course = data.result[0];
+  // const getFirstCourse = () => {
+  //   if (categories.length !== 0) {
+  //     const id = categories[0].idCategoria;
+  //     axios
+  //       .get(`${baseURL}/api/listadoUsuariosCursos/${id}`, {
+  //         headers: { Authorization: state.user.token }
+  //       })
+  //       .then(({ data }) => {
+  //         const course = data.result[0];
 
-          setCourse(course);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }
-  };
-  if (!state.user) return <p>Cargando</p>;
+  //         setCourse(course);
+  //       })
+  //       .catch(err => {
+  //         console.log(err);
+  //       });
+  //   } else {
+  //     return <p>Cargando</p>;
+  //   }
+  // };
+  // };
+  if (!user) return <p>Cargando</p>;
   return (
     <div className={classes.root}>
       <Typography className={classes.title}>Dashboard</Typography>
@@ -126,16 +128,16 @@ function Dashboard() {
         <CardContent>
           <Avatar
             alt="user-image"
-            src={userData.avatar}
+            src={user.avatar}
             sx={{ width: 56, height: 56 }}
           />
         </CardContent>
         <CardContent>
           <Typography>
-            Bienvenido {userData.nombreUsuario}{" "}
+            Bienvenido {user.nombreUsuario}{" "}
           </Typography>
           <Typography>
-            {userData.nombreCompania}
+            {user.nombreCompania}
           </Typography>
         </CardContent>
       </Card>
@@ -151,11 +153,10 @@ function Dashboard() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
         anchorEl={anchorEl}
-        onClick={getCategories()}
       >
-        {categories.map(category => {
+        {categories.map((category, i) => {
           return (
-            <MenuItem key={category.idCategoria}>
+            <MenuItem key={i}>
               {category.categoria}
             </MenuItem>
           );
@@ -166,13 +167,13 @@ function Dashboard() {
           Mis evaluaciones
         </Button>
       </Link>
-      <Paper elevation={8} className={classes.videoCards}>
+      {/* <Paper elevation={8} className={classes.videoCards}>
         <Typography variant="h2">Cursos principales</Typography>
         <Card sx={{ maxWidth: 345 }} variant="outlined">
           <CardMedia
             component="img"
             height="140"
-            image={course.urlImagen}
+            image={`${baseURL}/${course.urlImagen}`}
             alt="urlImagen"
           />
           <CardContent>
@@ -191,7 +192,7 @@ function Dashboard() {
             </Typography>
           </CardContent>
         </Card>
-      </Paper>
+      </Paper> */}
     </div>
   );
 }
