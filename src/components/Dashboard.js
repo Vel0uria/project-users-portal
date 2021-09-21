@@ -45,22 +45,22 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "#FFFFFF80"
   },
   cardsTitle: {
-    margin: theme.spacing(1),
-    //  textAlign: "center",
-    display: "flex",
-    flexFlow: "row noWrap",
-    justifyContent: "center"
+    position: "absolute",
+    marginLeft: theme.spacing(50),
+    textAlign: "center"
   },
   cardSection: {
-    margin: theme.spacing(2),
+    marginTop: theme.spacing(2),
     padding: theme.spacing(2),
     display: "flex",
-    flexFlow: "row noWrap",
+    // flexFlow: "row nowrap",
+    justifyContent: "space-evenly",
     backgroundColor: "#FFFFF190"
   },
   courses: {
     margin: theme.spacing(1),
     padding: theme.spacing(2),
+    marginTop: 80,
     width: 350,
     flexDirection: "row"
     // flexFlow: "row noWrap"
@@ -169,12 +169,14 @@ function Dashboard() {
           Mis evaluaciones
         </Button>
       </Link>
-      <Paper elevation={8} className={classes.cardSection}>
-        <div className={classes.cardsTitle}>
-          <Typography variant="h2">Cursos principales</Typography>
-        </div>
 
-        {firstCourses.map((course, i) => {
+      <Paper elevation={8} className={classes.cardSection}>
+        <div>
+          <Typography variant="h2" className={classes.cardsTitle}>
+            Cursos principales
+          </Typography>
+        </div>
+        {courses.map((course, i) => {
           return (
             <Card
               className={classes.courses}
