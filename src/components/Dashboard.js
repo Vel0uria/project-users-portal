@@ -44,12 +44,26 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
     backgroundColor: "#FFFFFF80"
   },
-  videoCards: {
+  cardsTitle: {
+    margin: theme.spacing(1),
+    //  textAlign: "center",
+    display: "flex",
+    flexFlow: "row noWrap",
+    justifyContent: "center"
+  },
+  cardSection: {
     margin: theme.spacing(2),
     padding: theme.spacing(2),
     display: "flex",
-    flexFlow: "column noWrap",
+    flexFlow: "row noWrap",
     backgroundColor: "#FFFFF190"
+  },
+  courses: {
+    margin: theme.spacing(1),
+    padding: theme.spacing(2),
+    width: 350,
+    flexDirection: "row"
+    // flexFlow: "row noWrap"
   }
 }));
 
@@ -58,7 +72,8 @@ function Dashboard() {
   const { state } = useContext(MyContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [categories, setCategory] = useState([]);
-  const [course, setCourse] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const firstCourses = courses.splice(0, 2);
   const [user, setUser] = useState({});
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
   useEffect(
@@ -77,8 +92,27 @@ function Dashboard() {
           console.log(err);
         });
     },
-    [baseURL]
+    [state.user.datosPerfil, state.user.token]
   );
+
+  useEffect(() => {
+    if (categories.length !== 0) {
+      const id = categories[0].idCategoria;
+      axios
+        .get(`${baseURL}/api/listadoUsuariosCursos/${id}`, {
+          headers: {
+            Authorization: state.user.token
+          }
+        })
+        .then(({ data }) => {
+          const courses = data.result;
+          setCourses(courses);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  }, []);
 
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
@@ -87,39 +121,7 @@ function Dashboard() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const getCategories = () => {
-    axios
-      .get(`${baseURL}/api/listadoModulosCursos/1`, {
-        headers: { Authorization: state.user.token }
-      })
-      .then(({ data }) => {
-        const category = data.result;
-        setCategory(category);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-  // const getFirstCourse = () => {
-  //   if (categories.length !== 0) {
-  //     const id = categories[0].idCategoria;
-  //     axios
-  //       .get(`${baseURL}/api/listadoUsuariosCursos/${id}`, {
-  //         headers: { Authorization: state.user.token }
-  //       })
-  //       .then(({ data }) => {
-  //         const course = data.result[0];
 
-  //         setCourse(course);
-  //       })
-  //       .catch(err => {
-  //         console.log(err);
-  //       });
-  //   } else {
-  //     return <p>Cargando</p>;
-  //   }
-  // };
-  // };
   if (!user) return <p>Cargando</p>;
   return (
     <div className={classes.root}>
@@ -167,32 +169,44 @@ function Dashboard() {
           Mis evaluaciones
         </Button>
       </Link>
-      {/* <Paper elevation={8} className={classes.videoCards}>
-        <Typography variant="h2">Cursos principales</Typography>
-        <Card sx={{ maxWidth: 345 }} variant="outlined">
-          <CardMedia
-            component="img"
-            height="140"
-            image={`${baseURL}/${course.urlImagen}`}
-            alt="urlImagen"
-          />
-          <CardContent>
-            <Typography variant="h4" component="div">
-              {course.nombre}
-            </Typography>
-            <Typography variant="subtitle1" color="primary">
-              Módulo {course.idModulo}
-            </Typography>
-            <Typography variant="subtitle2">
-              Categoría {course.categoria}
-            </Typography>
+      <Paper elevation={8} className={classes.cardSection}>
+        <div className={classes.cardsTitle}>
+          <Typography variant="h2">Cursos principales</Typography>
+        </div>
 
-            <Typography variant="body1">
-              {course.descripcion}
-            </Typography>
-          </CardContent>
-        </Card>
-      </Paper> */}
+        {firstCourses.map((course, i) => {
+          return (
+            <Card
+              className={classes.courses}
+              sx={{ maxWidth: 345 }}
+              variant="outlined"
+              key={i}
+            >
+              <CardMedia
+                component="img"
+                image={`${baseURL //  width="5" //  sx={{ maxWidth: 45, maxHeight: 35 }}
+                }/${course.urlImagen}`}
+                alt="urlImagen"
+              />
+              <CardContent>
+                <Typography variant="h4" component="div">
+                  {course.nombre}
+                </Typography>
+                <Typography variant="subtitle1" color="primary">
+                  Módulo {course.idModulo}
+                </Typography>
+                <Typography variant="subtitle2">
+                  Categoría {course.categoria}
+                </Typography>
+
+                <Typography variant="body1">
+                  {course.descripcion}
+                </Typography>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </Paper>
     </div>
   );
 }

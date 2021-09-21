@@ -1,14 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+//import "./index.css";
 import ContextProvider from "./services/Context";
 import Router from "./Router";
 import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
-
   <ContextProvider>
- <Router />
+    <Router />
   </ContextProvider>,
   document.getElementById("root")
 );
