@@ -4,12 +4,13 @@ import {
   Card,
   CardContent,
   CardMedia,
-  Menu,
-  MenuItem,
   Button,
   Typography,
   Avatar,
-  Box
+  Tab,
+  Tabs,
+  Box,
+  Paper
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
@@ -42,49 +43,37 @@ const useStyles = makeStyles(theme => ({
   userData: {
     display: "flex",
     margin: theme.spacing(1),
-    backgroundColor: "#FFFFFF80"
+    backgroundColor: "#FFFFFF80",
+    minHeight: 100
   },
-  cardsTitle: {
-    // position: "absolute",
-    // marginLeft: theme.spacing(40),
-    textAlign: "center"
-  },
-  cardSection: {
-    marginTop: theme.spacing(2),
-    padding: theme.spacing(2),
-    display: "flex",
-    flexFlow: "row nowrap",
-    justifyContent: "space-evenly",
-    backgroundColor: "#FFFFF190"
-  },
+
   courses: {
     margin: theme.spacing(1),
     padding: theme.spacing(2),
     marginTop: 40
+  },
+
+  tabs: {
+    margin: theme.spacing(1)
   }
-  // [theme.breakpoints.between("sm", "md")]: {
-  //   flexShrink: 3
-  // }
 }));
 
 // PENDIENTES DASHBOARD:
 
 // - Corregir refresh de página: Los datos de usuario se pierden
+//-Tabs: Ordenar cursos en la Tab correspondiente según la categoría
 // - Estilos:
-// 1. Cards responsivas en móvil
+// 1. Responsivo
 // 2. Tamaño tipografías
-// 3. Tamaño cards
-//Menú categorías
 
 function Dashboard() {
   const classes = useStyles();
   const { state } = useContext(MyContext);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [categories, setCategory] = useState([]);
   const [courses, setCourses] = useState([]);
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
   const userData = state.user.datosPerfil;
-
+  const [value, setValue] = useState(0);
   useEffect(
     () => {
       axios
@@ -102,32 +91,85 @@ function Dashboard() {
     [baseURL, state.user.token]
   );
 
-  useEffect(() => {
-    if (categories.length !== 0) {
-      const id = categories[0].idCategoria;
+  useEffect(
+    () => {
+      if (categories.length !== 0) {
+        const id = categories[value].idCategoria;
 
-      axios
-        .get(`${baseURL}/api/listadoUsuariosCursos/${id}`, {
-          headers: {
-            Authorization: state.user.token
-          }
-        })
-        .then(({ data }) => {
-          const courses = data.result;
-          setCourses(courses);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }
-  });
+        axios
+          .get(`${baseURL}/api/listadoUsuariosCursos/${id}`, {
+            headers: {
+              Authorization: state.user.token
+            }
+          })
+          .then(({ data }) => {
+            const courses = data.result;
+            setCourses(courses);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
+    },
+    [categories, state.user.token, value]
+  );
 
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
-  };
+  function TabPanel(props) {
+    const { value, index } = props;
 
-  const handleClose = () => {
-    setAnchorEl(null);
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+      >
+        {value === index &&
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-evenly",
+              "& > :not(style)": { m: 1, minWidth: 250, minHeight: 428 }
+            }}
+          >
+            {courses.map((course, i) => {
+              if (!courses) return <Typography>Cargando</Typography>;
+              else {
+                return (
+                  <Card className={classes.courses} variant="outlined" key={i}>
+                    <CardMedia
+                      component="img"
+                      height="194"
+                      image={`${baseURL}/${course.urlImagen}`}
+                      alt="urlImagen"
+                    />
+                    <CardContent>
+                      <Typography variant="h5" component="div">
+                        {course.nombre}
+                      </Typography>
+                      <Typography variant="subtitle1" color="primary">
+                        Módulo {course.idModulo}
+                      </Typography>
+                      <Typography variant="subtitle2">
+                        Categoría {course.categoria}
+                      </Typography>
+
+                      <Typography variant="body1">
+                        {course.descripcion}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                );
+              }
+            })}
+          </Box>}
+      </div>
+    );
+  }
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
   };
 
   if (!state.user) return <p>Cargando</p>;
@@ -146,62 +188,38 @@ function Dashboard() {
             {userData.nombreCompania}
           </Typography>
         </CardContent>
+        <CardContent>
+          <Button color="primary" variant="contained">
+            Mis evaluaciones
+          </Button>
+        </CardContent>
       </Card>
-      <Button
-        aria-controls="simple-menu"
-        aria-haspopup="true"
-        onClick={handleClick}
-      >
-        Categorías de cursos
-      </Button>
-      <Menu
-        id="simple-menu"
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        anchorEl={anchorEl}
-      >
-        {categories.map((category, i) => {
-          if (!categories) return <Typography>Cargando</Typography>;
-          else {
-            return (
-              <div key={i}>
-                {!category
-                  ? <Typography>Loading</Typography>
-                  : <MenuItem key={category.idCategoria}>
-                      {category.categoria}
-                    </MenuItem>}
-              </div>
-            );
-          }
-        })}
-      </Menu>
-      <Link to="/diagnosticos">
-        <Button color="primary" variant="contained" size="large">
-          Mis evaluaciones
-        </Button>
-      </Link>
-      <Typography variant="h2" className={classes.cardsTitle}>
-        Cursos principales
-      </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-evenly",
-          "& > :not(style)": { m: 1, minWidth: 250, minHeight: 428 }
-        }}
-      >
+      <Link to="/diagnosticos" />
+      <Paper className={classes.tabs}>
+        <Typography variant="h6" align="center">
+          Cursos por categoría
+        </Typography>
+        <Tabs onChange={handleChange} value={value} textColor="primary">
+          {categories.map(category => {
+            if (!categories) return <Typography>Cargando</Typography>;
+            else {
+              return (
+                <Tab id={category.idCategoria} label={category.categoria} />
+              );
+            }
+          })}
+        </Tabs>
+      </Paper>
+      <TabPanel value={value} index={0}>
+        Item one
+      </TabPanel>
+
+      {/* <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-evenly", "& > :not(style)": { m: 1, minWidth: 250, minHeight: 428 } }}>
         {courses.map((course, i) => {
           if (!courses) return <Typography>Cargando</Typography>;
           else {
-            return (
-              <Card className={classes.courses} variant="outlined" key={i}>
-                <CardMedia
-                  component="img"
-                  height="194"
-                  image={`${baseURL}/${course.urlImagen}`}
-                  alt="urlImagen"
-                />
+            return <Card className={classes.courses} variant="outlined" key={i}>
+                <CardMedia component="img" height="194" image={`${baseURL}/${course.urlImagen}`} alt="urlImagen" />
                 <CardContent>
                   <Typography variant="h5" component="div">
                     {course.nombre}
@@ -217,11 +235,10 @@ function Dashboard() {
                     {course.descripcion}
                   </Typography>
                 </CardContent>
-              </Card>
-            );
+              </Card>;
           }
         })}
-      </Box>
+      </Box> */}
     </div>
   );
 }
