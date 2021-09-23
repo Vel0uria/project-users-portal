@@ -3,15 +3,15 @@ import React, { useState, useContext, useEffect } from "react";
 import {
   Card,
   CardContent,
-  CardMedia,
   Button,
   Typography,
   Avatar,
   Tab,
   Tabs,
-  Box,
-  Paper
+  Paper,
+  Box
 } from "@material-ui/core";
+import { ImageList, ImageListItem, ImageListItemBar } from "@mui/material";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { MyContext } from "../services/Context";
@@ -48,13 +48,17 @@ const useStyles = makeStyles(theme => ({
   },
 
   courses: {
-    margin: theme.spacing(1),
-    padding: theme.spacing(2),
-    marginTop: 40
+    maxWidth: 400,
+    //  maxHeight: 370,
+    display: "flex"
+    // height: 10
   },
 
   tabs: {
-    margin: theme.spacing(1)
+    padding: theme.spacing(1)
+  },
+  courseImg: {
+    width: "148 !important"
   }
 }));
 
@@ -62,6 +66,7 @@ const useStyles = makeStyles(theme => ({
 
 // - Corregir refresh de página: Los datos de usuario se pierden
 //-Tabs: Ordenar cursos en la Tab correspondiente según la categoría
+//-Cursos: función que despliegue un background si en la respuesta no hay imagen
 // - Estilos:
 // 1. Responsivo
 // 2. Tamaño tipografías
@@ -130,39 +135,33 @@ function Dashboard() {
               display: "flex",
               flexWrap: "wrap",
               justifyContent: "space-evenly",
-              "& > :not(style)": { m: 1, minWidth: 250, minHeight: 428 }
+              backgroundColor: "#FFFFFF80"
             }}
           >
-            {courses.map((course, i) => {
-              if (!courses) return <Typography>Cargando</Typography>;
-              else {
-                return (
-                  <Card className={classes.courses} variant="outlined" key={i}>
-                    <CardMedia
-                      component="img"
-                      height="194"
-                      image={`${baseURL}/${course.urlImagen}`}
-                      alt="urlImagen"
-                    />
-                    <CardContent>
-                      <Typography variant="h5" component="div">
-                        {course.nombre}
-                      </Typography>
-                      <Typography variant="subtitle1" color="primary">
-                        Módulo {course.idModulo}
-                      </Typography>
-                      <Typography variant="subtitle2">
-                        Categoría {course.categoria}
-                      </Typography>
-
-                      <Typography variant="body1">
-                        {course.descripcion}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                );
-              }
-            })}
+            <ImageList sx={{ maxWidth: 900, maxHeight: 500 }}>
+              {courses.map((course, i) => {
+                if (!courses) return <Typography>Cargando</Typography>;
+                else {
+                  return (
+                    <ImageListItem key={i} variant="woven">
+                      <img
+                        src={`${baseURL}/${course.urlImagen}?w=248&fit=crop&auto=format`}
+                        alt={course.nombre}
+                        loading="cargando"
+                      />
+                      <ImageListItemBar
+                        title={course.nombre}
+                        subtitle={
+                          <span>
+                            Módulo {course.idModulo}
+                          </span>
+                        }
+                      />
+                    </ImageListItem>
+                  );
+                }
+              })}
+            </ImageList>
           </Box>}
       </div>
     );
@@ -196,15 +195,23 @@ function Dashboard() {
       </Card>
       <Link to="/diagnosticos" />
       <Paper className={classes.tabs}>
-        <Typography variant="h6" align="center">
-          Cursos por categoría
-        </Typography>
-        <Tabs onChange={handleChange} value={value} textColor="primary">
-          {categories.map(category => {
+        <Typography variant="overline">Cursos por categoría</Typography>
+        <Tabs
+          onChange={handleChange}
+          value={value}
+          textColor="primary"
+          variant="scrollable"
+          scrollButtons="auto"
+        >
+          {categories.map((category, i) => {
             if (!categories) return <Typography>Cargando</Typography>;
             else {
               return (
-                <Tab id={category.idCategoria} label={category.categoria} />
+                <Tab
+                  key={i}
+                  id={category.idCategoria}
+                  label={category.categoria}
+                />
               );
             }
           })}
