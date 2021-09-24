@@ -7,7 +7,10 @@ import {
   ListItemText,
   ListSubheader,
   Collapse,
-  Box
+  Box,
+  Card,
+  CardMedia,
+  CardContent
 } from "@material-ui/core";
 import ListItemButton from "@mui/material/ListItemButton";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
@@ -21,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     backgroundSize: "cover",
     backgroundPosition: "center",
     display: "flex",
-    //flexFlow: "column nowrap",
+    flexFlow: "column nowrap",
     padding: theme.spacing(1),
     [theme.breakpoints.up("lg")]: {
       height: theme.spacing(140)
@@ -45,6 +48,7 @@ function Cursos(props) {
   const [courses, setCourses] = useState({});
   const [files, setFiles] = useState([]);
   const [sections, setSections] = useState([]);
+  const [media, setMedia] = useState({});
   const [open, setOpen] = React.useState(false);
 
   const handleClick = () => {
@@ -62,6 +66,7 @@ function Cursos(props) {
           setCourses(courses);
           setSections(courses.listaContenido);
           setFiles(courses.listaArchivos);
+          setMedia(courses.urlImagen);
         })
         .catch(err => {
           console.log(err);
@@ -69,7 +74,16 @@ function Cursos(props) {
     },
     [baseURL, id, state]
   );
-
+  function mediaDisplay() {
+    return (
+      <div>
+        <Card>
+          <CardMedia component="img" image={`${baseURL}/${media}`} />
+        </Card>
+      </div>
+    );
+  }
+  // console.log(media);
   return (
     <div className={classes.root}>
       <Box>
@@ -77,7 +91,8 @@ function Cursos(props) {
           {courses.nombreCurso}
         </Typography>
       </Box>
-      <Box>
+      <Box sx={{ display: "flex", flexFlow: "row wrap" }}>
+        {mediaDisplay(media)}
         <List
           sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
           component="nav"
@@ -96,8 +111,19 @@ function Cursos(props) {
                 <Collapse in={open} timeout="auto" unmountOnExit>
                   <List component="div">
                     {sections[i].lecciones.map((lesson, i) => {
+                      // console.log(lesson);
                       return (
-                        <ListItemButton key={i} sx={{ pl: 4 }}>
+                        <ListItemButton
+                          key={i}
+                          sx={{ pl: 4 }}
+                          onClick={() => {
+                            setMedia(lesson.url);
+                            //    setMedia(prevState => ({
+                            //   prevState,
+                            //   lesson.url
+                            // }));
+                          }}
+                        >
                           <ListItemText secondary={lesson.nombre} />
                         </ListItemButton>
                       );
