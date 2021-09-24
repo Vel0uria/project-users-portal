@@ -3,15 +3,18 @@ import React, { useState, useContext, useEffect } from "react";
 import {
   Card,
   CardContent,
+  CardMedia,
+  CardHeader,
   Button,
   Typography,
   Avatar,
   Tab,
   Tabs,
   Paper,
-  Box
+  Box,
+  IconButton
 } from "@material-ui/core";
-import { ImageList, ImageListItem, ImageListItemBar } from "@mui/material";
+import PlayCircleOutlineOutlinedIcon from "@material-ui/icons/PlayCircleOutlineOutlined";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { MyContext } from "../services/Context";
@@ -26,6 +29,7 @@ const useStyles = makeStyles(theme => ({
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
+
     // [theme.breakpoints.between("sm", "md")]: {
     //   height: theme.spacing(120)
     // },
@@ -51,15 +55,18 @@ const useStyles = makeStyles(theme => ({
   },
 
   courses: {
-    maxWidth: 400,
-    display: "flex"
+    margin: theme.spacing(1),
+    //  padding: theme.spacing(1),
+    marginTop: 40,
+    maxWidth: 300
+  },
+
+  coursesImg: {
+    //  alignContent: "center"
   },
 
   tabs: {
     padding: theme.spacing(1)
-  },
-  courseImg: {
-    width: "148 !important"
   }
 }));
 
@@ -68,6 +75,7 @@ const useStyles = makeStyles(theme => ({
 // - Corregir refresh de página: Los datos de usuario se pierden
 //-Tabs: Ordenar cursos en la Tab correspondiente según la categoría
 //-Cursos: función que despliegue un background si en la respuesta no hay imagen
+//Categorías: deshabilitar Tab si la categoría viene vacía
 // - Estilos:
 // 1. Responsivo
 // 2. Tamaño tipografías
@@ -133,45 +141,55 @@ function Dashboard() {
         {value === index &&
           <Box
             sx={{
-              mt: 1,
               display: "flex",
-              flexWrap: "nowrap",
               justifyContent: "space-evenly",
-              backgroundColor: "#FFFFFF80"
+              backgroundColor: "#FFFFFF80",
+              flexWrap: {
+                xs: "wrap",
+                md: "nowrap",
+                lg: "nowrap"
+              }
             }}
           >
-            <ImageList
-              rowHeight={200}
-              gap={6}
-              sx={{ maxWidth: 900, maxHeight: 400, overflow: "hidden" }}
-            >
-              {courses.map((course, i) => {
-                if (!courses) return <Typography>Cargando</Typography>;
-                else {
-                  return (
-                    <ImageListItem
-                      key={course.urlImagen}
-                      sx={{ maxWidth: 300, maxHeight: 200 }}
-                    >
-                      <img
-                        src={`${baseURL}/${course.urlImagen}`}
-                        alt={course.nombre}
-                        loading="cargando"
-                        sizes="height:190px"
-                      />
-                      <ImageListItemBar
-                        title={course.nombre}
-                        subtitle={
-                          <span>
-                            Módulo {course.idModulo}
-                          </span>
-                        }
-                      />
-                    </ImageListItem>
-                  );
-                }
-              })}
-            </ImageList>
+            {courses.map((course, i) => {
+              if (!courses) return <Typography>Cargando</Typography>;
+              else {
+                return (
+                  <Card className={classes.courses} variant="outlined" key={i}>
+                    <CardHeader
+                      title={course.nombre}
+                      subheader={`Módulo ${course.idModulo}`}
+                      action={
+                        <Link to={`cursos/${course.idModulo}`}>
+                          <IconButton aria-label="play">
+                            <PlayCircleOutlineOutlinedIcon
+                              fontSize="large"
+                              color="secondary"
+                            />
+                          </IconButton>
+                        </Link>
+                      }
+                    />
+                    <CardMedia
+                      component="img"
+                      height="194"
+                      image={`${baseURL}/${course.urlImagen}`}
+                      alt="urlImagen"
+                      className={classes.coursesImg}
+                    />
+                    <CardContent>
+                      <Typography variant="subtitle2" color="primary">
+                        Categoría {course.categoria}
+                      </Typography>
+
+                      <Typography variant="body1">
+                        {course.descripcion}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                );
+              }
+            })}
           </Box>}
       </div>
     );
