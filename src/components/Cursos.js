@@ -10,10 +10,17 @@ import {
   Box,
   Card,
   CardMedia,
-  CardContent
+  CardContent,
+  CardActions,
+  IconButton
 } from "@material-ui/core";
 import ListItemButton from "@mui/material/ListItemButton";
-import { ExpandLess, ExpandMore } from "@material-ui/icons";
+import {
+  ExpandLess,
+  ExpandMore,
+  FolderOpen,
+  FontDownload
+} from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
 
@@ -36,9 +43,8 @@ const useStyles = makeStyles(theme => ({
 //-La función collapse se abre en todos los items de la lista
 
 //PENDIENTES:
-//-Función que despliegue el archivo correspondiente a la lección
-//-Desplegar archivos
-//¿dar opción de descarga?
+
+//¿dar opción de descargar archivos?
 
 function Cursos(props) {
   const classes = useStyles();
@@ -49,8 +55,12 @@ function Cursos(props) {
   const [files, setFiles] = useState([]);
   const [sections, setSections] = useState([]);
   const [media, setMedia] = useState({});
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
+  const handleExpand = () => {
+    setExpanded(!expanded);
+  };
   const handleClick = () => {
     setOpen(!open);
   };
@@ -74,16 +84,43 @@ function Cursos(props) {
     },
     [baseURL, id, state]
   );
+
   function mediaDisplay() {
     return (
       <div>
         <Card>
           <CardMedia component="img" image={`${baseURL}/${media}`} />
+          <CardContent>
+            <Typography variant="h6">
+              En este curso {courses.descripcionGeneral}
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Typography variant="subtitle1">Archivos</Typography>
+            <IconButton onClick={handleExpand}>
+              <FolderOpen fontSize="large" color="primary" />
+              {expanded ? <ExpandLess /> : <ExpandMore />}
+            </IconButton>
+          </CardActions>
+          <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <CardContent>
+              <List sx={{ ml: 3 }}>
+                {files.map(file => {
+                  return (
+                    <ListItemText
+                      key={file.idArchivoModulo}
+                      primary={file.idArchivoModulo}
+                    />
+                  );
+                })}
+              </List>
+            </CardContent>
+          </Collapse>
         </Card>
       </div>
     );
   }
-  // console.log(media);
+
   return (
     <div className={classes.root}>
       <Box>
@@ -109,22 +146,21 @@ function Cursos(props) {
                 <ListItemText primary={section.titulo} />
                 {open ? <ExpandLess /> : <ExpandMore />}
                 <Collapse in={open} timeout="auto" unmountOnExit>
-                  <List component="div">
+                  <List
+                    sx={{ margin: 10 }}
+                    disablePadding
+                    component="div"
+                    subheader={<ListSubheader>Lecciones</ListSubheader>}
+                  >
                     {sections[i].lecciones.map((lesson, i) => {
-                      // console.log(lesson);
                       return (
                         <ListItemButton
                           key={i}
-                          sx={{ pl: 4 }}
                           onClick={() => {
                             setMedia(lesson.url);
-                            //    setMedia(prevState => ({
-                            //   prevState,
-                            //   lesson.url
-                            // }));
                           }}
                         >
-                          <ListItemText secondary={lesson.nombre} />
+                          <ListItemText primary={lesson.nombre} />
                         </ListItemButton>
                       );
                     })}
