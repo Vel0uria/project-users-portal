@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     backgroundSize: "cover",
     backgroundPosition: "center",
     display: "flex",
-    flexFlow: "column nowrap",
+    //flexFlow: "column nowrap",
     padding: theme.spacing(1),
     [theme.breakpoints.up("lg")]: {
       height: theme.spacing(140)
@@ -29,14 +29,22 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+//FIXES:
+//-La función collapse se abre en todos los items de la lista
+
+//PENDIENTES:
+//-Función que despliegue el archivo correspondiente a la lección
+//-Desplegar archivos
+//¿dar opción de descarga?
+
 function Cursos(props) {
   const classes = useStyles();
   const { id } = props.match.params;
   const { state } = useContext(MyContext);
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
   const [courses, setCourses] = useState({});
+  const [files, setFiles] = useState([]);
   const [sections, setSections] = useState([]);
-  const [lessons, setLessons] = useState([]);
   const [open, setOpen] = React.useState(false);
 
   const handleClick = () => {
@@ -52,8 +60,8 @@ function Cursos(props) {
         .then(({ data }) => {
           const courses = data.result;
           setCourses(courses);
-          // const sections = courses.listaContenido;
           setSections(courses.listaContenido);
+          setFiles(courses.listaArchivos);
         })
         .catch(err => {
           console.log(err);
@@ -61,7 +69,7 @@ function Cursos(props) {
     },
     [baseURL, id, state]
   );
-  // console.log(sections);
+
   return (
     <div className={classes.root}>
       <Box>
@@ -80,17 +88,23 @@ function Cursos(props) {
             </ListSubheader>
           }
         >
-          {sections.map(section => {
+          {sections.map((section, i) => {
             return (
-              <ListItemButton key={section.idCurso} onClick={handleClick}>
+              <ListItemButton key={i} onClick={handleClick}>
                 <ListItemText primary={section.titulo} />
                 {open ? <ExpandLess /> : <ExpandMore />}
+                <Collapse in={open} timeout="auto" unmountOnExit>
+                  <List component="div">
+                    {sections[i].lecciones.map((lesson, i) => {
+                      return (
+                        <ListItemButton key={i} sx={{ pl: 4 }}>
+                          <ListItemText secondary={lesson.nombre} />
+                        </ListItemButton>
+                      );
+                    })}
+                  </List>
+                </Collapse>
               </ListItemButton>
-              //        <Collapse in={open} timeout="auto" unmountOnExit>
-              //   <List component="div">
-              //     <ListItemText primary="holoo" />
-              //   </List>
-              // </Collapse>
             );
           })}
         </List>
