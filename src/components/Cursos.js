@@ -15,12 +15,7 @@ import {
   IconButton
 } from "@material-ui/core";
 import ListItemButton from "@mui/material/ListItemButton";
-import {
-  ExpandLess,
-  ExpandMore,
-  FolderOpen,
-  FontDownload
-} from "@material-ui/icons";
+import { ExpandLess, ExpandMore, FolderOpen } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
 
@@ -39,12 +34,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-//FIXES:
-//-La función collapse se abre en todos los items de la lista
-
 //PENDIENTES:
-
-//¿dar opción de descargar archivos?
+//-Archivos:descargar y desplegar en otra pantalla
+//Estilos-responsive
 
 function Cursos(props) {
   const classes = useStyles();
@@ -55,14 +47,17 @@ function Cursos(props) {
   const [files, setFiles] = useState([]);
   const [sections, setSections] = useState([]);
   const [media, setMedia] = useState({});
-  const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
-
+  const [index, setIndex] = useState([]);
   const handleExpand = () => {
     setExpanded(!expanded);
   };
-  const handleClick = () => {
-    setOpen(!open);
+  const handleClick = i => {
+    if (i === index) {
+      setIndex([]);
+    } else {
+      setIndex(i);
+    }
   };
 
   useEffect(
@@ -89,7 +84,11 @@ function Cursos(props) {
     return (
       <div>
         <Card>
-          <CardMedia component="img" image={`${baseURL}/${media}`} />
+          <CardMedia
+            height="400"
+            component="iframe"
+            src={`${baseURL}/${media}`}
+          />
           <CardContent>
             <Typography variant="h6">
               En este curso {courses.descripcionGeneral}
@@ -120,7 +119,7 @@ function Cursos(props) {
       </div>
     );
   }
-
+  //  console.log(index);
   return (
     <div className={classes.root}>
       <Box>
@@ -142,10 +141,15 @@ function Cursos(props) {
         >
           {sections.map((section, i) => {
             return (
-              <ListItemButton key={i} onClick={handleClick}>
+              <ListItemButton
+                key={i}
+                onClick={() => {
+                  handleClick(i);
+                }}
+              >
                 <ListItemText primary={section.titulo} />
-                {open ? <ExpandLess /> : <ExpandMore />}
-                <Collapse in={open} timeout="auto" unmountOnExit>
+                {i === index ? <ExpandLess /> : <ExpandMore />}
+                <Collapse in={i === index} timeout="auto" unmountOnExit>
                   <List
                     sx={{ margin: 10 }}
                     disablePadding

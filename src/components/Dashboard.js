@@ -60,11 +60,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: 40,
     maxWidth: 300
   },
-
-  coursesImg: {
-    //  alignContent: "center"
-  },
-
   tabs: {
     padding: theme.spacing(1)
   }
@@ -79,6 +74,7 @@ const useStyles = makeStyles(theme => ({
 // - Estilos:
 // 1. Responsivo
 // 2. Tamaño tipografías
+// 3. Texto en Cards: mismo espacio en todos los títulos
 
 function Dashboard() {
   const classes = useStyles();
