@@ -5,6 +5,7 @@ import {
   CardContent,
   CardMedia,
   CardHeader,
+  CardActions,
   Button,
   Typography,
   Avatar,
@@ -56,8 +57,8 @@ const useStyles = makeStyles(theme => ({
 
   courses: {
     margin: theme.spacing(1),
-    //  padding: theme.spacing(1),
     marginTop: 40,
+    minWidth: 200,
     maxWidth: 300
   },
   tabs: {
@@ -70,11 +71,10 @@ const useStyles = makeStyles(theme => ({
 // - Corregir refresh de página: Los datos de usuario se pierden
 //-Tabs: Ordenar cursos en la Tab correspondiente según la categoría
 //-Cursos: función que despliegue un background si en la respuesta no hay imagen
-//Categorías: deshabilitar Tab si la categoría viene vacía
+//-Categorías: deshabilitar Tab si la categoría viene vacía
+//-Card de perfil: que se despliegue en todas las vistas (pasarlo a router)
 // - Estilos:
 // 1. Responsivo
-// 2. Tamaño tipografías
-// 3. Texto en Cards: mismo espacio en todos los títulos
 
 function Dashboard() {
   const classes = useStyles();
@@ -153,18 +153,9 @@ function Dashboard() {
                 return (
                   <Card className={classes.courses} variant="outlined" key={i}>
                     <CardHeader
+                      sx={{ padding: 10 }}
                       title={course.nombre}
                       subheader={`Módulo ${course.idModulo}`}
-                      action={
-                        <Link to={`cursos/${course.idModulo}`}>
-                          <IconButton aria-label="play">
-                            <PlayCircleOutlineOutlinedIcon
-                              fontSize="large"
-                              color="secondary"
-                            />
-                          </IconButton>
-                        </Link>
-                      }
                     />
                     <CardMedia
                       component="img"
@@ -173,15 +164,24 @@ function Dashboard() {
                       alt="urlImagen"
                       className={classes.coursesImg}
                     />
-                    <CardContent>
-                      <Typography variant="subtitle2" color="primary">
-                        Categoría {course.categoria}
+                    <CardActions disableSpacing>
+                      <Typography variant="overline" color="primary">
+                        Ir a lecciones
                       </Typography>
-
+                      <Link to={`cursos/${course.idModulo}`}>
+                        <IconButton aria-label="play">
+                          <PlayCircleOutlineOutlinedIcon
+                            fontSize="large"
+                            color="secondary"
+                          />
+                        </IconButton>
+                      </Link>
+                    </CardActions>
+                    {/* <CardContent>
                       <Typography variant="body1">
                         {course.descripcion}
                       </Typography>
-                    </CardContent>
+                    </CardContent> */}
                   </Card>
                 );
               }
@@ -205,7 +205,7 @@ function Dashboard() {
         </CardContent>
         <CardContent>
           <Typography>
-            Bienvenido {userData.nombreUsuario}{" "}
+            {userData.nombreUsuario}{" "}
           </Typography>
           <Typography>
             {userData.nombreCompania}
