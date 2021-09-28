@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useContext, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -18,7 +18,6 @@ import {
 import PlayCircleOutlineOutlinedIcon from "@material-ui/icons/PlayCircleOutlineOutlined";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { MyContext } from "../services/Context";
 import bgImage from "../assets/dashboard.jpg";
 import placeholder from "../assets/placeholder.png";
 const useStyles = makeStyles(theme => ({
@@ -69,7 +68,7 @@ const useStyles = makeStyles(theme => ({
 // PENDIENTES DASHBOARD:
 
 //-Tabs: Ordenar cursos en la Tab correspondiente según la categoría
-//-MediaCard: función que despliegue un placeholder si en la respuesta no hay imagen
+//-MediaCard: corregir función de placeholder
 //-Categorías: deshabilitar Tab si la categoría viene vacía
 // - Estilos:
 // 1. Responsivo
@@ -78,7 +77,7 @@ function Dashboard() {
   const classes = useStyles();
   const [categories, setCategory] = useState([]);
   const [courses, setCourses] = useState([]);
-  const [media, setMedia] = useState("");
+  const [media, setMedia] = useState([]);
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
   const [value, setValue] = useState(0);
   const user = JSON.parse(localStorage.getItem("USER"));
@@ -153,13 +152,13 @@ function Dashboard() {
                       title={course.nombre}
                       subheader={`Módulo ${course.idModulo}`}
                     />
-                    {!course.urlImagen
+                    {/* {!course.urlImagen
                       ? setMedia(placeholder)
-                      : setMedia(`${baseURL}/${course.urlImagen}`)}
+                      : setMedia(`${baseURL}/${course.urlImagen}`)} */}
                     <CardMedia
                       component="img"
                       height="194"
-                      image={media}
+                      image={`${baseURL}/${course.urlImagen}`}
                       alt="URLimagen"
                       className={classes.coursesImg}
                     />

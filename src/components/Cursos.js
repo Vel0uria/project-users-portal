@@ -120,7 +120,7 @@ function Cursos(props) {
       </div>
     );
   }
-  //  console.log(index);
+
   return (
     <div className={classes.root}>
       <Box>

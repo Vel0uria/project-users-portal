@@ -4,6 +4,7 @@ import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import Diagnosticos from "./components/Diagnosticos";
 import Cursos from "./components/Cursos";
+import NavBar from "./components/NavBar";
 import { MyContext } from "./services/Context";
 
 const Router = () => {
@@ -20,6 +21,7 @@ const Router = () => {
   );
   return (
     <BrowserRouter>
+      <NavBar />
       <Switch>
         <Route exact path="/" component={Login} />
         <Route exact path="/dashboard" component={Dashboard} />
