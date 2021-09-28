@@ -20,7 +20,7 @@ import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { MyContext } from "../services/Context";
 import bgImage from "../assets/dashboard.jpg";
-
+import placeholder from "../assets/placeholder.png";
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
@@ -68,27 +68,27 @@ const useStyles = makeStyles(theme => ({
 
 // PENDIENTES DASHBOARD:
 
-// - Corregir refresh de página: Los datos de usuario se pierden
 //-Tabs: Ordenar cursos en la Tab correspondiente según la categoría
-//-Cursos: función que despliegue un background si en la respuesta no hay imagen
+//-MediaCard: función que despliegue un placeholder si en la respuesta no hay imagen
 //-Categorías: deshabilitar Tab si la categoría viene vacía
-//-Card de perfil: que se despliegue en todas las vistas (pasarlo a router)
 // - Estilos:
 // 1. Responsivo
 
 function Dashboard() {
   const classes = useStyles();
-  const { state } = useContext(MyContext);
   const [categories, setCategory] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [media, setMedia] = useState("");
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
-  const userData = state.user.datosPerfil;
   const [value, setValue] = useState(0);
+  const user = JSON.parse(localStorage.getItem("USER"));
+  const token = user.token;
+
   useEffect(
     () => {
       axios
         .get(`${baseURL}/api/listadoModulosCursos/1`, {
-          headers: { Authorization: state.user.token }
+          headers: { Authorization: token }
         })
         .then(({ data }) => {
           const category = data.result;
@@ -98,7 +98,7 @@ function Dashboard() {
           console.log(err);
         });
     },
-    [baseURL, state.user.token]
+    [baseURL, token]
   );
 
   useEffect(
@@ -109,7 +109,7 @@ function Dashboard() {
         axios
           .get(`${baseURL}/api/listadoUsuariosCursos/${id}`, {
             headers: {
-              Authorization: state.user.token
+              Authorization: token
             }
           })
           .then(({ data }) => {
@@ -121,7 +121,7 @@ function Dashboard() {
           });
       }
     },
-    [categories, state.user.token, value]
+    [categories, token, value]
   );
 
   function TabPanel(props) {
@@ -140,11 +140,7 @@ function Dashboard() {
               display: "flex",
               justifyContent: "space-evenly",
               backgroundColor: "#FFFFFF80",
-              flexWrap: {
-                xs: "wrap",
-                md: "nowrap",
-                lg: "nowrap"
-              }
+              flexWrap: { xs: "wrap", md: "nowrap", lg: "nowrap" }
             }}
           >
             {courses.map((course, i) => {
@@ -157,11 +153,14 @@ function Dashboard() {
                       title={course.nombre}
                       subheader={`Módulo ${course.idModulo}`}
                     />
+                    {!course.urlImagen
+                      ? setMedia(placeholder)
+                      : setMedia(`${baseURL}/${course.urlImagen}`)}
                     <CardMedia
                       component="img"
                       height="194"
-                      image={`${baseURL}/${course.urlImagen}`}
-                      alt="urlImagen"
+                      image={media}
+                      alt="URLimagen"
                       className={classes.coursesImg}
                     />
                     <CardActions disableSpacing>
@@ -195,20 +194,20 @@ function Dashboard() {
     setValue(newValue);
   };
 
-  if (!state.user) return <p>Cargando</p>;
+  if (!user) return <p>Cargando</p>;
   return (
     <div className={classes.root}>
       <Typography className={classes.title}>Dashboard</Typography>
       <Card variant="outlined" className={classes.userData}>
         <CardContent>
-          <Avatar alt="user-image" src={userData.avatar} />
+          <Avatar alt="user-image" src={user.datosPerfil.avatar} />
         </CardContent>
         <CardContent>
           <Typography>
-            {userData.nombreUsuario}{" "}
+            {user.datosPerfil.nombreUsuario}{" "}
           </Typography>
           <Typography>
-            {userData.nombreCompania}
+            {user.datosPerfil.nombreCompania}
           </Typography>
         </CardContent>
         <CardContent>

@@ -81,7 +81,7 @@ const Login = props => {
 
   useEffect(
     () => {
-      changePlace("api");
+      changePlace("capacitacion");
     },
     [changePlace]
   );

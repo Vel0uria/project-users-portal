@@ -41,7 +41,8 @@ const useStyles = makeStyles(theme => ({
 function Cursos(props) {
   const classes = useStyles();
   const { id } = props.match.params;
-  const { state } = useContext(MyContext);
+  const user = JSON.parse(localStorage.getItem("USER"));
+  const token = user.token;
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
   const [courses, setCourses] = useState({});
   const [files, setFiles] = useState([]);
@@ -64,7 +65,7 @@ function Cursos(props) {
     () => {
       axios
         .get(`${baseURL}/api/listadoLecciones/${id}`, {
-          headers: { Authorization: state.user.token }
+          headers: { Authorization: token }
         })
         .then(({ data }) => {
           const courses = data.result;
@@ -77,7 +78,7 @@ function Cursos(props) {
           console.log(err);
         });
     },
-    [baseURL, id, state]
+    [baseURL, id, token]
   );
 
   function mediaDisplay() {

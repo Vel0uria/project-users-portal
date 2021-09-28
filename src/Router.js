@@ -1,11 +1,23 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import Diagnosticos from "./components/Diagnosticos";
 import Cursos from "./components/Cursos";
+import { MyContext } from "./services/Context";
 
 const Router = () => {
+  const { login, changeisLogged } = useContext(MyContext);
+  const { state } = useContext(MyContext);
+  useEffect(
+    () => {
+      const getProfile = () => {
+        login(state.user);
+      };
+      getProfile();
+    },
+    [changeisLogged, login, state.user]
+  );
   return (
     <BrowserRouter>
       <Switch>
