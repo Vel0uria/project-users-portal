@@ -19,7 +19,7 @@ import PlayCircleOutlineOutlinedIcon from "@material-ui/icons/PlayCircleOutlineO
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
-import placeholder from "../assets/placeholder.png";
+//import placeholder from "../assets/placeholder.png";
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
@@ -77,7 +77,7 @@ function Dashboard() {
   const classes = useStyles();
   const [categories, setCategory] = useState([]);
   const [courses, setCourses] = useState([]);
-  const [media, setMedia] = useState([]);
+  //const [media, setMedia] = useState([]);
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
   const [value, setValue] = useState(0);
   const user = JSON.parse(localStorage.getItem("USER"));

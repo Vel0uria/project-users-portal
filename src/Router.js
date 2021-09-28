@@ -10,6 +10,7 @@ import { MyContext } from "./services/Context";
 const Router = () => {
   const { login, changeisLogged } = useContext(MyContext);
   const { state } = useContext(MyContext);
+
   useEffect(
     () => {
       const getProfile = () => {
@@ -21,7 +22,8 @@ const Router = () => {
   );
   return (
     <BrowserRouter>
-      <NavBar />
+      {state.place === "Login" ? null : <NavBar />}
+      {console.log(state.place)}
       <Switch>
         <Route exact path="/" component={Login} />
         <Route exact path="/dashboard" component={Dashboard} />
