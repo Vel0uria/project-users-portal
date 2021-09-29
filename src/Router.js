@@ -23,7 +23,6 @@ const Router = () => {
   return (
     <BrowserRouter>
       {state.place === "Login" ? null : <NavBar />}
-      {console.log(state.place)}
       <Switch>
         <Route exact path="/" component={Login} />
         <Route exact path="/dashboard" component={Dashboard} />

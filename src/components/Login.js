@@ -81,7 +81,7 @@ const Login = props => {
 
   useEffect(
     () => {
-      changePlace("capacitacion");
+      changePlace("Login");
     },
     [changePlace]
   );
@@ -93,6 +93,7 @@ const Login = props => {
         login(res.data.result);
         localStorage.setItem("USER", JSON.stringify(res.data.result));
         props.history.push("/dashboard");
+        changePlace("auth");
       })
       .catch(err => {
         console.log(err);

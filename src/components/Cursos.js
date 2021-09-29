@@ -12,12 +12,14 @@ import {
   CardMedia,
   CardContent,
   CardActions,
-  IconButton
+  IconButton,
+  Divider
 } from "@material-ui/core";
 import ListItemButton from "@mui/material/ListItemButton";
 import { ExpandLess, ExpandMore, FolderOpen } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
+import { width } from "@mui/system";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,10 +29,28 @@ const useStyles = makeStyles(theme => ({
     backgroundPosition: "center",
     display: "flex",
     flexFlow: "column nowrap",
-    padding: theme.spacing(1),
+    padding: theme.spacing(1.5),
     [theme.breakpoints.up("lg")]: {
       height: theme.spacing(140)
     }
+  },
+    title: {
+    textAlign: "center",
+    margin:theme.spacing(2),
+    marginTop:theme.spacing(2),
+    backgroundColor: "#FF6347",
+   color: "white", 
+   borderRadius:4,
+   padding:theme.spacing(1),
+  // width:450,
+
+  },
+  list: {
+    backgroundColor: "#3979a078",
+    width: "100%",
+    maxWidth: 360,
+    marginLeft: theme.spacing(1),
+ 
   }
 }));
 
@@ -124,29 +144,31 @@ function Cursos(props) {
   return (
     <div className={classes.root}>
       <Box>
-        <Typography variant="h2">
+
+        <Typography variant="h3" className={classes.title}>
           {courses.nombreCurso}
         </Typography>
       </Box>
       <Box sx={{ display: "flex", flexFlow: "row wrap" }}>
         {mediaDisplay(media)}
         <List
-          sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+          className={classes.list}
           component="nav"
           aria-labelledby="nested-list-subheader"
           subheader={
             <ListSubheader>
-              {`categoría ${courses.categoria}`}
+              {`Categoría ${courses.categoria}`}
             </ListSubheader>
           }
         >
+     
           {sections.map((section, i) => {
             return (
-              <ListItemButton
+              <><ListItemButton
                 key={i}
                 onClick={() => {
                   handleClick(i);
-                }}
+                } }
               >
                 <ListItemText primary={section.titulo} />
                 {i === index ? <ExpandLess /> : <ExpandMore />}
@@ -163,7 +185,7 @@ function Cursos(props) {
                           key={i}
                           onClick={() => {
                             setMedia(lesson.url);
-                          }}
+                          } }
                         >
                           <ListItemText primary={lesson.nombre} />
                         </ListItemButton>
@@ -171,7 +193,7 @@ function Cursos(props) {
                     })}
                   </List>
                 </Collapse>
-              </ListItemButton>
+              </ListItemButton><Divider /></>
             );
           })}
         </List>

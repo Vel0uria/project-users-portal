@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
   userData: {
     display: "flex",
     margin: theme.spacing(0.5),
-    backgroundColor: "#FFFFFF80",
+    backgroundColor: "#FFFFFF9E",
     [theme.breakpoints.down("sm")]: {
       flexFlow: "column nowrap"
     }
@@ -61,7 +61,8 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 300
   },
   tabs: {
-    padding: theme.spacing(1)
+    padding: theme.spacing(1),
+    backgroundColor: "#FFFFFF78"
   }
 }));
 
@@ -77,7 +78,7 @@ function Dashboard() {
   const classes = useStyles();
   const [categories, setCategory] = useState([]);
   const [courses, setCourses] = useState([]);
-  //const [media, setMedia] = useState([]);
+
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
   const [value, setValue] = useState(0);
   const user = JSON.parse(localStorage.getItem("USER"));
@@ -197,7 +198,7 @@ function Dashboard() {
   return (
     <div className={classes.root}>
       <Typography className={classes.title}>Dashboard</Typography>
-      <Card variant="outlined" className={classes.userData}>
+      <Card className={classes.userData}>
         <CardContent>
           <Avatar alt="user-image" src={user.datosPerfil.avatar} />
         </CardContent>

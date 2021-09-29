@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { MyContext } from "../services/Context";
-import { AppBar, Toolbar, IconButton } from "@material-ui/core";
+import { AppBar, Toolbar, IconButton, Divider } from "@material-ui/core";
 import {
   ExitToApp,
   NotificationsActiveTwoTone,
@@ -12,24 +12,22 @@ const useStyles = makeStyles(theme => ({
   toolBar: {
     display: "flex",
     justifyContent: "flex-end",
-    backgroundColor: "aliceblue"
+    backgroundColor: "#b5c6da"
   }
 }));
 
 //PENDIENTES:
-//verificar logout
-//que el componente no se despliegue en Login
+//Estilos
 function NavBar() {
   const classes = useStyles();
   const { logout } = useContext(MyContext);
 
   return (
-    <AppBar position="static" color="default">
+    <AppBar position="static">
       <Toolbar className={classes.toolBar}>
         <IconButton>
           <InboxTwoTone />
         </IconButton>
-
         <IconButton>
           <NotificationsActiveTwoTone />
         </IconButton>
@@ -39,6 +37,7 @@ function NavBar() {
           </IconButton>
         </Link>
       </Toolbar>
+      <Divider />
     </AppBar>
   );
 }
