@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 
 import {
@@ -10,11 +10,11 @@ import {
   Card,
   CardMedia,
   CardContent,
-  CardActions,
   IconButton,
   Divider,
   Drawer,
-  Toolbar
+  Toolbar,
+  ListItemIcon
 } from "@material-ui/core";
 import ListItemButton from "@mui/material/ListItemButton";
 import {
@@ -25,7 +25,8 @@ import {
 } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
-const drawerWidth = 300;
+const drawerWidth = 240;
+//const windowHeight = useRef()
 const useStyles = makeStyles(theme => ({
   root: {
     width: "fullWidth",
@@ -41,24 +42,28 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     textAlign: "center",
-    margin: theme.spacing(2),
-    marginTop: theme.spacing(2),
+    // margin: theme.spacing(2),
+    // marginTop: theme.spacing(2),
+    marginLeft: drawerWidth,
     backgroundColor: "#FF6347",
     alignSelf: "center",
     width: "55%",
     color: "white",
     borderRadius: 4,
     padding: theme.spacing(1),
+    [theme.breakpoints.between("sm", "md")]: {
+      fontSize: "1.5rem"
+    },
     [theme.breakpoints.down("sm")]: {
-      fontSize: "1.2rem"
+      fontSize: "1.2rem",
+      marginLeft: 0
     }
   },
   list: {
     backgroundColor: "#b5c6da"
-    // maxWidth: 360,
-    // marginRight: theme.spacing(1)
   },
   permanetDrawer: {
+    height: "windowHeight",
     backgroundColor: "#3979a078",
     [theme.breakpoints.down("sm")]: {
       display: "none"
@@ -155,6 +160,27 @@ function Cursos(props) {
           );
         })}
       </List>
+      <Toolbar>
+        <ListItemButton onClick={handleExpand}>
+          <ListItemIcon>
+            <FolderOpen fontSize="large" color="primary" />
+          </ListItemIcon>
+          <ListItemText primary="Archivos" />
+          {expanded ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+      </Toolbar>
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <List>
+          {files.map(file => {
+            return (
+              <div key={file.idArchivoModulo}>
+                <ListItemText primary={file.idArchivoModulo} />
+                <Divider />
+              </div>
+            );
+          })}
+        </List>
+      </Collapse>
     </div>
   );
   useEffect(
@@ -195,7 +221,12 @@ function Cursos(props) {
       </Typography>
       <Box
         component="main"
-        sx={{ p: 3, display: "flex", justifyContent: "center" }}
+        sx={{
+          p: 3,
+          display: "flex",
+          justifyContent: "center",
+          ml: { sm: `calc(10px + ${drawerWidth}px)` }
+        }}
       >
         <Card>
           <CardMedia
@@ -208,27 +239,6 @@ function Cursos(props) {
               En este curso {courses.descripcionGeneral}
             </Typography>
           </CardContent>
-          <CardActions>
-            <Typography variant="subtitle1">Archivos</Typography>
-            <IconButton onClick={handleExpand}>
-              <FolderOpen fontSize="large" color="primary" />
-              {expanded ? <ExpandLess /> : <ExpandMore />}
-            </IconButton>
-          </CardActions>
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
-            <CardContent>
-              <List>
-                {files.map(file => {
-                  return (
-                    <ListItemText
-                      key={file.idArchivoModulo}
-                      primary={file.idArchivoModulo}
-                    />
-                  );
-                })}
-              </List>
-            </CardContent>
-          </Collapse>
         </Card>
       </Box>
       <Box
