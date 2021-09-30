@@ -37,20 +37,27 @@ const useStyles = makeStyles(theme => ({
     //   height: theme.spacing(130)
     // },
     [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(110)
+      height: theme.spacing(140)
     }
   },
   title: {
     textAlign: "center",
     backgroundColor: "#FF6347",
-    color: "white"
+    color: "white",
+    fontSize: "1.7rem",
+    [theme.breakpoints.up("lg")]: {
+      fontSize: "2rem"
+    },
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "1.2rem"
+    }
   },
   userData: {
     display: "flex",
     margin: theme.spacing(0.5),
     backgroundColor: "#FFFFFF9E",
     [theme.breakpoints.down("sm")]: {
-      flexFlow: "column nowrap"
+      flexFlow: "column"
     }
   },
 
@@ -78,7 +85,6 @@ function Dashboard() {
   const classes = useStyles();
   const [categories, setCategory] = useState([]);
   const [courses, setCourses] = useState([]);
-
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
   const [value, setValue] = useState(0);
   const user = JSON.parse(localStorage.getItem("USER"));
@@ -197,7 +203,9 @@ function Dashboard() {
   if (!user) return <p>Cargando</p>;
   return (
     <div className={classes.root}>
-      <Typography className={classes.title}>Dashboard</Typography>
+      <Typography variant="h1" className={classes.title}>
+        Dashboard
+      </Typography>
       <Card className={classes.userData}>
         <CardContent>
           <Avatar alt="user-image" src={user.datosPerfil.avatar} />
@@ -211,7 +219,7 @@ function Dashboard() {
           </Typography>
         </CardContent>
         <CardContent>
-          <Button color="primary" variant="contained">
+          <Button color="primary" variant="contained" disableElevation>
             Mis diagnósticos
           </Button>
         </CardContent>
