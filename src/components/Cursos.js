@@ -5,7 +5,6 @@ import {
   Typography,
   List,
   ListItemText,
-  ListSubheader,
   Collapse,
   Box,
   Card,
@@ -13,13 +12,20 @@ import {
   CardContent,
   CardActions,
   IconButton,
-  Divider
+  Divider,
+  Drawer,
+  Toolbar
 } from "@material-ui/core";
 import ListItemButton from "@mui/material/ListItemButton";
-import { ExpandLess, ExpandMore, FolderOpen } from "@material-ui/icons";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import {
+  ExpandLess,
+  ExpandMore,
+  FolderOpen,
+  MenuTwoTone
+} from "@material-ui/icons";
+import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
-
+const drawerWidth = 300;
 const useStyles = makeStyles(theme => ({
   root: {
     width: "fullWidth",
@@ -38,6 +44,8 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(2),
     marginTop: theme.spacing(2),
     backgroundColor: "#FF6347",
+    alignSelf: "center",
+    width: "55%",
     color: "white",
     borderRadius: 4,
     padding: theme.spacing(1),
@@ -46,10 +54,32 @@ const useStyles = makeStyles(theme => ({
     }
   },
   list: {
+    backgroundColor: "#b5c6da"
+    // maxWidth: 360,
+    // marginRight: theme.spacing(1)
+  },
+  permanetDrawer: {
     backgroundColor: "#3979a078",
-    // width: "100%",
-    maxWidth: 360,
-    marginRight: theme.spacing(1)
+    [theme.breakpoints.down("sm")]: {
+      display: "none"
+    },
+    [theme.breakpoints.only("sm")]: {
+      display: "block"
+    },
+    "& .MuiDrawer-paper": {
+      boxSizing: "border-box",
+      width: drawerWidth
+    }
+  },
+  drawer: {
+    backgroundColor: "#3979a078",
+    "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+    [theme.breakpoints.down("sm")]: {
+      display: "block"
+    },
+    [theme.breakpoints.only("sm")]: {
+      display: "none"
+    }
   }
 }));
 
@@ -59,7 +89,6 @@ const useStyles = makeStyles(theme => ({
 
 function Cursos(props) {
   const classes = useStyles();
-  const theme = useTheme();
   const { id } = props.match.params;
   const user = JSON.parse(localStorage.getItem("USER"));
   const token = user.token;
@@ -70,7 +99,9 @@ function Cursos(props) {
   const [media, setMedia] = useState({});
   const [expanded, setExpanded] = useState(false);
   const [index, setIndex] = useState([]);
-  const handleExpand = () => {
+  const [mobile, setMobile] = useState(false);
+
+  const handleExpand = props => {
     setExpanded(!expanded);
   };
   const handleClick = i => {
@@ -80,7 +111,52 @@ function Cursos(props) {
       setIndex(i);
     }
   };
+  const handleDrawer = () => {
+    setMobile(!mobile);
+  };
 
+  const drawer = (
+    <div className={classes.list}>
+      <Toolbar>
+        <Typography variant="overline">Secciones</Typography>
+      </Toolbar>
+      <Divider />
+      <List>
+        {sections.map((section, i) => {
+          return (
+            <div key={i}>
+              <ListItemButton
+                onClick={() => {
+                  handleClick(i);
+                }}
+              >
+                <ListItemText primary={section.titulo} />
+                {i === index ? <ExpandLess /> : <ExpandMore />}
+                <Collapse in={i === index} timeout="auto" unmountOnExit>
+                  <List disablePadding component="div">
+                    {sections[i].lecciones.map((lesson, i) => {
+                      return (
+                        <ListItemButton
+                          key={i}
+                          onClick={() => {
+                            setMedia(lesson.url);
+                          }}
+                          sx={{ pl: 4 }}
+                        >
+                          <ListItemText primary={lesson.nombre} />
+                        </ListItemButton>
+                      );
+                    })}
+                  </List>
+                </Collapse>
+              </ListItemButton>
+              <Divider />
+            </div>
+          );
+        })}
+      </List>
+    </div>
+  );
   useEffect(
     () => {
       axios
@@ -100,93 +176,78 @@ function Cursos(props) {
     },
     [baseURL, id, token]
   );
-  console.log(theme);
+
   return (
     <div className={classes.root}>
+      <Toolbar>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          edge="start"
+          onClick={handleDrawer}
+          sx={{ mr: 2, display: { sm: "none" } }}
+        >
+          <MenuTwoTone />
+        </IconButton>
+      </Toolbar>
       <Typography variant="h3" className={classes.title}>
         {courses.nombreCurso}
       </Typography>
       <Box
-        sx={{ display: "flex", flexFlow: "row wrap", justifyContent: "center" }}
+        component="main"
+        sx={{ p: 3, display: "flex", justifyContent: "center" }}
       >
-        <List
-          className={classes.list}
-          component="nav"
-          aria-labelledby="nested-list-subheader"
-          subheader={
-            <ListSubheader component="div" id="nested-list">
-              {`Categoría ${courses.categoria}`}
-            </ListSubheader>
-          }
-        >
-          {sections.map((section, i) => {
-            return (
-              <div key={i}>
-                <ListItemButton
-                  onClick={() => {
-                    handleClick(i);
-                  }}
-                >
-                  <ListItemText primary={section.titulo} />
-                  {i === index ? <ExpandLess /> : <ExpandMore />}
-                  <Collapse in={i === index} timeout="auto" unmountOnExit>
-                    <List disablePadding component="div">
-                      {sections[i].lecciones.map((lesson, i) => {
-                        return (
-                          <ListItemButton
-                            key={i}
-                            onClick={() => {
-                              setMedia(lesson.url);
-                            }}
-                            sx={{ pl: 4 }}
-                          >
-                            <ListItemText primary={lesson.nombre} />
-                          </ListItemButton>
-                        );
-                      })}
-                    </List>
-                  </Collapse>
-                </ListItemButton>
-                <Divider />
-              </div>
-            );
-          })}
-        </List>
-        <div>
-          <Card>
-            <CardMedia
-              height="400"
-              component="iframe"
-              src={`${baseURL}/${media}`}
-            />
+        <Card>
+          <CardMedia
+            height="400"
+            component="iframe"
+            src={`${baseURL}/${media}`}
+          />
+          <CardContent>
+            <Typography variant="h6">
+              En este curso {courses.descripcionGeneral}
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Typography variant="subtitle1">Archivos</Typography>
+            <IconButton onClick={handleExpand}>
+              <FolderOpen fontSize="large" color="primary" />
+              {expanded ? <ExpandLess /> : <ExpandMore />}
+            </IconButton>
+          </CardActions>
+          <Collapse in={expanded} timeout="auto" unmountOnExit>
             <CardContent>
-              <Typography variant="h6">
-                En este curso {courses.descripcionGeneral}
-              </Typography>
+              <List>
+                {files.map(file => {
+                  return (
+                    <ListItemText
+                      key={file.idArchivoModulo}
+                      primary={file.idArchivoModulo}
+                    />
+                  );
+                })}
+              </List>
             </CardContent>
-            <CardActions>
-              <Typography variant="subtitle1">Archivos</Typography>
-              <IconButton onClick={handleExpand}>
-                <FolderOpen fontSize="large" color="primary" />
-                {expanded ? <ExpandLess /> : <ExpandMore />}
-              </IconButton>
-            </CardActions>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
-              <CardContent>
-                <List>
-                  {files.map(file => {
-                    return (
-                      <ListItemText
-                        key={file.idArchivoModulo}
-                        primary={file.idArchivoModulo}
-                      />
-                    );
-                  })}
-                </List>
-              </CardContent>
-            </Collapse>
-          </Card>
-        </div>
+          </Collapse>
+        </Card>
+      </Box>
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        aria-label="drawers"
+      >
+        <Drawer variant="permanent" className={classes.permanetDrawer} open>
+          {drawer}
+        </Drawer>
+        <Drawer
+          variant="temporary"
+          open={mobile}
+          onClose={handleDrawer}
+          ModalProps={{ keepMounted: true }}
+          className={classes.drawer}
+        >
+          {drawer}
+        </Drawer>
       </Box>
     </div>
   );
