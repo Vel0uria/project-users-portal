@@ -37,7 +37,6 @@ function NavBar() {
           </IconButton>
         </Link>
       </Toolbar>
-      <Divider />
     </AppBar>
   );
 }

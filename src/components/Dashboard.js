@@ -62,6 +62,8 @@ const useStyles = makeStyles(theme => ({
   },
 
   courses: {
+    display: "flex",
+    flexWrap: "wrap",
     margin: theme.spacing(1),
     marginTop: 40,
     minWidth: 200,
@@ -146,7 +148,7 @@ function Dashboard() {
               display: "flex",
               justifyContent: "space-evenly",
               backgroundColor: "#FFFFFF80",
-              flexWrap: { xs: "wrap", md: "nowrap", lg: "nowrap" }
+              flexWrap: { xs: "wrap", md: "wrap", lg: "nowrap" }
             }}
           >
             {courses.map((course, i) => {

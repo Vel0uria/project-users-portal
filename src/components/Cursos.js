@@ -21,10 +21,13 @@ import {
   ExpandLess,
   ExpandMore,
   FolderOpen,
-  MenuTwoTone
+  MenuTwoTone,
+  BookTwoTone,
+  MenuBookTwoTone
 } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
+import { textAlign } from "@mui/system";
 const drawerWidth = 240;
 //const windowHeight = useRef()
 const useStyles = makeStyles(theme => ({
@@ -35,19 +38,17 @@ const useStyles = makeStyles(theme => ({
     backgroundPosition: "center",
     display: "flex",
     flexFlow: "column nowrap",
-    padding: theme.spacing(1.5),
     [theme.breakpoints.up("lg")]: {
       height: theme.spacing(140)
     }
   },
   title: {
     textAlign: "center",
-    // margin: theme.spacing(2),
-    // marginTop: theme.spacing(2),
     marginLeft: drawerWidth,
+    marginTop: -30,
     backgroundColor: "#FF6347",
     alignSelf: "center",
-    width: "55%",
+    width: 700,
     color: "white",
     borderRadius: 4,
     padding: theme.spacing(1),
@@ -56,8 +57,13 @@ const useStyles = makeStyles(theme => ({
     },
     [theme.breakpoints.down("sm")]: {
       fontSize: "1.2rem",
-      marginLeft: 0
+      marginLeft: 0,
+      marginTop: 0
     }
+  },
+  mediaCard: {
+    maxWidth: 600,
+    marginTop: theme.spacing(1)
   },
   list: {
     backgroundColor: "#b5c6da"
@@ -85,6 +91,9 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.only("sm")]: {
       display: "none"
     }
+  },
+  files: {
+    paddingLeft: theme.spacing(1)
   }
 }));
 
@@ -123,7 +132,18 @@ function Cursos(props) {
   const drawer = (
     <div className={classes.list}>
       <Toolbar>
-        <Typography variant="overline">Secciones</Typography>
+        <ListItemIcon>
+          <MenuBookTwoTone fontSize="large" color="error" />
+        </ListItemIcon>
+        <ListItemText
+          primary="SECCIONES"
+          primaryTypographyProps={{
+            color: "textSecondary",
+            letterSpacing: 10,
+            fontWeight: "bolder",
+            variant: "subtitle1"
+          }}
+        />
       </Toolbar>
       <Divider />
       <List>
@@ -135,32 +155,37 @@ function Cursos(props) {
                   handleClick(i);
                 }}
               >
-                <ListItemText primary={section.titulo} />
+                <ListItemText
+                  primary={section.titulo}
+                  primaryTypographyProps={{
+                    variant: "subtitle2",
+                    color: "textPrimary"
+                  }}
+                />
                 {i === index ? <ExpandLess /> : <ExpandMore />}
-                <Collapse in={i === index} timeout="auto" unmountOnExit>
-                  <List disablePadding component="div">
-                    {sections[i].lecciones.map((lesson, i) => {
-                      return (
-                        <ListItemButton
-                          key={i}
-                          onClick={() => {
-                            setMedia(lesson.url);
-                          }}
-                          sx={{ pl: 4 }}
-                        >
-                          <ListItemText primary={lesson.nombre} />
-                        </ListItemButton>
-                      );
-                    })}
-                  </List>
-                </Collapse>
               </ListItemButton>
+              <Collapse in={i === index} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  {sections[i].lecciones.map((lesson, i) => {
+                    return (
+                      <ListItemButton
+                        key={i}
+                        onClick={() => {
+                          setMedia(lesson.url);
+                        }}
+                      >
+                        <ListItemText primary={lesson.nombre} />
+                      </ListItemButton>
+                    );
+                  })}
+                </List>
+              </Collapse>
               <Divider />
             </div>
           );
         })}
       </List>
-      <Toolbar>
+      <Toolbar className={classes.files}>
         <ListItemButton onClick={handleExpand}>
           <ListItemIcon>
             <FolderOpen fontSize="large" color="primary" />
@@ -228,7 +253,7 @@ function Cursos(props) {
           ml: { sm: `calc(10px + ${drawerWidth}px)` }
         }}
       >
-        <Card>
+        <Card className={classes.mediaCard}>
           <CardMedia
             height="400"
             component="iframe"
