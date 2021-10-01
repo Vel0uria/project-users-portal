@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import {
   Typography,
   List,
   ListItemText,
+  ListItem,
   Collapse,
   Box,
   Card,
@@ -22,14 +23,12 @@ import {
   ExpandMore,
   FolderOpen,
   MenuTwoTone,
-  BookTwoTone,
-  MenuBookTwoTone
+  MenuBookTwoTone,
+  CloudDownload
 } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
-import { textAlign } from "@mui/system";
 const drawerWidth = 240;
-//const windowHeight = useRef()
 const useStyles = makeStyles(theme => ({
   root: {
     width: "fullWidth",
@@ -46,7 +45,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: "center",
     marginLeft: drawerWidth,
     marginTop: -30,
-    backgroundColor: "#FF6347",
+    backgroundColor: "#FF6347DA",
     alignSelf: "center",
     width: 700,
     color: "white",
@@ -63,7 +62,8 @@ const useStyles = makeStyles(theme => ({
   },
   mediaCard: {
     maxWidth: 600,
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(1),
+    backgroundColor: "#FFFFFF9E"
   },
   list: {
     backgroundColor: "#b5c6da"
@@ -92,8 +92,9 @@ const useStyles = makeStyles(theme => ({
       display: "none"
     }
   },
-  files: {
-    paddingLeft: theme.spacing(1)
+  filesList: {
+    //marginLeft: 50,
+    paddingRight: 1
   }
 }));
 
@@ -162,7 +163,9 @@ function Cursos(props) {
                     color: "textPrimary"
                   }}
                 />
+                {/* <ListItemIcon> */}
                 {i === index ? <ExpandLess /> : <ExpandMore />}
+                {/* </ListItemIcon> */}
               </ListItemButton>
               <Collapse in={i === index} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
@@ -174,7 +177,13 @@ function Cursos(props) {
                           setMedia(lesson.url);
                         }}
                       >
-                        <ListItemText primary={lesson.nombre} />
+                        <ListItemText
+                          primary={lesson.nombre}
+                          primaryTypographyProps={{
+                            variant: "caption",
+                            color: "textPrimary"
+                          }}
+                        />
                       </ListItemButton>
                     );
                   })}
@@ -185,23 +194,33 @@ function Cursos(props) {
           );
         })}
       </List>
-      <Toolbar className={classes.files}>
+      <Toolbar className={classes.filesList}>
         <ListItemButton onClick={handleExpand}>
           <ListItemIcon>
             <FolderOpen fontSize="large" color="primary" />
           </ListItemIcon>
-          <ListItemText primary="Archivos" />
-          {expanded ? <ExpandLess /> : <ExpandMore />}
+          <ListItemText
+            primary="Archivos"
+            primaryTypographyProps={{
+              variant: "subtitle2",
+              color: "textPrimary"
+            }}
+          />
+          <ListItemIcon>
+            {expanded ? <ExpandLess /> : <ExpandMore />}
+          </ListItemIcon>
         </ListItemButton>
       </Toolbar>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <List>
           {files.map(file => {
             return (
-              <div key={file.idArchivoModulo}>
+              <ListItemButton key={file.idArchivoModulo}>
                 <ListItemText primary={file.idArchivoModulo} />
-                <Divider />
-              </div>
+                <ListItemIcon>
+                  <CloudDownload />
+                </ListItemIcon>
+              </ListItemButton>
             );
           })}
         </List>
@@ -253,14 +272,15 @@ function Cursos(props) {
           ml: { sm: `calc(10px + ${drawerWidth}px)` }
         }}
       >
-        <Card className={classes.mediaCard}>
+        <Card variant="outlined" className={classes.mediaCard}>
           <CardMedia
             height="400"
             component="iframe"
             src={`${baseURL}/${media}`}
           />
+          <Divider />
           <CardContent>
-            <Typography variant="h6">
+            <Typography variant="subtitle1" sx={{ textAlign: "justified" }}>
               En este curso {courses.descripcionGeneral}
             </Typography>
           </CardContent>

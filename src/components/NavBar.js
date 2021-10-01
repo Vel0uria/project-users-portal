@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { MyContext } from "../services/Context";
-import { AppBar, Toolbar, IconButton, Divider } from "@material-ui/core";
+import { AppBar, Toolbar, IconButton } from "@material-ui/core";
 import {
   ExitToApp,
   NotificationsActiveTwoTone,
