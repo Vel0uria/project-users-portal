@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import { Link } from "react-router-dom";
 import {
   Typography,
   List,
   ListItemText,
-  ListItem,
   Collapse,
   Box,
   Card,
@@ -17,6 +16,7 @@ import {
   Toolbar,
   ListItemIcon
 } from "@material-ui/core";
+import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import {
   ExpandLess,
@@ -101,6 +101,7 @@ const useStyles = makeStyles(theme => ({
 //PENDIENTES:
 //-Archivos:descargar y desplegar en otra pantalla
 //Estilos-responsive
+//-NOTAS:
 
 function Cursos(props) {
   const classes = useStyles();
@@ -115,6 +116,7 @@ function Cursos(props) {
   const [expanded, setExpanded] = useState(false);
   const [index, setIndex] = useState([]);
   const [mobile, setMobile] = useState(false);
+  const [mediaType, setMediaType] = useState("video");
 
   const handleExpand = props => {
     setExpanded(!expanded);
@@ -128,6 +130,9 @@ function Cursos(props) {
   };
   const handleDrawer = () => {
     setMobile(!mobile);
+  };
+  const displayFile = file => {
+    window.open(file);
   };
 
   const drawer = (
@@ -213,15 +218,47 @@ function Cursos(props) {
       </Toolbar>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <List>
-          {files.map(file => {
+          {files.map((file, i) => {
             return (
-              <ListItemButton key={file.idArchivoModulo}>
-                <ListItemText primary={file.idArchivoModulo} />
-                <ListItemIcon>
-                  <CloudDownload />
-                </ListItemIcon>
-              </ListItemButton>
+              <ListItem
+                key={i}
+                secondaryAction={
+                  <Link
+                    to={`${baseURL}/${file.urlArchivo}`}
+                    target="_blank"
+                    download
+                  >
+                    <ListItemIcon>
+                      <CloudDownload />
+                    </ListItemIcon>
+                  </Link>
+                }
+              >
+                {/* <ListItemButton onClick={() => {
+                    displayFile(`${baseURL}/${file.urlArchivo}`);
+                  }}> */}
+                <ListItemText
+                  onClick={() => {
+                    displayFile(`${baseURL}/${file.urlArchivo}`);
+                  }}
+                  primary={file.idArchivoModulo}
+                  primaryTypographyProps={{ variant: "button" }}
+                />
+                {/* </ListItemButton> */}
+              </ListItem>
             );
+            // <div key={i}>
+
+            //   <Link
+            //     to={`${baseURL}/${file.urlArchivo}`}
+            //     target="_blank"
+            //     download
+            //   >
+            //     <ListItemIcon>
+            //       <CloudDownload />
+            //     </ListItemIcon>
+            //   </Link>
+            // </div>
           })}
         </List>
       </Collapse>
@@ -277,6 +314,7 @@ function Cursos(props) {
             height="400"
             component="iframe"
             src={`${baseURL}/${media}`}
+            type="video"
           />
           <Divider />
           <CardContent>
