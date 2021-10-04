@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Card,
   CardContent,
@@ -19,6 +19,7 @@ import PlayCircleOutlineOutlinedIcon from "@material-ui/icons/PlayCircleOutlineO
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
+import { MyContext } from "../services/Context";
 //import placeholder from "../assets/placeholder.png";
 const useStyles = makeStyles(theme => ({
   root: {
@@ -91,9 +92,11 @@ function Dashboard() {
   const [value, setValue] = useState(0);
   const user = JSON.parse(localStorage.getItem("USER"));
   const token = user.token;
+  const { changePlace } = useContext(MyContext);
 
   useEffect(
     () => {
+      changePlace("auth");
       axios
         .get(`${baseURL}/api/listadoModulosCursos/1`, {
           headers: { Authorization: token }
@@ -106,7 +109,7 @@ function Dashboard() {
           console.log(err);
         });
     },
-    [baseURL, token]
+    [baseURL, token, changePlace]
   );
 
   useEffect(

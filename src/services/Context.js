@@ -4,7 +4,7 @@ export const MyContext = createContext();
 
 class ContextProvider extends Component {
   state = {
-  place: "Login",
+    place: "Login",
     user: null
   };
 
@@ -13,23 +13,19 @@ class ContextProvider extends Component {
   };
 
   login = user => this.setState({ user });
-  logout = () => this.setState({ user: null });
+  logout = () => {
+    this.setState({ user: null });
+  };
 
   render() {
-    const {
-      changePlace,
-      state,
-      login,
-      logout
-    
-    } = this;
+    const { changePlace, state, login, logout } = this;
     return (
       <MyContext.Provider
         value={{
           state,
-        changePlace,
+          changePlace,
           login,
-        logout
+          logout
         }}
       >
         {this.props.children}

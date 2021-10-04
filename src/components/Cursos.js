@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import {
@@ -14,7 +14,8 @@ import {
   Divider,
   Drawer,
   Toolbar,
-  ListItemIcon
+  ListItemIcon,
+  Tooltip
 } from "@material-ui/core";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -28,17 +29,23 @@ import {
 } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
+import { MyContext } from "../services/Context";
 const drawerWidth = 240;
 const useStyles = makeStyles(theme => ({
   root: {
     width: "fullWidth",
+    height: "windowHeigth",
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     display: "flex",
     flexFlow: "column nowrap",
+    [theme.breakpoints.between("md", "lg")]: {
+      height: theme.spacing(80),
+      marginTop: 0
+    },
     [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(140)
+      height: theme.spacing(135)
     }
   },
   title: {
@@ -47,21 +54,23 @@ const useStyles = makeStyles(theme => ({
     marginTop: -30,
     backgroundColor: "#FF6347DA",
     alignSelf: "center",
-    width: 700,
+    width: 900,
     color: "white",
     borderRadius: 4,
     padding: theme.spacing(1),
     [theme.breakpoints.between("sm", "md")]: {
-      fontSize: "1.5rem"
+      fontSize: "1.5rem",
+      width: 700
     },
     [theme.breakpoints.down("sm")]: {
       fontSize: "1.2rem",
       marginLeft: 0,
-      marginTop: 0
+      marginTop: 0,
+      width: 190
     }
   },
   mediaCard: {
-    maxWidth: 600,
+    maxWidth: 1000,
     marginTop: theme.spacing(1),
     backgroundColor: "#FFFFFF9E"
   },
@@ -92,16 +101,19 @@ const useStyles = makeStyles(theme => ({
       display: "none"
     }
   },
+  expandIcon: {
+    justifyContent: "flex-end"
+  },
   filesList: {
     //marginLeft: 50,
     paddingRight: 1
+    // alignSelf: "flex-end"
   }
 }));
 
 //PENDIENTES:
-//-Archivos:descargar y desplegar en otra pantalla
-//Estilos-responsive
-//-NOTAS:
+//Lista: Scroll automático para lista de archivos
+//Video: Opción para mostrar en pantalla completa
 
 function Cursos(props) {
   const classes = useStyles();
@@ -116,7 +128,27 @@ function Cursos(props) {
   const [expanded, setExpanded] = useState(false);
   const [index, setIndex] = useState([]);
   const [mobile, setMobile] = useState(false);
-  const [mediaType, setMediaType] = useState("video");
+  const { changePlace } = useContext(MyContext);
+  useEffect(
+    () => {
+      changePlace("auth");
+      axios
+        .get(`${baseURL}/api/listadoLecciones/${id}`, {
+          headers: { Authorization: token }
+        })
+        .then(({ data }) => {
+          const courses = data.result;
+          setCourses(courses);
+          setSections(courses.listaContenido);
+          setFiles(courses.listaArchivos);
+          setMedia(courses.urlImagen);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    [baseURL, id, token, changePlace]
+  );
 
   const handleExpand = props => {
     setExpanded(!expanded);
@@ -131,9 +163,9 @@ function Cursos(props) {
   const handleDrawer = () => {
     setMobile(!mobile);
   };
-  const displayFile = file => {
-    window.open(file);
-  };
+  // const displayFile = file => {
+  //   window.open(file);
+  // };
 
   const drawer = (
     <div className={classes.list}>
@@ -168,9 +200,9 @@ function Cursos(props) {
                     color: "textPrimary"
                   }}
                 />
-                {/* <ListItemIcon> */}
-                {i === index ? <ExpandLess /> : <ExpandMore />}
-                {/* </ListItemIcon> */}
+                <ListItemIcon className={classes.expandIcon}>
+                  {i === index ? <ExpandLess /> : <ExpandMore />}
+                </ListItemIcon>
               </ListItemButton>
               <Collapse in={i === index} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
@@ -185,7 +217,7 @@ function Cursos(props) {
                         <ListItemText
                           primary={lesson.nombre}
                           primaryTypographyProps={{
-                            variant: "caption",
+                            variant: "subtitle2",
                             color: "textPrimary"
                           }}
                         />
@@ -207,11 +239,11 @@ function Cursos(props) {
           <ListItemText
             primary="Archivos"
             primaryTypographyProps={{
-              variant: "subtitle2",
+              variant: "subtitle1",
               color: "textPrimary"
             }}
           />
-          <ListItemIcon>
+          <ListItemIcon className={classes.expandIcon}>
             {expanded ? <ExpandLess /> : <ExpandMore />}
           </ListItemIcon>
         </ListItemButton>
@@ -239,7 +271,8 @@ function Cursos(props) {
                   }}> */}
                 <ListItemText
                   onClick={() => {
-                    displayFile(`${baseURL}/${file.urlArchivo}`);
+                    setMedia(file.urlArchivo);
+                    //  displayFile(`${baseURL}/${file.urlArchivo}`);
                   }}
                   primary={file.idArchivoModulo}
                   primaryTypographyProps={{ variant: "button" }}
@@ -247,55 +280,26 @@ function Cursos(props) {
                 {/* </ListItemButton> */}
               </ListItem>
             );
-            // <div key={i}>
-
-            //   <Link
-            //     to={`${baseURL}/${file.urlArchivo}`}
-            //     target="_blank"
-            //     download
-            //   >
-            //     <ListItemIcon>
-            //       <CloudDownload />
-            //     </ListItemIcon>
-            //   </Link>
-            // </div>
           })}
         </List>
       </Collapse>
     </div>
   );
-  useEffect(
-    () => {
-      axios
-        .get(`${baseURL}/api/listadoLecciones/${id}`, {
-          headers: { Authorization: token }
-        })
-        .then(({ data }) => {
-          const courses = data.result;
-          setCourses(courses);
-          setSections(courses.listaContenido);
-          setFiles(courses.listaArchivos);
-          setMedia(courses.urlImagen);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
-    [baseURL, id, token]
-  );
 
   return (
     <div className={classes.root}>
       <Toolbar>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          edge="start"
-          onClick={handleDrawer}
-          sx={{ mr: 2, display: { sm: "none" } }}
-        >
-          <MenuTwoTone />
-        </IconButton>
+        <Tooltip title="Secciones">
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawer}
+            sx={{ mr: 2, display: { sm: "none" } }}
+          >
+            <MenuTwoTone fontSize="large" />
+          </IconButton>
+        </Tooltip>
       </Toolbar>
       <Typography variant="h3" className={classes.title}>
         {courses.nombreCurso}
@@ -314,7 +318,6 @@ function Cursos(props) {
             height="400"
             component="iframe"
             src={`${baseURL}/${media}`}
-            type="video"
           />
           <Divider />
           <CardContent>

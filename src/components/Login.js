@@ -92,8 +92,8 @@ const Login = props => {
       .then(res => {
         login(res.data.result);
         localStorage.setItem("USER", JSON.stringify(res.data.result));
-        props.history.push("/dashboard");
         changePlace("auth");
+        props.history.push("/dashboard");
       })
       .catch(err => {
         console.log(err);
