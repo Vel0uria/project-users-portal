@@ -90,20 +90,24 @@ function Dashboard() {
   const [courses, setCourses] = useState([]);
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
   const [value, setValue] = useState(0);
-  const [media, setMedia] = useState([]);
+  //  const [media, setMedia] = useState("");
   const user = JSON.parse(localStorage.getItem("USER"));
   const token = user.token;
   const { changePlace } = useContext(MyContext);
-  const imageArr = [];
+  let newArr;
   const handleMedia = img => {
-    //  if ((img = "")) {
-    //  setMedia(placeholder);
-    // } else {
-    setMedia(img);
-    //  console.log(img);
-    // }
+    const imageArr = [];
+    imageArr.push(img);
+    newArr = imageArr.map(i => {
+      if (i !== "") return `${baseURL}/${i}`;
+    });
+    const index = newArr.indexOf(undefined);
+    if (index !== -1) {
+      newArr[index] = placeholder;
+    }
+    return newArr;
   };
-
+  //console.log(newArr);
   useEffect(
     () => {
       changePlace("auth");
@@ -145,7 +149,6 @@ function Dashboard() {
     },
     [categories, token, value]
   );
-  // console.log(imageArr);
 
   function TabPanel(props) {
     const { value, index } = props;
@@ -176,19 +179,13 @@ function Dashboard() {
                       title={course.nombre}
                       subheader={`Módulo ${course.idModulo}`}
                     />
-                    {imageArr.push(courses[i].urlImagen)}
-                    {imageArr.map((pic, i) => {
-                      return console.log(pic[i]);
-                    })}
-                    {
-                      <CardMedia
-                        component="img"
-                        height="194"
-                        image={`${baseURL}/${courses.urlImagen}`}
-                        alt="URLimagen"
-                        className={classes.coursesImg}
-                      />
-                    }
+                    <CardMedia
+                      component="img"
+                      height="194"
+                      image={handleMedia(course.urlImagen)}
+                      alt="URLimagen"
+                      className={classes.coursesImg}
+                    />
                     <CardActions disableSpacing>
                       <Typography variant="overline" color="primary">
                         Ir a lecciones
@@ -268,9 +265,7 @@ function Dashboard() {
           })}
         </Tabs>
       </Paper>
-      <TabPanel value={value} index={0}>
-        Item one
-      </TabPanel>
+      <TabPanel value={value} index={0} />
     </div>
   );
 }
