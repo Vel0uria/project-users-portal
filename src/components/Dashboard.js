@@ -20,7 +20,7 @@ import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
 import { MyContext } from "../services/Context";
-//import placeholder from "../assets/placeholder.png";
+import placeholder from "../assets/placeholder.png";
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
@@ -90,13 +90,24 @@ function Dashboard() {
   const [courses, setCourses] = useState([]);
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
   const [value, setValue] = useState(0);
+  const [media, setMedia] = useState([]);
   const user = JSON.parse(localStorage.getItem("USER"));
   const token = user.token;
   const { changePlace } = useContext(MyContext);
+  const imageArr = [];
+  const handleMedia = img => {
+    //  if ((img = "")) {
+    //  setMedia(placeholder);
+    // } else {
+    setMedia(img);
+    //  console.log(img);
+    // }
+  };
 
   useEffect(
     () => {
       changePlace("auth");
+
       axios
         .get(`${baseURL}/api/listadoModulosCursos/1`, {
           headers: { Authorization: token }
@@ -134,6 +145,7 @@ function Dashboard() {
     },
     [categories, token, value]
   );
+  // console.log(imageArr);
 
   function TabPanel(props) {
     const { value, index } = props;
@@ -164,16 +176,19 @@ function Dashboard() {
                       title={course.nombre}
                       subheader={`Módulo ${course.idModulo}`}
                     />
-                    {/* {!course.urlImagen
-                      ? setMedia(placeholder)
-                      : setMedia(`${baseURL}/${course.urlImagen}`)} */}
-                    <CardMedia
-                      component="img"
-                      height="194"
-                      image={`${baseURL}/${course.urlImagen}`}
-                      alt="URLimagen"
-                      className={classes.coursesImg}
-                    />
+                    {imageArr.push(courses[i].urlImagen)}
+                    {imageArr.map((pic, i) => {
+                      return console.log(pic[i]);
+                    })}
+                    {
+                      <CardMedia
+                        component="img"
+                        height="194"
+                        image={`${baseURL}/${courses.urlImagen}`}
+                        alt="URLimagen"
+                        className={classes.coursesImg}
+                      />
+                    }
                     <CardActions disableSpacing>
                       <Typography variant="overline" color="primary">
                         Ir a lecciones

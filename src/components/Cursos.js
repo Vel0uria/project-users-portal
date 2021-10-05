@@ -163,6 +163,14 @@ function Cursos(props) {
   const handleDrawer = () => {
     setMobile(!mobile);
   };
+
+  const handleMedia = video => {
+    setMedia(video);
+    if (mobile === true) {
+      setMobile(!mobile);
+    }
+  };
+
   // const displayFile = file => {
   //   window.open(file);
   // };
@@ -211,7 +219,7 @@ function Cursos(props) {
                       <ListItemButton
                         key={i}
                         onClick={() => {
-                          setMedia(lesson.url);
+                          handleMedia(lesson.url);
                         }}
                       >
                         <ListItemText
