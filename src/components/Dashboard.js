@@ -78,8 +78,7 @@ const useStyles = makeStyles(theme => ({
 
 // PENDIENTES DASHBOARD:
 
-//-Tabs: Ordenar cursos en la Tab correspondiente según la categoría
-//-MediaCard: corregir función de placeholder
+//-MediaCard: corregir warning
 //-Categorías: deshabilitar Tab si la categoría viene vacía
 // - Estilos:
 // 1. Responsivo
@@ -90,15 +89,13 @@ function Dashboard() {
   const [courses, setCourses] = useState([]);
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
   const [value, setValue] = useState(0);
-  //  const [media, setMedia] = useState("");
   const user = JSON.parse(localStorage.getItem("USER"));
   const token = user.token;
   const { changePlace } = useContext(MyContext);
-  let newArr;
   const handleMedia = img => {
     const imageArr = [];
     imageArr.push(img);
-    newArr = imageArr.map(i => {
+    const newArr = imageArr.map(i => {
       if (i !== "") return `${baseURL}/${i}`;
     });
     const index = newArr.indexOf(undefined);
@@ -107,7 +104,7 @@ function Dashboard() {
     }
     return newArr;
   };
-  //console.log(newArr);
+
   useEffect(
     () => {
       changePlace("auth");

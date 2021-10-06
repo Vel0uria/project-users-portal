@@ -15,7 +15,12 @@ import {
   Drawer,
   Toolbar,
   ListItemIcon,
-  Tooltip
+  Tooltip,
+  Button,
+  CardActions,
+  TextField,
+  Tab,
+  Tabs
 } from "@material-ui/core";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -30,7 +35,8 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
 import { MyContext } from "../services/Context";
-const drawerWidth = 240;
+
+const drawerWidth = 300;
 const useStyles = makeStyles(theme => ({
   root: {
     width: "fullWidth",
@@ -80,6 +86,9 @@ const useStyles = makeStyles(theme => ({
   permanetDrawer: {
     height: "windowHeight",
     backgroundColor: "#3979a078",
+    [theme.breakpoints.between("md", "lg")]: {
+      backgroundColor: "#FFFFFF9E"
+    },
     [theme.breakpoints.down("sm")]: {
       display: "none"
     },
@@ -118,6 +127,7 @@ const useStyles = makeStyles(theme => ({
 function Cursos(props) {
   const classes = useStyles();
   const { id } = props.match.params;
+  const { changePlace } = useContext(MyContext);
   const user = JSON.parse(localStorage.getItem("USER"));
   const token = user.token;
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
@@ -128,7 +138,8 @@ function Cursos(props) {
   const [expanded, setExpanded] = useState(false);
   const [index, setIndex] = useState([]);
   const [mobile, setMobile] = useState(false);
-  const { changePlace } = useContext(MyContext);
+  const [value, setValue] = useState(0);
+
   useEffect(
     () => {
       changePlace("auth");
@@ -153,6 +164,7 @@ function Cursos(props) {
   const handleExpand = props => {
     setExpanded(!expanded);
   };
+
   const handleClick = i => {
     if (i === index) {
       setIndex([]);
@@ -170,11 +182,9 @@ function Cursos(props) {
       setMobile(!mobile);
     }
   };
-
-  // const displayFile = file => {
-  //   window.open(file);
-  // };
-
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   const drawer = (
     <div className={classes.list}>
       <Toolbar>
@@ -204,7 +214,7 @@ function Cursos(props) {
                 <ListItemText
                   primary={section.titulo}
                   primaryTypographyProps={{
-                    variant: "subtitle2",
+                    variant: "h6",
                     color: "textPrimary"
                   }}
                 />
@@ -293,7 +303,19 @@ function Cursos(props) {
       </Collapse>
     </div>
   );
-
+  function TabPanel(props) {
+    const { value, index } = props;
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+      >
+        <TextField fullWidth label="Escribe tus comentarios" />{" "}
+      </div>
+    );
+  }
   return (
     <div className={classes.root}>
       <Toolbar>
@@ -329,9 +351,19 @@ function Cursos(props) {
           />
           <Divider />
           <CardContent>
-            <Typography variant="subtitle1" sx={{ textAlign: "justified" }}>
+            <Typography align="justify" variant="h6">
               En este curso {courses.descripcionGeneral}
             </Typography>
+          </CardContent>
+          <CardActions>
+            <Tabs value={value}>
+              <Tab label="Comentarios" />
+              <Tab label="Recursos" />
+              <Tab label="Cuestionario" />
+            </Tabs>
+          </CardActions>
+          <CardContent>
+            <TabPanel value={value} index={0} />
           </CardContent>
         </Card>
       </Box>
