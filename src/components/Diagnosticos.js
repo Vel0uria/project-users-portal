@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useContext, useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -7,62 +9,110 @@ import {
   TableHead,
   TableRow,
   Paper,
+  IconButton,
+  Typography
 } from "@material-ui/core";
+import ForwardIcon from "@mui/icons-material/Forward";
 import { makeStyles } from "@material-ui/core/styles";
-const useStyles = makeStyles({
-  table: {
-    minWidth: 360,
+import bgImage from "../assets/dashboard.jpg";
+import { MyContext } from "../services/Context";
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: "flex",
+    padding: theme.spacing(3),
+    flexFlow: "column nowrap",
+    width: "fullWidth",
+    backgroundImage: `url(${bgImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    [theme.breakpoints.up("lg")]: {
+      height: theme.spacing(140)
+    }
   },
-});
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-];
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
+  title: {
+    textAlign: "center",
+    backgroundColor: "#FF6347DA",
+    alignSelf: "center",
+    width: 900,
+    color: "white",
+    borderRadius: 4
+  },
+  table: {
+    minWidth: 360
+  },
+  tableContainer: {
+    marginTop: theme.spacing(4)
+  }
+}));
 
 function Diagnosticos() {
   const classes = useStyles();
+  const user = JSON.parse(localStorage.getItem("USER"));
+  const token = user.token;
+  const { changePlace } = useContext(MyContext);
+  const [dataRows, setRows] = useState([]);
+  useEffect(
+    () => {
+      changePlace("auth");
+      axios
+        .get(
+          "https://impulsorintelectualhumanista.com/capacitacion/portafolio/consultarPortafolio",
+          {
+            headers: { Authorization: token }
+          }
+        )
+        .then(({ data }) => {
+          const category = data.result.portafolio;
+          setRows(category);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    [token, changePlace, setRows]
+  );
 
   return (
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map(row =>
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">
-                {row.calories}
-              </TableCell>
-              <TableCell align="right">
-                {row.fat}
-              </TableCell>
-              <TableCell align="right">
-                {row.carbs}
-              </TableCell>
-              <TableCell align="right">
-                {row.protein}
-              </TableCell>
+    <div className={classes.root}>
+      <Typography variant="h3" className={classes.title}>
+        Mis diagnósticos
+      </Typography>
+      <TableContainer component={Paper} className={classes.tableContainer}>
+        <Table className={classes.table} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Formulario</TableCell>
+              <TableCell align="right">Veces a aplicar</TableCell>
+              <TableCell align="right">Vigencia</TableCell>
+              <TableCell align="right">Acciones</TableCell>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {dataRows.map(row =>
+              <TableRow key={row.idFormulario}>
+                <TableCell component="th" scope="row">
+                  {row.nombre}
+                </TableCell>
+                <TableCell align="right">
+                  {row.vecesAplicar}
+                </TableCell>
+                <TableCell align="right">
+                  {row.vigencia}
+                </TableCell>
+                <TableCell align="right">
+                  <Link to={`formulario/${row.idEnvioUnique}`}>
+                    <IconButton>
+                      <ForwardIcon color="warning" />
+                    </IconButton>
+                  </Link>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 }
 

@@ -16,6 +16,7 @@ import {
   IconButton
 } from "@material-ui/core";
 import PlayCircleOutlineOutlinedIcon from "@material-ui/icons/PlayCircleOutlineOutlined";
+import QuizIcon from "@mui/icons-material/Quiz";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
@@ -235,12 +236,18 @@ function Dashboard() {
           </Typography>
         </CardContent>
         <CardContent>
-          <Button color="primary" variant="contained" disableElevation>
-            Mis diagnósticos
-          </Button>
+          <Link to="/diagnosticos">
+            <Button
+              color="primary"
+              variant="contained"
+              disableElevation
+              endIcon={<QuizIcon />}
+            >
+              Mis diagnósticos
+            </Button>
+          </Link>
         </CardContent>
       </Card>
-      <Link to="/diagnosticos" />
       <Paper className={classes.tabs}>
         <Typography variant="overline">Cursos por categoría</Typography>
         <Tabs
