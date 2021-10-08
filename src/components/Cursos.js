@@ -16,18 +16,19 @@ import {
   Toolbar,
   ListItemIcon,
   Tooltip,
-  Button,
   CardActions,
   TextField,
-  Tab,
-  Tabs
+  Tab
 } from "@material-ui/core";
+import Tabs from "@mui/material/Tabs";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import {
   ExpandLess,
   ExpandMore,
   FolderOpen,
+  CommentTwoTone,
+  QuestionAnswerTwoTone,
   MenuTwoTone,
   MenuBookTwoTone,
   CloudDownload
@@ -75,10 +76,32 @@ const useStyles = makeStyles(theme => ({
       width: 190
     }
   },
-  mediaCard: {
-    maxWidth: 1000,
+  card: {
+    width: "100%",
     marginTop: theme.spacing(1),
     backgroundColor: "#FFFFFF9E"
+
+    // [theme.breakpoints.between("md", "lg")]: {
+    //   width: "100%"
+    // }
+  },
+  media: {
+    width: "fullWidth",
+    // backgroundColor: "#d1d7e3",
+    [theme.breakpoints.between("md", "lg")]: {
+      marginLeft: theme.spacing(23.5)
+    }
+  },
+  tabs: {
+    [theme.breakpoints.down("sm")]: {
+      //  marginRight: theme.spacing(6)
+      // paddingLeft: theme.spacing(7)
+      //  paddingRight: theme.spacing(6)
+    },
+    [theme.breakpoints.between("md", "lg")]: {
+      padding: theme.spacing(1.5),
+      marginLeft: theme.spacing(2)
+    }
   },
   list: {
     backgroundColor: "#b5c6da"
@@ -112,17 +135,11 @@ const useStyles = makeStyles(theme => ({
   },
   expandIcon: {
     justifyContent: "flex-end"
-  },
-  filesList: {
-    //marginLeft: 50,
-    paddingRight: 1
-    // alignSelf: "flex-end"
   }
 }));
 
 //PENDIENTES:
-//Lista: Scroll automático para lista de archivos
-//Video: Opción para mostrar en pantalla completa
+//Card y Tabs: Responsivo en móvil
 
 function Cursos(props) {
   const classes = useStyles();
@@ -135,7 +152,6 @@ function Cursos(props) {
   const [files, setFiles] = useState([]);
   const [sections, setSections] = useState([]);
   const [media, setMedia] = useState({});
-  const [expanded, setExpanded] = useState(false);
   const [index, setIndex] = useState([]);
   const [mobile, setMobile] = useState(false);
   const [value, setValue] = useState(0);
@@ -160,10 +176,6 @@ function Cursos(props) {
     },
     [baseURL, id, token, changePlace]
   );
-
-  const handleExpand = props => {
-    setExpanded(!expanded);
-  };
 
   const handleClick = i => {
     if (i === index) {
@@ -249,62 +261,10 @@ function Cursos(props) {
           );
         })}
       </List>
-      <Toolbar className={classes.filesList}>
-        <ListItemButton onClick={handleExpand}>
-          <ListItemIcon>
-            <FolderOpen fontSize="large" color="primary" />
-          </ListItemIcon>
-          <ListItemText
-            primary="Archivos"
-            primaryTypographyProps={{
-              variant: "subtitle1",
-              color: "textPrimary"
-            }}
-          />
-          <ListItemIcon className={classes.expandIcon}>
-            {expanded ? <ExpandLess /> : <ExpandMore />}
-          </ListItemIcon>
-        </ListItemButton>
-      </Toolbar>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <List>
-          {files.map((file, i) => {
-            return (
-              <ListItem
-                key={i}
-                secondaryAction={
-                  <Link
-                    to={`${baseURL}/${file.urlArchivo}`}
-                    target="_blank"
-                    download
-                  >
-                    <ListItemIcon>
-                      <CloudDownload />
-                    </ListItemIcon>
-                  </Link>
-                }
-              >
-                {/* <ListItemButton onClick={() => {
-                    displayFile(`${baseURL}/${file.urlArchivo}`);
-                  }}> */}
-                <ListItemText
-                  onClick={() => {
-                    setMedia(file.urlArchivo);
-                    //  displayFile(`${baseURL}/${file.urlArchivo}`);
-                  }}
-                  primary={file.idArchivoModulo}
-                  primaryTypographyProps={{ variant: "button" }}
-                />
-                {/* </ListItemButton> */}
-              </ListItem>
-            );
-          })}
-        </List>
-      </Collapse>
     </div>
   );
   function TabPanel(props) {
-    const { value, index } = props;
+    const { value, index, children } = props;
     return (
       <div
         role="tabpanel"
@@ -312,7 +272,10 @@ function Cursos(props) {
         id={`simple-tabpanel-${index}`}
         aria-labelledby={`simple-tab-${index}`}
       >
-        <TextField fullWidth label="Escribe tus comentarios" />{" "}
+        {value === index &&
+          <Box sx={{ p: 3 }}>
+            {children}
+          </Box>}
       </div>
     );
   }
@@ -343,27 +306,67 @@ function Cursos(props) {
           ml: { sm: `calc(10px + ${drawerWidth}px)` }
         }}
       >
-        <Card variant="outlined" className={classes.mediaCard}>
+        <Card variant="outlined" className={classes.card}>
           <CardMedia
-            height="400"
+            className={classes.media}
+            height="350"
             component="iframe"
             src={`${baseURL}/${media}`}
+            allowFullScreen
           />
-          <Divider />
           <CardContent>
             <Typography align="justify" variant="h6">
               En este curso {courses.descripcionGeneral}
             </Typography>
           </CardContent>
+          <Divider />
           <CardActions>
-            <Tabs value={value}>
-              <Tab label="Comentarios" />
-              <Tab label="Recursos" />
-              <Tab label="Cuestionario" />
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              variant="scrollable"
+              scrollButtons="auto"
+              allowScrollButtonsMobile
+            >
+              <Tab label="Comentarios" icon={<CommentTwoTone />} />
+              <Tab label="Recursos" icon={<FolderOpen />} />
+              <Tab label="Cuestionario" icon={<QuestionAnswerTwoTone />} />
             </Tabs>
           </CardActions>
           <CardContent>
-            <TabPanel value={value} index={0} />
+            <TabPanel value={value} index={0}>
+              <TextField fullWidth label="Escribe tus comentarios" />
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              {files.map((file, i) => {
+                return (
+                  <List key={i}>
+                    <ListItem
+                      disablePadding
+                      secondaryAction={
+                        <Link
+                          to={`${baseURL}/${file.urlArchivo}`}
+                          target="_blank"
+                          download
+                        >
+                          <ListItemIcon>
+                            <CloudDownload />
+                          </ListItemIcon>
+                        </Link>
+                      }
+                    >
+                      <ListItemButton
+                        onClick={() => {
+                          setMedia(file.urlArchivo);
+                        }}
+                      >
+                        <ListItemText primary={file.idArchivoModulo} />
+                      </ListItemButton>
+                    </ListItem>
+                  </List>
+                );
+              })}
+            </TabPanel>
           </CardContent>
         </Card>
       </Box>

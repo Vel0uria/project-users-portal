@@ -92,9 +92,11 @@ function Dashboard() {
   const user = JSON.parse(localStorage.getItem("USER"));
   const token = user.token;
   const { changePlace } = useContext(MyContext);
+
   const handleMedia = img => {
     const imageArr = [];
     imageArr.push(img);
+    // eslint-disable-next-line array-callback-return
     const newArr = imageArr.map(i => {
       if (i !== "") return `${baseURL}/${i}`;
     });
