@@ -1,7 +1,8 @@
 import React, { useEffect, useContext, useState } from "react";
 import axios from "axios";
 import { MyContext } from "../services/Context";
-import { Typography, Box } from "@material-ui/core";
+import { Typography, Box, Button } from "@material-ui/core";
+import Slider from "@mui/material/Slider";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
 const useStyles = makeStyles(theme => ({
@@ -38,8 +39,16 @@ function Formularios(props) {
   const { changePlace } = useContext(MyContext);
   const user = JSON.parse(localStorage.getItem("USER"));
   const token = user.token;
+  const [quiz, setQuiz] = useState({});
   const [sections, setSections] = useState([]);
-  const [formData, setFormData] = useState({});
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState([]);
+  const [sectionIndex, setSectionIndex] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const marks = answers.map(e => {
+    return { value: Number(e.nombre), label: e.nombre };
+  });
+
   useEffect(
     () => {
       changePlace("auth");
@@ -51,27 +60,70 @@ function Formularios(props) {
           }
         )
         .then(({ data }) => {
+          const quiz = data.result;
           const sections = data.result.secciones;
+          const questions = sections[sectionIndex].preguntas;
+          const answers = questions[questionIndex].catalogo.respuestas;
+          setQuiz(quiz);
           setSections(sections);
-          setFormData(data.result);
+          setQuestions(questions);
+          setAnswers(answers);
         })
         .catch(err => {
           console.log(err);
         });
     },
-    [token, id, changePlace]
+    [token, id, changePlace, questionIndex, sectionIndex]
   );
+  function handleSectionChange() {
+    setSectionIndex(sectionIndex + 1);
+  }
 
+  if (!quiz) return <Typography>Cargando...</Typography>;
   return (
     <div className={classes.root}>
       <Typography variant="h3" className={classes.title}>
-        {formData.nombreFormulario}
+        {quiz.nombreFormulario}
       </Typography>
-      <Box sx={{ mt: 2 }}>
+      <Box>
         <Typography variant="overline">Instrucciones:</Typography>
         <Typography variant="body1">
-          {formData.indicaciones}
+          {quiz.indicaciones}
         </Typography>
+      </Box>
+      <Box
+        sx={{
+          mt: 2,
+          display: "flex",
+          flexFlow: "row-nowrap",
+          justifyContent: "space-evenly"
+        }}
+      >
+        {sections &&
+          <Box component="form">
+            <Typography variant="h4">
+              {`Sección ${sectionIndex + 1}: 
+             ${sections[sectionIndex].nombreSeccion}`}
+            </Typography>
+            {questions.map((question, i) => {
+              return (
+                <div key={i}>
+                  <Typography>
+                    {question.pregunta}
+                  </Typography>
+                  <Slider
+                    valueLabelDisplay="auto"
+                    marks={marks}
+                    aria-label="respuestas"
+                    min={1}
+                    max={10}
+                    step={1}
+                  />
+                </div>
+              );
+            })}
+            <Button>Siguiente sección</Button>
+          </Box>}
       </Box>
     </div>
   );
