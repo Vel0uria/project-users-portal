@@ -44,14 +44,10 @@ function Formularios(props) {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [sectionIndex, setSectionIndex] = useState(0);
-  const [questionIndex, setQuestionIndex] = useState(0);
-  const marks = answers.map(e => {
-    return { value: Number(e.nombre), label: e.nombre };
-  });
 
   useEffect(
     () => {
-      changePlace("auth");
+      changePlace("quiz");
       axios
         .get(
           `https://impulsorintelectualhumanista.com/capacitacion/portafolio/obtenerFormulario/${id}`,
@@ -63,7 +59,8 @@ function Formularios(props) {
           const quiz = data.result;
           const sections = data.result.secciones;
           const questions = sections[sectionIndex].preguntas;
-          const answers = questions[questionIndex].catalogo.respuestas;
+          const answers = questions.map(a => a.catalogo.respuestas);
+
           setQuiz(quiz);
           setSections(sections);
           setQuestions(questions);
@@ -73,33 +70,59 @@ function Formularios(props) {
           console.log(err);
         });
     },
-    [token, id, changePlace, questionIndex, sectionIndex]
+    [token, id, changePlace, sectionIndex]
   );
+  // console.log(answers[0].map(a => console.log(a["nombre"])));
   function handleSectionChange() {
-    setSectionIndex(sectionIndex + 1);
+    if (sectionIndex <= sections.length) {
+      setSectionIndex(sectionIndex + 1);
+    }
   }
+  const displayAnswers = id => {
+    const marks = answers[0].map(e => {
+      return { value: Number(e["nombre"]), label: e["nombre"] };
+    });
 
+    switch (id) {
+      case 1:
+        <Typography>Something</Typography>;
+        break;
+      case 2:
+        return (
+          <Slider
+            valueLabelDisplay="auto"
+            aria-label="Custom marks"
+            min={1}
+            marks={marks}
+            max={10}
+            step={1}
+          />
+        );
+
+      default:
+        <Typography>Cargando respuestas</Typography>;
+    }
+  };
   if (!quiz) return <Typography>Cargando...</Typography>;
   return (
     <div className={classes.root}>
       <Typography variant="h3" className={classes.title}>
         {quiz.nombreFormulario}
       </Typography>
-      <Box>
-        <Typography variant="overline">Instrucciones:</Typography>
-        <Typography variant="body1">
-          {quiz.indicaciones}
-        </Typography>
-      </Box>
+
+      <Typography variant="overline">Instrucciones:</Typography>
+      <Typography variant="body1">
+        {quiz.indicaciones}
+      </Typography>
       <Box
         sx={{
-          mt: 2,
+          mt: 3,
           display: "flex",
           flexFlow: "row-nowrap",
           justifyContent: "space-evenly"
         }}
       >
-        {sections &&
+        {sections.length !== 0 &&
           <Box component="form">
             <Typography variant="h4">
               {`Sección ${sectionIndex + 1}: 
@@ -111,18 +134,12 @@ function Formularios(props) {
                   <Typography>
                     {question.pregunta}
                   </Typography>
-                  <Slider
-                    valueLabelDisplay="auto"
-                    marks={marks}
-                    aria-label="respuestas"
-                    min={1}
-                    max={10}
-                    step={1}
-                  />
+
+                  {displayAnswers(question.idTipoRespuesta)}
                 </div>
               );
             })}
-            <Button>Siguiente sección</Button>
+            <Button onClick={handleSectionChange}>Siguiente sección</Button>
           </Box>}
       </Box>
     </div>

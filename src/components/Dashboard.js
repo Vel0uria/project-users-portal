@@ -94,7 +94,7 @@ function Dashboard() {
   const token = user.token;
   const { changePlace } = useContext(MyContext);
 
-  const handleMedia = img => {
+  function handleMedia(img) {
     const imageArr = [];
     imageArr.push(img);
     // eslint-disable-next-line array-callback-return
@@ -106,7 +106,7 @@ function Dashboard() {
       newArr[index] = placeholder;
     }
     return newArr;
-  };
+  }
 
   useEffect(
     () => {
