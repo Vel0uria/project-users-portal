@@ -1,21 +1,25 @@
 import React, { useEffect, useContext, useState } from "react";
 import axios from "axios";
 import { MyContext } from "../services/Context";
-import { Typography, Box, Button } from "@material-ui/core";
-import Slider from "@mui/material/Slider";
+import { Box, Slider, Typography, Button, Divider, Paper } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
+
 const useStyles = makeStyles(theme => ({
   root: {
-    display: "flex",
-    padding: theme.spacing(3),
-    flexFlow: "column nowrap",
-    width: "fullWidth",
+    width: "windowWidth",
+    height: "windowHeight",
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
+    display: "flex",
+    flexFlow: "column nowrap",
+    [theme.breakpoints.between("md", "lg")]: {
+      height: theme.spacing(80),
+      marginTop: 0
+    },
     [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(140)
+      height: theme.spacing(135)
     }
   },
   title: {
@@ -31,6 +35,10 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down("sm")]: {
       fontSize: "1.2rem"
     }
+  },
+  questions: {
+    padding: theme.spacing(1),
+    paddingTop: theme.spacing(3)
   }
 }));
 function Formularios(props) {
@@ -39,6 +47,7 @@ function Formularios(props) {
   const { changePlace } = useContext(MyContext);
   const user = JSON.parse(localStorage.getItem("USER"));
   const token = user.token;
+  const [start, setStart] = useState(false);
   const [quiz, setQuiz] = useState({});
   const [sections, setSections] = useState([]);
   const [questions, setQuestions] = useState([]);
@@ -72,76 +81,125 @@ function Formularios(props) {
     },
     [token, id, changePlace, sectionIndex]
   );
-  // console.log(answers[0].map(a => console.log(a["nombre"])));
-  function handleSectionChange() {
+  function handlePrevious() {
+    setSectionIndex(sectionIndex - 1);
+  }
+  function handleNext() {
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1);
     }
   }
   const displayAnswers = id => {
-    const marks = answers[0].map(e => {
-      return { value: Number(e["nombre"]), label: e["nombre"] };
-    });
-
-    switch (id) {
-      case 1:
-        <Typography>Something</Typography>;
-        break;
-      case 2:
-        return (
-          <Slider
-            valueLabelDisplay="auto"
-            aria-label="Custom marks"
-            min={1}
-            marks={marks}
-            max={10}
-            step={1}
-          />
-        );
-
-      default:
-        <Typography>Cargando respuestas</Typography>;
-    }
+    if (answers.length !== 0) {
+      const marks = answers[0].map(e => {
+        return { value: Number(e["nombre"]), label: e["nombre"] };
+      });
+      switch (id) {
+        case 1:
+          return <Typography>Something</Typography>;
+        case 2:
+          return (
+            <Slider
+              valueLabelDisplay="auto"
+              aria-label="Custom marks"
+              min={1}
+              marks={marks}
+              max={10}
+              step={1}
+            />
+          );
+        default:
+          return <Typography>Cargando respuestas</Typography>;
+      }
+    } else return <Typography>Cargando</Typography>;
   };
-  if (!quiz) return <Typography>Cargando...</Typography>;
+
   return (
     <div className={classes.root}>
       <Typography variant="h3" className={classes.title}>
         {quiz.nombreFormulario}
       </Typography>
-
-      <Typography variant="overline">Instrucciones:</Typography>
-      <Typography variant="body1">
-        {quiz.indicaciones}
-      </Typography>
-      <Box
-        sx={{
-          mt: 3,
-          display: "flex",
-          flexFlow: "row-nowrap",
-          justifyContent: "space-evenly"
-        }}
-      >
-        {sections.length !== 0 &&
-          <Box component="form">
-            <Typography variant="h4">
-              {`Sección ${sectionIndex + 1}: 
-             ${sections[sectionIndex].nombreSeccion}`}
-            </Typography>
-            {questions.map((question, i) => {
-              return (
-                <div key={i}>
-                  <Typography>
-                    {question.pregunta}
-                  </Typography>
-
-                  {displayAnswers(question.idTipoRespuesta)}
-                </div>
-              );
-            })}
-            <Button onClick={handleSectionChange}>Siguiente sección</Button>
-          </Box>}
+      <Box sx={{ mt: 6, "& button": { m: 4, ml: 100 } }}>
+        <Typography variant="h6">Instrucciones:</Typography>
+        <Typography variant="h6">
+          {quiz.indicaciones}
+        </Typography>
+        {!start &&
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={() => {
+              setStart(!start);
+            }}
+          >
+            Iniciar cuestionario
+          </Button>}
       </Box>
+      <Divider />
+      {start &&
+        <Box
+          component={Paper}
+          sx={{ mt: 3, display: "flex", alignSelf: "center" }}
+        >
+          {sections.length !== 0 &&
+            <Box
+              component="form"
+              m={2}
+              p={4}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                maxHeight: 800,
+                overflow: "scroll",
+                "& button": {
+                  mt: 4,
+                  ml: 12
+                },
+                "& p": {
+                  fontSize: "x-large",
+                  p: 1,
+                  pt: 3
+                },
+                "& h4": {
+                  textAlign: "center"
+                }
+              }}
+            >
+              <Typography variant="h4">
+                {`Sección ${sectionIndex + 1}: 
+             ${sections[sectionIndex].nombreSeccion}`}
+              </Typography>
+              {questions.map((question, i) => {
+                return (
+                  <div key={i}>
+                    <Typography variant="body1">
+                      {question.pregunta}
+                    </Typography>
+
+                    {displayAnswers(question.idTipoRespuesta)}
+                  </div>
+                );
+              })}
+              <div>
+                {sectionIndex !== 0 &&
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handlePrevious}
+                  >
+                    Sección anterior
+                  </Button>}
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleNext}
+                >
+                  Siguiente sección
+                </Button>
+              </div>
+            </Box>}
+        </Box>}
     </div>
   );
 }

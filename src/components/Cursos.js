@@ -41,7 +41,7 @@ const drawerWidth = 300;
 const useStyles = makeStyles(theme => ({
   root: {
     width: "fullWidth",
-    height: "windowHeigth",
+    height: "windowHeight",
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
