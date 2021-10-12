@@ -10,15 +10,18 @@ import {
   Paper,
   FormGroup,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  Card,
+  CardActions,
+  CardContent
 } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
 
 const useStyles = makeStyles(theme => ({
   root: {
+    padding: theme.spacing(3),
     width: "windowWidth",
-
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
@@ -34,7 +37,6 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     textAlign: "center",
-
     backgroundColor: "#FF6347",
     color: "white",
     fontSize: "1.7rem",
@@ -47,6 +49,11 @@ const useStyles = makeStyles(theme => ({
       fontSize: "1.2rem"
     }
   },
+  card: {
+    padding: theme.spacing(1),
+    textAlign: "justify"
+  },
+
   questions: {
     padding: theme.spacing(1),
     paddingTop: theme.spacing(3)
@@ -138,22 +145,38 @@ function Formularios(props) {
       <Typography variant="h3" className={classes.title}>
         {quiz.nombreFormulario}
       </Typography>
-      <Box sx={{ mt: 6, "& button": { m: 4, ml: 100 } }}>
-        <Typography variant="h6">Instrucciones:</Typography>
-        <Typography variant="h6">
-          {quiz.indicaciones}
-        </Typography>
-        {!start &&
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={() => {
-              setStart(!start);
-            }}
-          >
-            Iniciar cuestionario
-          </Button>}
+      <Box
+        sx={{
+          mt: 4,
+          fontSize: 14,
+          "& button": { ml: { lg: 75, md: 55, sm: 35, xs: 25 } }
+        }}
+      >
+        <Card className={classes.card}>
+          <Typography variant="h6" component="div">
+            Instrucciones:
+          </Typography>
+
+          <CardContent>
+            <Typography variant="body1">
+              {quiz.indicaciones}
+            </Typography>
+          </CardContent>
+          <CardActions>
+            {!start &&
+              <Button
+                size="large"
+                color="info"
+                variant="outlined"
+                onClick={() => {
+                  // variant="contained"
+                  setStart(!start);
+                }}
+              >
+                Iniciar cuestionario
+              </Button>}
+          </CardActions>
+        </Card>
       </Box>
       <Divider />
       {start &&

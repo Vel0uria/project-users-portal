@@ -13,9 +13,11 @@ import {
   IconButton,
   Typography,
   TextField,
-  Toolbar
+  Toolbar,
+  Box
 } from "@mui/material";
 import ForwardIcon from "@mui/icons-material/Forward";
+import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
 import { MyContext } from "../services/Context";
@@ -56,10 +58,11 @@ const useStyles = makeStyles(theme => ({
     }
   },
   table: {
-    minWidth: 360
+    minWidth: 360,
+    marginTop: theme.spacing(2)
   },
   tableContainer: {
-    marginTop: theme.spacing(4)
+    marginTop: theme.spacing(5)
   }
 }));
 
@@ -104,7 +107,7 @@ function Diagnosticos() {
   return (
     <div className={classes.root}>
       <Typography variant="h3" className={classes.title}>
-        Mis diagnósticos
+        Diagnósticos
       </Typography>
       <TableContainer component={Paper} className={classes.tableContainer}>
         <Toolbar
@@ -113,11 +116,22 @@ function Diagnosticos() {
             pl: { sm: 2 },
             pr: { xs: 1, sm: 1 },
             "& .MuiTextField-root": {
-              ml: { xl: 245, lg: 150, md: 100, sm: 65, xs: 0 },
+              ml: { xl: 230, lg: 120, md: 100, sm: 65, xs: 0 },
               width: { xs: "15ch" }
             }
           }}
         >
+          <Box
+            type="div"
+            mt={0.5}
+            sx={{
+              display: "flex",
+              "& h4": { pl: 1 }
+            }}
+          >
+            <FolderSharedIcon fontSize="large" color="primary" />
+            <Typography variant="h4">Mi portafolio </Typography>
+          </Box>
           <TextField
             label="Buscar registros"
             variant="standard"
@@ -129,7 +143,7 @@ function Diagnosticos() {
           <TableHead
             sx={{
               "& h6": {
-                fontSize: { xs: 12 },
+                fontSize: { xs: 12, sm: 14, md: 16 },
                 fontWeight: "bold",
                 textAlign: "justify"
               }
@@ -183,6 +197,7 @@ function Diagnosticos() {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleRowsPerPage}
+          labelRowsPerPage={"Filas por página"}
         />
       </TableContainer>
     </div>
