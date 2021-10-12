@@ -6,12 +6,15 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TablePagination,
   TableHead,
   TableRow,
   Paper,
   IconButton,
-  Typography
-} from "@material-ui/core";
+  Typography,
+  TextField,
+  Toolbar
+} from "@mui/material";
 import ForwardIcon from "@mui/icons-material/Forward";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
@@ -22,10 +25,14 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     padding: theme.spacing(3),
     flexFlow: "column nowrap",
-    width: "fullWidth",
+    width: "windowWidth",
+    height: theme.spacing(65),
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
+    [theme.breakpoints.between("sm", "md")]: {
+      height: theme.spacing(75)
+    },
     [theme.breakpoints.up("lg")]: {
       height: theme.spacing(140)
     }
@@ -36,7 +43,17 @@ const useStyles = makeStyles(theme => ({
     alignSelf: "center",
     width: 900,
     color: "white",
-    borderRadius: 4
+    borderRadius: 4,
+    [theme.breakpoints.between("sm", "md")]: {
+      fontSize: "1.5rem",
+      width: 700
+    },
+    [theme.breakpoints.down("sm")]: {
+      fontSize: [22, "!important"],
+      marginLeft: 0,
+      marginTop: 0,
+      width: 250
+    }
   },
   table: {
     minWidth: 360
@@ -52,6 +69,9 @@ function Diagnosticos() {
   const token = user.token;
   const { changePlace } = useContext(MyContext);
   const [dataRows, setRows] = useState([]);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
+
   useEffect(
     () => {
       changePlace("auth");
@@ -72,20 +92,64 @@ function Diagnosticos() {
     },
     [token, changePlace, setRows]
   );
+  function handleChangePage(newPage) {
+    setPage(newPage);
+  }
 
+  function handleRowsPerPage(event) {
+    console.log(+event.target.value);
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  }
   return (
     <div className={classes.root}>
       <Typography variant="h3" className={classes.title}>
         Mis diagnósticos
       </Typography>
       <TableContainer component={Paper} className={classes.tableContainer}>
+        <Toolbar
+          sx={{
+            mt: 1,
+            pl: { sm: 2 },
+            pr: { xs: 1, sm: 1 },
+            "& .MuiTextField-root": {
+              ml: { xl: 245, lg: 150, md: 100, sm: 65, xs: 0 },
+              width: { xs: "15ch" }
+            }
+          }}
+        >
+          <TextField
+            label="Buscar registros"
+            variant="standard"
+            size="small"
+            type="search"
+          />
+        </Toolbar>
         <Table className={classes.table} aria-label="simple table">
-          <TableHead>
+          <TableHead
+            sx={{
+              "& h6": {
+                fontSize: { xs: 12 },
+                fontWeight: "bold",
+                textAlign: "justify"
+              }
+            }}
+          >
             <TableRow>
-              <TableCell>Formulario</TableCell>
-              <TableCell align="right">Veces a aplicar</TableCell>
-              <TableCell align="right">Vigencia</TableCell>
-              <TableCell align="right">Acciones</TableCell>
+              <TableCell>
+                <Typography variant="h6"> Formulario</Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography variant="h6">Veces a aplicar</Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography variant="h6">Vigencia</Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h6" align="center">
+                  Acciones
+                </Typography>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -94,16 +158,16 @@ function Diagnosticos() {
                 <TableCell component="th" scope="row">
                   {row.nombre}
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="center">
                   {row.vecesAplicar}
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="center">
                   {row.vigencia}
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="center">
                   <Link to={`formulario/${row.idEnvioUnique}`}>
                     <IconButton>
-                      <ForwardIcon color="warning" />
+                      <ForwardIcon color="warning" fontSize="large" />
                     </IconButton>
                   </Link>
                 </TableCell>
@@ -111,6 +175,15 @@ function Diagnosticos() {
             )}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={dataRows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleRowsPerPage}
+        />
       </TableContainer>
     </div>
   );

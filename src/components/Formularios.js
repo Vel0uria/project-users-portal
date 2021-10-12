@@ -1,14 +1,24 @@
 import React, { useEffect, useContext, useState } from "react";
 import axios from "axios";
 import { MyContext } from "../services/Context";
-import { Box, Slider, Typography, Button, Divider, Paper } from "@mui/material";
+import {
+  Box,
+  Slider,
+  Typography,
+  Button,
+  Divider,
+  Paper,
+  FormGroup,
+  FormControlLabel,
+  Checkbox
+} from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
 
 const useStyles = makeStyles(theme => ({
   root: {
     width: "windowWidth",
-    height: "windowHeight",
+
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
@@ -19,11 +29,12 @@ const useStyles = makeStyles(theme => ({
       marginTop: 0
     },
     [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(135)
+      height: theme.spacing(145)
     }
   },
   title: {
     textAlign: "center",
+
     backgroundColor: "#FF6347",
     color: "white",
     fontSize: "1.7rem",
@@ -69,7 +80,6 @@ function Formularios(props) {
           const sections = data.result.secciones;
           const questions = sections[sectionIndex].preguntas;
           const answers = questions.map(a => a.catalogo.respuestas);
-
           setQuiz(quiz);
           setSections(sections);
           setQuestions(questions);
@@ -89,15 +99,24 @@ function Formularios(props) {
       setSectionIndex(sectionIndex + 1);
     }
   }
+
   const displayAnswers = id => {
     if (answers.length !== 0) {
-      const marks = answers[0].map(e => {
-        return { value: Number(e["nombre"]), label: e["nombre"] };
-      });
-      switch (id) {
-        case 1:
-          return <Typography>Something</Typography>;
+      const newArr = answers.map(t => t.map(a => a.nombre));
+      const answerLength = newArr[0].length;
+      //console.log(newArr[0].length);
+      switch (answerLength) {
         case 2:
+          return (
+            <FormGroup>
+              <FormControlLabel control={<Checkbox />} label={newArr[0][0]} />
+              <FormControlLabel control={<Checkbox />} label={newArr[0][1]} />
+            </FormGroup>
+          );
+        case 10:
+          const marks = answers[0].map(e => {
+            return { value: Number(e["nombre"]), label: e["nombre"] };
+          });
           return (
             <Slider
               valueLabelDisplay="auto"
@@ -152,18 +171,9 @@ function Formularios(props) {
                 flexDirection: "column",
                 maxHeight: 800,
                 overflow: "scroll",
-                "& button": {
-                  mt: 4,
-                  ml: 12
-                },
-                "& p": {
-                  fontSize: "x-large",
-                  p: 1,
-                  pt: 3
-                },
-                "& h4": {
-                  textAlign: "center"
-                }
+                "& button": { mt: 4, ml: 12 },
+                "& p": { fontSize: "x-large", p: 1, pt: 3 },
+                "& h4": { textAlign: "center" }
               }}
             >
               <Typography variant="h4">
@@ -190,13 +200,16 @@ function Formularios(props) {
                   >
                     Sección anterior
                   </Button>}
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleNext}
-                >
-                  Siguiente sección
-                </Button>
+                {sectionIndex === sections.length - 1 &&
+                  <Button variant="contained">Enviar respuestas</Button>}
+                {sectionIndex < sections.length - 1 &&
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleNext}
+                  >
+                    Siguiente sección
+                  </Button>}
               </div>
             </Box>}
         </Box>}
