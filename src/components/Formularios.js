@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import { MyContext } from "../services/Context";
 import {
   Box,
@@ -27,6 +28,7 @@ const useStyles = makeStyles(theme => ({
     backgroundPosition: "center",
     display: "flex",
     flexFlow: "column nowrap",
+    height: theme.spacing(120),
     [theme.breakpoints.between("md", "lg")]: {
       height: theme.spacing(80),
       marginTop: 0
@@ -43,10 +45,10 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 4,
     padding: theme.spacing(1),
     [theme.breakpoints.up("lg")]: {
-      fontSize: "2rem"
+      fontSize: [20, "!important"]
     },
     [theme.breakpoints.down("sm")]: {
-      fontSize: "1.2rem"
+      fontSize: [16, "!important"]
     }
   },
   card: {
@@ -139,7 +141,18 @@ function Formularios(props) {
       }
     } else return <Typography>Cargando</Typography>;
   };
-
+  const sendAnswers = e => {
+    e.preventDefault();
+    Swal.fire({
+      title: "¿Deseas concluir el cuestionario?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Enviar respuestas",
+      cancelButtonText: "Cancelar"
+    });
+  };
   return (
     <div className={classes.root}>
       <Typography variant="h3" className={classes.title}>
@@ -149,7 +162,7 @@ function Formularios(props) {
         sx={{
           mt: 4,
           fontSize: 14,
-          "& button": { ml: { lg: 75, md: 55, sm: 35, xs: 25 } }
+          "& button": { ml: { lg: 75, md: 55, sm: 35, xs: 3 } }
         }}
       >
         <Card className={classes.card}>
@@ -182,7 +195,12 @@ function Formularios(props) {
       {start &&
         <Box
           component={Paper}
-          sx={{ mt: 3, display: "flex", alignSelf: "center" }}
+          sx={{
+            mt: 3,
+            display: "flex",
+
+            alignSelf: "center"
+          }}
         >
           {sections.length !== 0 &&
             <Box
@@ -192,24 +210,28 @@ function Formularios(props) {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                maxHeight: 800,
+                maxHeight: 650,
                 overflow: "scroll",
                 "& button": { mt: 4, ml: 12 },
-                "& p": { fontSize: "x-large", p: 1, pt: 3 },
-                "& h4": { textAlign: "center" }
+                "& p": { fontSize: { xs: 14, lg: 16, xl: 18 }, pt: 3 },
+                "& h4": {
+                  textAlign: "center",
+                  fontSize: { xs: 16, lg: 22 },
+                  fontWeight: "bold"
+                }
               }}
             >
               <Typography variant="h4">
                 {`Sección ${sectionIndex + 1}: 
              ${sections[sectionIndex].nombreSeccion}`}
               </Typography>
+              <Divider />
               {questions.map((question, i) => {
                 return (
                   <div key={i}>
                     <Typography variant="body1">
                       {question.pregunta}
                     </Typography>
-
                     {displayAnswers(question.idTipoRespuesta)}
                   </div>
                 );
@@ -224,7 +246,9 @@ function Formularios(props) {
                     Sección anterior
                   </Button>}
                 {sectionIndex === sections.length - 1 &&
-                  <Button variant="contained">Enviar respuestas</Button>}
+                  <Button variant="contained" onClick={sendAnswers}>
+                    Enviar respuestas
+                  </Button>}
                 {sectionIndex < sections.length - 1 &&
                   <Button
                     variant="contained"

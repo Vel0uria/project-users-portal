@@ -77,19 +77,15 @@ const useStyles = makeStyles(theme => ({
     }
   },
   card: {
-    width: "100%",
     marginTop: theme.spacing(1),
     backgroundColor: "#FFFFFF9E"
-
-    // [theme.breakpoints.between("md", "lg")]: {
-    //   width: "100%"
-    // }
   },
   media: {
-    width: "fullWidth",
-    // backgroundColor: "#d1d7e3",
+    //border: "none",
+
     [theme.breakpoints.between("md", "lg")]: {
-      marginLeft: theme.spacing(23.5)
+      //    marginLeft: theme.spacing(23.5)
+      //    padding: theme.spacing(1)
     }
   },
   tabs: {
@@ -152,6 +148,7 @@ function Cursos(props) {
   const [files, setFiles] = useState([]);
   const [sections, setSections] = useState([]);
   const [media, setMedia] = useState({});
+  const [mediaType, setMediaType] = useState("img");
   const [index, setIndex] = useState([]);
   const [mobile, setMobile] = useState(false);
   const [value, setValue] = useState(0);
@@ -190,6 +187,7 @@ function Cursos(props) {
 
   const handleMedia = video => {
     setMedia(video);
+    setMediaType("iframe");
     if (mobile === true) {
       setMobile(!mobile);
     }
@@ -310,7 +308,7 @@ function Cursos(props) {
           <CardMedia
             className={classes.media}
             height="350"
-            component="iframe"
+            component={mediaType}
             src={`${baseURL}/${media}`}
             allowFullScreen
           />

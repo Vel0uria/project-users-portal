@@ -77,7 +77,7 @@ function Diagnosticos() {
 
   useEffect(
     () => {
-      changePlace("auth");
+      changePlace("Diagnósticos");
       axios
         .get(
           "https://impulsorintelectualhumanista.com/capacitacion/portafolio/consultarPortafolio",

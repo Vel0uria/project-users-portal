@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 //PENDIENTES:
-//Estilos
+//Navegación: dashboard, atrás, ¿diagnósticos y cursos?
 const NavBar = props => {
   const classes = useStyles();
   const { logout } = useContext(MyContext);
