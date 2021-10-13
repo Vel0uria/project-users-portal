@@ -5,15 +5,27 @@ import { AppBar, Toolbar, IconButton, Tooltip } from "@material-ui/core";
 import {
   ExitToApp,
   NotificationsActiveTwoTone,
-  InboxTwoTone
+  InboxTwoTone,
+  HomeTwoTone
 } from "@material-ui/icons";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 const useStyles = makeStyles(theme => ({
   toolBar: {
     display: "flex",
     justifyContent: "flex-end",
     backgroundColor: "#b5c6da"
+  },
+  backIcon: {
+    marginRight: theme.spacing(10),
+    [theme.breakpoints.between("sm", "md")]: {
+      marginRight: theme.spacing(65)
+    },
+    [theme.breakpoints.between("md", "lg")]: {
+      marginRight: theme.spacing(144)
+    }
   }
 }));
 
@@ -21,18 +33,18 @@ const useStyles = makeStyles(theme => ({
 //Navegación: dashboard, atrás, ¿diagnósticos y cursos?
 const NavBar = props => {
   const classes = useStyles();
-  const { logout } = useContext(MyContext);
+  const { logout, state } = useContext(MyContext);
   const history = useHistory();
+  //console.log(history.goBack());
   const handleLogout = e => {
     e.preventDefault();
     Swal.fire({
       title: "¿Deseas cerrar sesión?",
-      //   text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, cerrar sesión",
+      confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar"
     }).then(result => {
       if (result.isConfirmed) {
@@ -44,6 +56,17 @@ const NavBar = props => {
   return (
     <AppBar position="static">
       <Toolbar className={classes.toolBar}>
+        {state.place !== "Dashboard" &&
+          <IconButton className={classes.backIcon} onClick={history.goBack}>
+            <ArrowBackIcon fontSize="large" />
+          </IconButton>}
+        <Link to="dashboard">
+          <IconButton>
+            <Tooltip title="dashboard">
+              <HomeTwoTone />
+            </Tooltip>
+          </IconButton>
+        </Link>
         <Tooltip title="bandeja de entrada">
           <IconButton>
             <InboxTwoTone />

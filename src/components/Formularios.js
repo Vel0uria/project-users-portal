@@ -109,7 +109,7 @@ function Formularios(props) {
     }
   }
 
-  const displayAnswers = id => {
+  const displayAnswers = () => {
     if (answers.length !== 0) {
       const newArr = answers.map(t => t.map(a => a.nombre));
       const answerLength = newArr[0].length;
@@ -144,12 +144,12 @@ function Formularios(props) {
   const sendAnswers = e => {
     e.preventDefault();
     Swal.fire({
-      title: "¿Deseas concluir el cuestionario?",
+      title: "¿Deseas enviar tus respuestas?",
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Enviar respuestas",
+      confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar"
     });
   };
@@ -213,7 +213,10 @@ function Formularios(props) {
                 maxHeight: 650,
                 overflow: "scroll",
                 "& button": { mt: 4, ml: 12 },
-                "& p": { fontSize: { xs: 14, lg: 16, xl: 18 }, pt: 3 },
+                "& p": {
+                  fontSize: { xs: 14, sm: 18, md: 18, lg: 20, xl: 22 },
+                  pt: 3
+                },
                 "& h4": {
                   textAlign: "center",
                   fontSize: { xs: 16, lg: 22 },
@@ -232,7 +235,7 @@ function Formularios(props) {
                     <Typography variant="body1">
                       {question.pregunta}
                     </Typography>
-                    {displayAnswers(question.idTipoRespuesta)}
+                    {displayAnswers()}
                   </div>
                 );
               })}

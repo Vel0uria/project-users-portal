@@ -116,7 +116,7 @@ function Diagnosticos() {
             pl: { sm: 2 },
             pr: { xs: 1, sm: 1 },
             "& .MuiTextField-root": {
-              ml: { xl: 230, lg: 120, md: 100, sm: 65, xs: 0 },
+              ml: { xl: 132, lg: 20, md: 10, sm: 15, xs: 15 },
               width: { xs: "15ch" }
             }
           }}
@@ -124,9 +124,10 @@ function Diagnosticos() {
           <Box
             type="div"
             mt={0.5}
+            p={1}
             sx={{
               display: "flex",
-              "& h4": { pl: 1 }
+              "& h4": { pl: 1, fontSize: { xs: 14 } }
             }}
           >
             <FolderSharedIcon fontSize="large" color="primary" />

@@ -110,7 +110,7 @@ function Dashboard() {
 
   useEffect(
     () => {
-      changePlace("auth");
+      changePlace("Dashboard");
 
       axios
         .get(`${baseURL}/api/listadoModulosCursos/1`, {

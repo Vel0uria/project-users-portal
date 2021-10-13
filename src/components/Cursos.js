@@ -155,7 +155,7 @@ function Cursos(props) {
 
   useEffect(
     () => {
-      changePlace("auth");
+      changePlace("Cursos");
       axios
         .get(`${baseURL}/api/listadoLecciones/${id}`, {
           headers: { Authorization: token }
