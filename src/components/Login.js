@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Card,
@@ -55,7 +55,17 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "Snow",
     borderRadius: 10,
     position: "relative",
-
+    "& button": {
+      [theme.breakpoints.down("md")]: {
+        marginLeft: theme.spacing(8)
+      },
+      [theme.breakpoints.between("md", "lg")]: {
+        marginLeft: theme.spacing(10)
+      },
+      [theme.breakpoints.up("lg")]: {
+        marginLeft: theme.spacing(14)
+      }
+    },
     [theme.breakpoints.between("md", "lg")]: {
       marginLeft: theme.spacing(70),
       padding: theme.spacing(7)
@@ -67,7 +77,6 @@ const useStyles = makeStyles(theme => ({
   },
   textField: {
     marginBottom: theme.spacing(1),
-    // minWidth: "25ch",
     display: "flex",
     flexDirection: "row"
   }
@@ -77,6 +86,7 @@ const Login = props => {
   const { changePlace, login } = useContext(MyContext);
   const classes = useStyles();
   const authService = new AuthService();
+  const [passwordStatus, setPassword] = useState(0);
   const [form, handleInputs] = useForm();
 
   useEffect(
@@ -91,71 +101,130 @@ const Login = props => {
       .login(form)
       .then(res => {
         login(res.data.result);
+        const passwordStatus = res.data.result.restablecerContrasena;
+        passwordStatus !== 1 ? setPassword(passwordStatus) : setPassword(1);
         localStorage.setItem("USER", JSON.stringify(res.data.result));
         changePlace("auth");
-        props.history.push("/dashboard");
+
+        //  props.history.push("/dashboard");
       })
       .catch(err => {
         console.log(err);
       });
   };
 
+  //  const changePassword = status => {};
+
+  const displayForm = id => {
+    if (id === 1) {
+      return (
+        <form className={classes.formControl}>
+          <Card className={classes.title} variant="outlined">
+            <Typography variant="h4">Login</Typography>
+          </Card>
+          <Grid item className={classes.textField}>
+            <TextField
+              className={classes.textField}
+              fullWidth
+              variant="outlined"
+              id="1"
+              label="Correo electrónico"
+              name="usuario"
+              onChange={handleInputs}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <MailOutlineIcon />
+                  </InputAdornment>
+                )
+              }}
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              className={classes.textField}
+              fullWidth
+              variant="outlined"
+              id="2"
+              label="Contraseña"
+              name="contrasena"
+              onChange={handleInputs}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockOutlinedIcon />
+                  </InputAdornment>
+                )
+              }}
+            />
+          </Grid>
+          <ButtonGroup
+            orientation="vertical"
+            color="primary"
+            aria-label="vertical contained primary button group"
+            variant="text"
+            fullWidth
+          >
+            <Button size="large" onClick={handleLogin}>
+              ENTRAR
+            </Button>
+            <Button size="small">¿Olvidaste tu contraseña?</Button>
+          </ButtonGroup>
+        </form>
+      );
+    } else {
+      return (
+        <form className={classes.formControl}>
+          <Card className={classes.title} variant="outlined">
+            <Typography variant="h4">Reestablecer contraseña</Typography>
+          </Card>
+          <Grid item className={classes.textField}>
+            <TextField
+              className={classes.textField}
+              fullWidth
+              variant="outlined"
+              id="1"
+              label="Contraseña"
+              name="nueva"
+              onChange={handleInputs}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockOutlinedIcon />
+                  </InputAdornment>
+                )
+              }}
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              className={classes.textField}
+              fullWidth
+              variant="outlined"
+              id="2"
+              label="Confirmar contraseña"
+              name="nuevacontrasena"
+              onChange={handleInputs}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockOutlinedIcon />
+                  </InputAdornment>
+                )
+              }}
+            />
+          </Grid>
+
+          <Button size="large" variant="contained" color="primary">
+            GUARDAR
+          </Button>
+        </form>
+      );
+    }
+  };
   return (
     <div className={classes.root}>
-      <form className={classes.formControl}>
-        <Card className={classes.title} variant="outlined">
-          <Typography variant="h4">Login</Typography>
-        </Card>
-        <Grid item className={classes.textField}>
-          <TextField
-            className={classes.textField}
-            fullWidth
-            variant="outlined"
-            id="1"
-            label="Correo electrónico"
-            name="usuario"
-            onChange={handleInputs}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <MailOutlineIcon />
-                </InputAdornment>
-              )
-            }}
-          />
-        </Grid>
-
-        <Grid item>
-          <TextField
-            className={classes.textField}
-            fullWidth
-            variant="outlined"
-            id="2"
-            label="Contraseña"
-            name="contrasena"
-            onChange={handleInputs}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LockOutlinedIcon />
-                </InputAdornment>
-              )
-            }}
-          />
-        </Grid>
-        <ButtonGroup
-          orientation="vertical"
-          color="primary"
-          aria-label="vertical contained primary button group"
-          variant="text"
-          fullWidth
-        >
-          <Button size="large" onClick={handleLogin}>
-            ENTRAR
-          </Button>
-          <Button size="small">¿Olvidaste tu contraseña?</Button>
-        </ButtonGroup>
-      </form>
+      {displayForm(passwordStatus)}
     </div>
   );
 };
