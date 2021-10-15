@@ -55,17 +55,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "Snow",
     borderRadius: 10,
     position: "relative",
-    "& button": {
-      [theme.breakpoints.down("md")]: {
-        marginLeft: theme.spacing(8)
-      },
-      [theme.breakpoints.between("md", "lg")]: {
-        marginLeft: theme.spacing(10)
-      },
-      [theme.breakpoints.up("lg")]: {
-        marginLeft: theme.spacing(14)
-      }
-    },
     [theme.breakpoints.between("md", "lg")]: {
       marginLeft: theme.spacing(70),
       padding: theme.spacing(7)
@@ -79,6 +68,17 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     display: "flex",
     flexDirection: "row"
+  },
+  passwordbtn: {
+    [theme.breakpoints.down("md")]: {
+      marginLeft: theme.spacing(8)
+    },
+    [theme.breakpoints.between("md", "lg")]: {
+      marginLeft: theme.spacing(10)
+    },
+    [theme.breakpoints.up("lg")]: {
+      marginLeft: theme.spacing(14)
+    }
   }
 }));
 
@@ -86,34 +86,38 @@ const Login = props => {
   const { changePlace, login } = useContext(MyContext);
   const classes = useStyles();
   const authService = new AuthService();
-  const [passwordStatus, setPassword] = useState(0);
+  const [passwordStatus, setPassword] = useState(1);
   const [form, handleInputs] = useForm();
-
+  const [errorState, setErrorState] = useState(false);
+  const [helpText, setHelpText] = useState("");
   useEffect(
     () => {
       changePlace("Login");
     },
     [changePlace]
   );
-
+  console.log(passwordStatus);
   const handleLogin = () => {
     authService
       .login(form)
       .then(res => {
-        login(res.data.result);
-        const passwordStatus = res.data.result.restablecerContrasena;
-        passwordStatus !== 1 ? setPassword(passwordStatus) : setPassword(1);
-        localStorage.setItem("USER", JSON.stringify(res.data.result));
-        changePlace("auth");
-
-        //  props.history.push("/dashboard");
+        if (res.data.status === 200) {
+          login(res.data.result);
+          setPassword(1);
+          //   const passwordStatus = res.data.result.restablecerContrasena;
+          // console.log(passwordStatus);
+          //   passwordStatus !== 1 ? setPassword(passwordStatus) : setPassword(1);
+          localStorage.setItem("USER", JSON.stringify(res.data.result));
+          props.history.push("/dashboard");
+        } else {
+          setHelpText("datos incorrectos");
+          setErrorState(true);
+        }
       })
       .catch(err => {
         console.log(err);
       });
   };
-
-  //  const changePassword = status => {};
 
   const displayForm = id => {
     if (id === 1) {
@@ -124,6 +128,7 @@ const Login = props => {
           </Card>
           <Grid item className={classes.textField}>
             <TextField
+              error={errorState}
               className={classes.textField}
               fullWidth
               variant="outlined"
@@ -131,6 +136,7 @@ const Login = props => {
               label="Correo electrónico"
               name="usuario"
               onChange={handleInputs}
+              helperText={helpText}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -144,11 +150,13 @@ const Login = props => {
             <TextField
               className={classes.textField}
               fullWidth
+              error={errorState}
               variant="outlined"
               id="2"
               label="Contraseña"
               name="contrasena"
               onChange={handleInputs}
+              helperText={helpText}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -168,7 +176,14 @@ const Login = props => {
             <Button size="large" onClick={handleLogin}>
               ENTRAR
             </Button>
-            <Button size="small">¿Olvidaste tu contraseña?</Button>
+            <Button
+              size="small"
+              onClick={() => {
+                setPassword(0);
+              }}
+            >
+              ¿Olvidaste tu contraseña?
+            </Button>
           </ButtonGroup>
         </form>
       );
@@ -215,7 +230,12 @@ const Login = props => {
             />
           </Grid>
 
-          <Button size="large" variant="contained" color="primary">
+          <Button
+            className={classes.passwordbtn}
+            size="large"
+            variant="contained"
+            color="primary"
+          >
             GUARDAR
           </Button>
         </form>
