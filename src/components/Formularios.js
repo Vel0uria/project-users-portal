@@ -61,6 +61,9 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(3)
   }
 }));
+
+//PENDIENTES: mapear questions.catalogo.nombre para saber el tipo de respuesta
+
 function Formularios(props) {
   const { id } = props.match.params;
   const classes = useStyles();
@@ -110,10 +113,11 @@ function Formularios(props) {
   }
 
   const displayAnswers = () => {
+    console.log(questions);
     if (answers.length !== 0) {
       const newArr = answers.map(t => t.map(a => a.nombre));
       const answerLength = newArr[0].length;
-      //console.log(newArr[0].length);
+
       switch (answerLength) {
         case 2:
           return (
@@ -169,7 +173,6 @@ function Formularios(props) {
           <Typography variant="h6" component="div">
             Instrucciones:
           </Typography>
-
           <CardContent>
             <Typography variant="body1">
               {quiz.indicaciones}

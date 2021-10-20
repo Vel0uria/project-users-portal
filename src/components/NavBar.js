@@ -35,7 +35,6 @@ const NavBar = props => {
   const classes = useStyles();
   const { logout, state } = useContext(MyContext);
   const history = useHistory();
-  //console.log(history.goBack());
   const handleLogout = e => {
     e.preventDefault();
     Swal.fire({

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import Swal from "sweetalert2";
 import {
   Card,
   Button,
@@ -96,7 +97,7 @@ const Login = props => {
     },
     [changePlace]
   );
-  console.log(passwordStatus);
+
   const handleLogin = () => {
     authService
       .login(form)
@@ -104,9 +105,6 @@ const Login = props => {
         if (res.data.status === 200) {
           login(res.data.result);
           setPassword(1);
-          //   const passwordStatus = res.data.result.restablecerContrasena;
-          // console.log(passwordStatus);
-          //   passwordStatus !== 1 ? setPassword(passwordStatus) : setPassword(1);
           localStorage.setItem("USER", JSON.stringify(res.data.result));
           props.history.push("/dashboard");
         } else {
@@ -118,133 +116,86 @@ const Login = props => {
         console.log(err);
       });
   };
-
-  const displayForm = id => {
-    if (id === 1) {
-      return (
-        <form className={classes.formControl}>
-          <Card className={classes.title} variant="outlined">
-            <Typography variant="h4">Login</Typography>
-          </Card>
-          <Grid item className={classes.textField}>
-            <TextField
-              error={errorState}
-              className={classes.textField}
-              fullWidth
-              variant="outlined"
-              id="1"
-              label="Correo electrónico"
-              name="usuario"
-              onChange={handleInputs}
-              helperText={helpText}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <MailOutlineIcon />
-                  </InputAdornment>
-                )
-              }}
-            />
-          </Grid>
-          <Grid item>
-            <TextField
-              className={classes.textField}
-              fullWidth
-              error={errorState}
-              variant="outlined"
-              id="2"
-              label="Contraseña"
-              name="contrasena"
-              onChange={handleInputs}
-              helperText={helpText}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockOutlinedIcon />
-                  </InputAdornment>
-                )
-              }}
-            />
-          </Grid>
-          <ButtonGroup
-            orientation="vertical"
-            color="primary"
-            aria-label="vertical contained primary button group"
-            variant="text"
-            fullWidth
-          >
-            <Button size="large" onClick={handleLogin}>
-              ENTRAR
-            </Button>
-            <Button
-              size="small"
-              onClick={() => {
-                setPassword(0);
-              }}
-            >
-              ¿Olvidaste tu contraseña?
-            </Button>
-          </ButtonGroup>
-        </form>
-      );
-    } else {
-      return (
-        <form className={classes.formControl}>
-          <Card className={classes.title} variant="outlined">
-            <Typography variant="h4">Reestablecer contraseña</Typography>
-          </Card>
-          <Grid item className={classes.textField}>
-            <TextField
-              className={classes.textField}
-              fullWidth
-              variant="outlined"
-              id="1"
-              label="Contraseña"
-              name="nueva"
-              onChange={handleInputs}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockOutlinedIcon />
-                  </InputAdornment>
-                )
-              }}
-            />
-          </Grid>
-          <Grid item>
-            <TextField
-              className={classes.textField}
-              fullWidth
-              variant="outlined"
-              id="2"
-              label="Confirmar contraseña"
-              name="nuevacontrasena"
-              onChange={handleInputs}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockOutlinedIcon />
-                  </InputAdornment>
-                )
-              }}
-            />
-          </Grid>
-
-          <Button
-            className={classes.passwordbtn}
-            size="large"
-            variant="contained"
-            color="primary"
-          >
-            GUARDAR
-          </Button>
-        </form>
-      );
-    }
+  const passwordChange = () => {
+    Swal.fire({
+      title: "Introduce tu correo electrónico",
+      icon: "success",
+      html: `<input type="text" id="mail" class="swal2-input" placeholder="E-mail">`,
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirmar",
+      cancelButtonText: "Cancelar"
+    });
   };
+
   return (
     <div className={classes.root}>
-      {displayForm(passwordStatus)}
+      <form className={classes.formControl}>
+        <Card className={classes.title} variant="outlined">
+          <Typography variant="h4">Login</Typography>
+        </Card>
+        <Grid item className={classes.textField}>
+          <TextField
+            error={errorState}
+            className={classes.textField}
+            fullWidth
+            variant="outlined"
+            id="1"
+            label="Correo electrónico"
+            name="usuario"
+            onChange={handleInputs}
+            helperText={helpText}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <MailOutlineIcon />
+                </InputAdornment>
+              )
+            }}
+          />
+        </Grid>
+        <Grid item>
+          <TextField
+            className={classes.textField}
+            fullWidth
+            error={errorState}
+            variant="outlined"
+            id="2"
+            label="Contraseña"
+            name="contrasena"
+            onChange={handleInputs}
+            helperText={helpText}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockOutlinedIcon />
+                </InputAdornment>
+              )
+            }}
+          />
+        </Grid>
+        <ButtonGroup
+          orientation="vertical"
+          color="primary"
+          aria-label="vertical contained primary button group"
+          variant="text"
+          fullWidth
+        >
+          <Button size="large" onClick={handleLogin}>
+            ENTRAR
+          </Button>
+          <Button
+            size="small"
+            onClick={() => {
+              setPassword(0);
+              passwordChange();
+            }}
+          >
+            ¿Olvidaste tu contraseña?
+          </Button>
+        </ButtonGroup>
+      </form>
     </div>
   );
 };
