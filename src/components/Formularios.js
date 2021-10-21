@@ -95,7 +95,6 @@ function Formularios(props) {
           const sections = data.result.secciones;
           const questions = sections[sectionIndex].preguntas;
           const answers = questions.map(a => a.catalogo.respuestas);
-
           setQuiz(quiz);
           setSections(sections);
           setQuestions(questions);
@@ -120,7 +119,7 @@ function Formularios(props) {
     
      if (answers.length !== 0) {
     const newArr = questions.map(name => name.catalogo.nombre);
-
+console.log(newArr);
     switch (newArr[index]) {
  
       case "Si /No":
@@ -152,6 +151,13 @@ function Formularios(props) {
             fullWidth
           />
         );
+        case "Sexo":
+          return(
+                     <FormGroup>
+            <FormControlLabel control={<Checkbox />} label="Masculino" />
+            <FormControlLabel control={<Checkbox />} label="Femenino" />
+   </FormGroup>
+          )
       case "Autos":
         const imageArr = answers.map(i => i.map(pic => pic.nombre))
        return( 

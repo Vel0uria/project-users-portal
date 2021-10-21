@@ -18,11 +18,9 @@ import {
   Tooltip,
   CardActions,
   TextField,
-  Tab
-} from "@material-ui/core";
-import Tabs from "@mui/material/Tabs";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
+  Tab, Tabs, ListItem, ListItemButton
+} from "@mui/material";
+
 import {
   ExpandLess,
   ExpandMore,
@@ -152,7 +150,8 @@ function Cursos(props) {
   const [index, setIndex] = useState([]);
   const [mobile, setMobile] = useState(false);
   const [value, setValue] = useState(0);
-
+  const[ lessonId, setLessonId] = useState(null)
+  const[comments, setComments] = useState([])
   useEffect(
     () => {
       changePlace("Cursos");
@@ -173,6 +172,36 @@ function Cursos(props) {
     },
     [baseURL, id, token, changePlace]
   );
+useEffect(()=>{
+  if(lessonId !== null){
+ axios.get(`${baseURL}/api/obtenerComentarios/${lessonId}`, {
+          headers: { Authorization: token }})
+ .then(({data})=>{
+  // const comments = data.result
+   setComments(data.result)
+ }).catch(err => console.log(err))
+} 
+},[ lessonId, token])
+
+
+const displayComments = () => {
+return( 
+  <TextField fullWidth label="Agrega un comentario" />,
+comments.length !== 0 &&
+  <List>
+{comments.map((comment,i)=>{
+
+  return(
+    <ListItem key={i} disablePadding>
+  <ListItemText primary={comment.comentario} secondary={comment.fecha}/>
+
+   </ListItem>
+
+  )
+})}
+   </List> 
+)
+}
 
   const handleClick = i => {
     if (i === index) {
@@ -195,6 +224,7 @@ function Cursos(props) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
   const drawer = (
     <div className={classes.list}>
       <Toolbar>
@@ -214,6 +244,7 @@ function Cursos(props) {
       <Divider />
       <List>
         {sections.map((section, i) => {
+         
           return (
             <div key={i}>
               <ListItemButton
@@ -240,6 +271,7 @@ function Cursos(props) {
                         key={i}
                         onClick={() => {
                           handleMedia(lesson.url);
+                          setLessonId(lesson.idleccion)
                         }}
                       >
                         <ListItemText
@@ -333,7 +365,12 @@ function Cursos(props) {
           </CardActions>
           <CardContent>
             <TabPanel value={value} index={0}>
-              <TextField fullWidth label="Escribe tus comentarios" />
+              {lessonId === null ? (
+                <Typography>Elige una lección para mostrar los comentarios</Typography>
+              ) : ( 
+                
+                displayComments()
+                  )}
             </TabPanel>
             <TabPanel value={value} index={1}>
               {files.map((file, i) => {
@@ -356,6 +393,7 @@ function Cursos(props) {
                       <ListItemButton
                         onClick={() => {
                           setMedia(file.urlArchivo);
+                          setMediaType("iframe")
                         }}
                       >
                         <ListItemText primary={file.idArchivoModulo} />
