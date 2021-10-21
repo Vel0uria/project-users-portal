@@ -118,17 +118,18 @@ function Formularios(props) {
 
   const displayAnswers = (index) => {
     
-    // if (answers.length !== 0) {
+     if (answers.length !== 0) {
     const newArr = questions.map(name => name.catalogo.nombre);
 
-    switch (newArr[0]) {
+    switch (newArr[index]) {
+ 
       case "Si /No":
-        return (
-          <FormGroup>
-            <FormControlLabel control={<Checkbox />} label={newArr[0][0]} />
-            <FormControlLabel control={<Checkbox />} label={newArr[0][1]} />
-          </FormGroup>
-        );
+        return (  
+           <FormGroup>
+            <FormControlLabel control={<Checkbox />} label="Sí" />
+            <FormControlLabel control={<Checkbox />} label="No" />
+   </FormGroup>
+ );
       case "Respuestas del 1-10":
         const marks = answers[0].map(e => {
           return { value: Number(e["nombre"]), label: e["nombre"] };
@@ -156,36 +157,19 @@ function Formularios(props) {
        return( 
          <ImageList>
         { imageArr[index].map(pics => {
-          
+
           return(
      <ImageListItem key={pics}>
          <img alt="imagen" src={`${baseURL}${pics}`}/>
          </ImageListItem>
-          )}
-         
+          )}      
 )}
          </ImageList>
        )
-       //console.log(imageArr);
-       // return  imageArr.map(images => images.map(image => {<img src={´${baseURL}/{image}´}/>}))
-        
-        //imageArr.map((car => <p>{`${baseURL}/${car}`}</p>)
-          // <ImageList>
-    // {
-      
-      //{
-     //  return(
-    //<ImageListItem key={i}  >
-             //   <img alt="carro" src={`${baseURL}/${car}`}/>
-             // </ImageListItem>
-     //  )
-   // })}
- //</ImageList>
- //)
       default:
         <Typography>Cargando respuestas</Typography>;
     }
-    // } else return <Typography>Cargando</Typography>
+     } else return <Typography>Cargando</Typography>
   };
   const sendAnswers = e => {
     e.preventDefault();
