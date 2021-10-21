@@ -99,6 +99,7 @@ function Dashboard() {
     imageArr.push(img);
     // eslint-disable-next-line array-callback-return
     const newArr = imageArr.map(i => {
+   
       if (i !== "") return `${baseURL}/${i}`;
     });
     const index = newArr.indexOf(undefined);

@@ -11,10 +11,13 @@ import {
   Paper,
   FormGroup,
   FormControlLabel,
+  TextField,
   Checkbox,
   Card,
   CardActions,
-  CardContent
+  CardContent,
+  ImageList,
+  ImageListItem
 } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
@@ -76,13 +79,13 @@ function Formularios(props) {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [sectionIndex, setSectionIndex] = useState(0);
-
+  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion";
   useEffect(
     () => {
       changePlace("quiz");
       axios
         .get(
-          `https://impulsorintelectualhumanista.com/capacitacion/portafolio/obtenerFormulario/${id}`,
+          `${baseURL}/portafolio/obtenerFormulario/${id}`,
           {
             headers: { Authorization: token }
           }
@@ -92,6 +95,7 @@ function Formularios(props) {
           const sections = data.result.secciones;
           const questions = sections[sectionIndex].preguntas;
           const answers = questions.map(a => a.catalogo.respuestas);
+
           setQuiz(quiz);
           setSections(sections);
           setQuestions(questions);
@@ -112,38 +116,76 @@ function Formularios(props) {
     }
   }
 
-  const displayAnswers = () => {
-    console.log(questions);
-    if (answers.length !== 0) {
-      const newArr = answers.map(t => t.map(a => a.nombre));
-      const answerLength = newArr[0].length;
+  const displayAnswers = (index) => {
+    
+    // if (answers.length !== 0) {
+    const newArr = questions.map(name => name.catalogo.nombre);
 
-      switch (answerLength) {
-        case 2:
-          return (
-            <FormGroup>
-              <FormControlLabel control={<Checkbox />} label={newArr[0][0]} />
-              <FormControlLabel control={<Checkbox />} label={newArr[0][1]} />
-            </FormGroup>
-          );
-        case 10:
-          const marks = answers[0].map(e => {
-            return { value: Number(e["nombre"]), label: e["nombre"] };
-          });
-          return (
-            <Slider
-              valueLabelDisplay="auto"
-              aria-label="Custom marks"
-              min={1}
-              marks={marks}
-              max={10}
-              step={1}
-            />
-          );
-        default:
-          return <Typography>Cargando respuestas</Typography>;
-      }
-    } else return <Typography>Cargando</Typography>;
+    switch (newArr[0]) {
+      case "Si /No":
+        return (
+          <FormGroup>
+            <FormControlLabel control={<Checkbox />} label={newArr[0][0]} />
+            <FormControlLabel control={<Checkbox />} label={newArr[0][1]} />
+          </FormGroup>
+        );
+      case "Respuestas del 1-10":
+        const marks = answers[0].map(e => {
+          return { value: Number(e["nombre"]), label: e["nombre"] };
+        });
+        return (
+          <Slider
+            valueLabelDisplay="auto"
+            aria-label="Custom marks"
+            min={1}
+            marks={marks}
+            max={10}
+            step={1}
+          />
+        );
+      case "Texto":
+        return (
+          <TextField
+            label="Introduce tu respuesta"
+            variant="standard"
+            fullWidth
+          />
+        );
+      case "Autos":
+        const imageArr = answers.map(i => i.map(pic => pic.nombre))
+       return( 
+         <ImageList>
+        { imageArr[index].map(pics => {
+          
+          return(
+     <ImageListItem key={pics}>
+         <img alt="imagen" src={`${baseURL}${pics}`}/>
+         </ImageListItem>
+          )}
+         
+)}
+         </ImageList>
+       )
+       //console.log(imageArr);
+       // return  imageArr.map(images => images.map(image => {<img src={´${baseURL}/{image}´}/>}))
+        
+        //imageArr.map((car => <p>{`${baseURL}/${car}`}</p>)
+          // <ImageList>
+    // {
+      
+      //{
+     //  return(
+    //<ImageListItem key={i}  >
+             //   <img alt="carro" src={`${baseURL}/${car}`}/>
+             // </ImageListItem>
+     //  )
+   // })}
+ //</ImageList>
+ //)
+      default:
+        <Typography>Cargando respuestas</Typography>;
+    }
+    // } else return <Typography>Cargando</Typography>
   };
   const sendAnswers = e => {
     e.preventDefault();
@@ -157,6 +199,7 @@ function Formularios(props) {
       cancelButtonText: "Cancelar"
     });
   };
+
   return (
     <div className={classes.root}>
       <Typography variant="h3" className={classes.title}>
@@ -233,12 +276,13 @@ function Formularios(props) {
               </Typography>
               <Divider />
               {questions.map((question, i) => {
+                
                 return (
                   <div key={i}>
                     <Typography variant="body1">
                       {question.pregunta}
                     </Typography>
-                    {displayAnswers()}
+                    {displayAnswers(i)}
                   </div>
                 );
               })}

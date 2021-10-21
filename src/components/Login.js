@@ -87,7 +87,7 @@ const Login = props => {
   const { changePlace, login } = useContext(MyContext);
   const classes = useStyles();
   const authService = new AuthService();
-  const [passwordStatus, setPassword] = useState(1);
+  // const [passwordStatus, setPassword] = useState(1);
   const [form, handleInputs] = useForm();
   const [errorState, setErrorState] = useState(false);
   const [helpText, setHelpText] = useState("");
@@ -104,7 +104,7 @@ const Login = props => {
       .then(res => {
         if (res.data.status === 200) {
           login(res.data.result);
-          setPassword(1);
+          // setPassword(1);
           localStorage.setItem("USER", JSON.stringify(res.data.result));
           props.history.push("/dashboard");
         } else {
@@ -188,7 +188,6 @@ const Login = props => {
           <Button
             size="small"
             onClick={() => {
-              setPassword(0);
               passwordChange();
             }}
           >

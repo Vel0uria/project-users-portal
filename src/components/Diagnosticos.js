@@ -65,7 +65,8 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(5)
   }
 }));
-
+//PENDIENTES:
+//Ajustar posición de items en Toolbar
 function Diagnosticos() {
   const classes = useStyles();
   const user = JSON.parse(localStorage.getItem("USER"));
@@ -87,6 +88,7 @@ function Diagnosticos() {
         )
         .then(({ data }) => {
           const category = data.result.portafolio;
+
           setRows(category);
         })
         .catch(err => {
@@ -95,15 +97,17 @@ function Diagnosticos() {
     },
     [token, changePlace, setRows]
   );
-  function handleChangePage(newPage) {
+  const handleChangePage = (event, newPage) => {
     setPage(newPage);
-  }
+  };
 
-  function handleRowsPerPage(event) {
-    console.log(+event.target.value);
-    setRowsPerPage(+event.target.value);
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  }
+  };
+  // console.log(
+  //   dataRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+  // );
   return (
     <div className={classes.root}>
       <Typography variant="h3" className={classes.title}>
@@ -125,10 +129,7 @@ function Diagnosticos() {
             type="div"
             mt={0.5}
             p={1}
-            sx={{
-              display: "flex",
-              "& h4": { pl: 1, fontSize: { xs: 14 } }
-            }}
+            sx={{ display: "flex", "& h4": { pl: 1, fontSize: { xs: 14 } } }}
           >
             <FolderSharedIcon fontSize="large" color="primary" />
             <Typography variant="h4">Mi portafolio </Typography>
@@ -168,26 +169,28 @@ function Diagnosticos() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {dataRows.map(row =>
-              <TableRow key={row.idFormulario}>
-                <TableCell component="th" scope="row">
-                  {row.nombre}
-                </TableCell>
-                <TableCell align="center">
-                  {row.vecesAplicar}
-                </TableCell>
-                <TableCell align="center">
-                  {row.vigencia}
-                </TableCell>
-                <TableCell align="center">
-                  <Link to={`formulario/${row.idEnvioUnique}`}>
-                    <IconButton>
-                      <ForwardIcon color="warning" fontSize="large" />
-                    </IconButton>
-                  </Link>
-                </TableCell>
-              </TableRow>
-            )}
+            {dataRows
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map(row =>
+                <TableRow key={row.idEnvioUnique} hover tabIndex={-1}>
+                  <TableCell component="th" scope="row">
+                    {row.nombre}
+                  </TableCell>
+                  <TableCell align="center">
+                    {row.vecesAplicar}
+                  </TableCell>
+                  <TableCell align="center">
+                    {row.vigencia}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Link to={`formulario/${row.idEnvioUnique}`}>
+                      <IconButton>
+                        <ForwardIcon color="warning" fontSize="large" />
+                      </IconButton>
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              )}
           </TableBody>
         </Table>
         <TablePagination
@@ -197,7 +200,7 @@ function Diagnosticos() {
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
-          onRowsPerPageChange={handleRowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage={"Filas por página"}
         />
       </TableContainer>
