@@ -14,10 +14,11 @@ import {
   Typography,
   TextField,
   Toolbar,
-  Box
+  Box, InputAdornment
 } from "@mui/material";
 import ForwardIcon from "@mui/icons-material/Forward";
 import FolderSharedIcon from "@mui/icons-material/FolderShared";
+import  SearchTwoTone from "@mui/icons-material/SearchTwoTone"
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
 import { MyContext } from "../services/Context";
@@ -117,28 +118,36 @@ function Diagnosticos() {
         <Toolbar
           sx={{
             mt: 1,
-            pl: { sm: 2 },
-            pr: { xs: 1, sm: 1 },
+            pl: { sm: 2, md:3, lg:4, xl:4 },
+            pr: { xs: 1, sm: 1,  },
             "& .MuiTextField-root": {
-              ml: { xl: 132, lg: 20, md: 10, sm: 15, xs: 15 },
-              width: { xs: "15ch" }
-            }
+              mt:1,
+              ml: { xl: 180, lg: 115, md: 65, sm: 45, xs: 0 },
+              width: { xs: "15ch", sm:"18ch", md:"20ch", lg:"25ch", xl:"25ch" }
+            }, 
           }}
         >
           <Box
             type="div"
             mt={0.5}
             p={1}
-            sx={{ display: "flex", "& h4": { pl: 1, fontSize: { xs: 14 } } }}
+            sx={{ display: "flex", "& h4": { p: 1, fontSize: { xs: 14, s:16, md:18, lg:20, xl:22 } } }}
           >
             <FolderSharedIcon fontSize="large" color="primary" />
             <Typography variant="h4">Mi portafolio </Typography>
           </Box>
           <TextField
             label="Buscar registros"
-            variant="standard"
+            //variant="standard"
             size="small"
             type="search"
+             InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchTwoTone />
+            </InputAdornment>
+          ),
+        }}
           />
         </Toolbar>
         <Table className={classes.table} aria-label="simple table">
@@ -176,10 +185,10 @@ function Diagnosticos() {
                   <TableCell component="th" scope="row">
                     {row.nombre}
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     {row.vecesAplicar}
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     {row.vigencia}
                   </TableCell>
                   <TableCell align="center">

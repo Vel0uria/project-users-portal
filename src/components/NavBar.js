@@ -6,7 +6,8 @@ import {
   ExitToApp,
   NotificationsActiveTwoTone,
   InboxTwoTone,
-  HomeTwoTone
+  HomeTwoTone,
+
 } from "@material-ui/icons";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,13 +22,16 @@ const useStyles = makeStyles(theme => ({
   backIcon: {
     marginRight: theme.spacing(10),
     [theme.breakpoints.between("sm", "md")]: {
-      marginRight: theme.spacing(65)
+      marginRight: theme.spacing(60)
     },
     [theme.breakpoints.between("md", "lg")]: {
       marginRight: theme.spacing(144)
     },
+        [theme.breakpoints.only("md")]: {
+      marginRight: theme.spacing(115)
+    },
     [theme.breakpoints.up("lg")]: {
-      marginRight: theme.spacing(168)
+      marginRight: theme.spacing(215)
     }
   }
 }));

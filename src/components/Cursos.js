@@ -34,12 +34,9 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import bgImage from "../assets/dashboard.jpg";
 import { MyContext } from "../services/Context";
-
 const drawerWidth = 300;
 const useStyles = makeStyles(theme => ({
   root: {
-    width: "fullWidth",
-    height: "windowHeigh",
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
@@ -50,7 +47,7 @@ const useStyles = makeStyles(theme => ({
       marginTop: 0
     },
     [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(135)
+      height: theme.spacing(175)
     }
   },
   title: {
@@ -64,11 +61,11 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 4,
     padding: theme.spacing(1),
     [theme.breakpoints.between("sm", "md")]: {
-      fontSize: "1.5rem",
+      fontSize: ["1.5rem", "!important"],
       width: 700
     },
     [theme.breakpoints.down("sm")]: {
-      fontSize: "1.2rem",
+      fontSize: ["1.2rem", "!important"],
       marginLeft: 0,
       marginTop: 0,
       width: 190
@@ -76,24 +73,23 @@ const useStyles = makeStyles(theme => ({
   },
   card: {
     marginTop: theme.spacing(1),
-    backgroundColor: "#FFFFFF9E"
-  },
-  media: {
-    //border: "none",
-
-    [theme.breakpoints.between("md", "lg")]: {
-      //    marginLeft: theme.spacing(23.5)
-      //    padding: theme.spacing(1)
+    backgroundColor: "#FFFFFF9E", 
+    width:"100%", 
+    "& .MuiCardMedia-root":{
+    [theme.breakpoints.only("md")]: {
+      marginLeft:40
+    },
+    [theme.breakpoints.up("lg")]: {
+      marginLeft:110
     }
   },
+  },
   tabs: {
-    [theme.breakpoints.down("sm")]: {
-      //  marginRight: theme.spacing(6)
-      // paddingLeft: theme.spacing(7)
-      //  paddingRight: theme.spacing(6)
-    },
+    //width:750,
+  padding: theme.spacing(1),
+   marginLeft:theme.spacing(1),
     [theme.breakpoints.between("md", "lg")]: {
-      padding: theme.spacing(1.5),
+      padding: theme.spacing(2),
       marginLeft: theme.spacing(2)
     }
   },
@@ -177,7 +173,6 @@ useEffect(()=>{
  axios.get(`${baseURL}/api/obtenerComentarios/${lessonId}`, {
           headers: { Authorization: token }})
  .then(({data})=>{
-  // const comments = data.result
    setComments(data.result)
  }).catch(err => console.log(err))
 } 
@@ -186,19 +181,25 @@ useEffect(()=>{
 
 const displayComments = () => {
 return( 
-  <TextField fullWidth label="Agrega un comentario" />,
 comments.length !== 0 &&
-  <List>
+  <List  sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+    <ListItem alignItems="center">
+     <TextField fullWidth label="Agrega un comentario" variant="filled"/>
+     </ListItem>
 {comments.map((comment,i)=>{
-
   return(
-    <ListItem key={i} disablePadding>
-  <ListItemText primary={comment.comentario} secondary={comment.fecha}/>
-
-   </ListItem>
-
+    <div key={i}>
+    <ListItem >
+      <ListItemText primary={comment.comentario} secondary={comment.fecha}      
+      primaryTypographyProps={{
+            variant:"h6"
+          }}/>
+    </ListItem>
+    <Divider variant="fullWidth" component="li" />
+    </div>
   )
 })}
+
    </List> 
 )
 }
@@ -235,7 +236,7 @@ comments.length !== 0 &&
           primary="SECCIONES"
           primaryTypographyProps={{
             color: "textSecondary",
-            letterSpacing: 10,
+            letterSpacing: 1.5,
             fontWeight: "bolder",
             variant: "subtitle1"
           }}
@@ -243,8 +244,7 @@ comments.length !== 0 &&
       </Toolbar>
       <Divider />
       <List>
-        {sections.map((section, i) => {
-         
+        {sections.map((section, i) => {     
           return (
             <div key={i}>
               <ListItemButton
@@ -350,8 +350,9 @@ comments.length !== 0 &&
             </Typography>
           </CardContent>
           <Divider />
-          <CardActions>
+          <CardActions sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs
+              className={classes.tabs}
               value={value}
               onChange={handleChange}
               variant="scrollable"
@@ -361,15 +362,14 @@ comments.length !== 0 &&
               <Tab label="Comentarios" icon={<CommentTwoTone />} />
               <Tab label="Recursos" icon={<FolderOpen />} />
               <Tab label="Cuestionario" icon={<QuestionAnswerTwoTone />} />
-            </Tabs>
+            </Tabs> 
           </CardActions>
           <CardContent>
             <TabPanel value={value} index={0}>
               {lessonId === null ? (
                 <Typography>Elige una lección para mostrar los comentarios</Typography>
               ) : ( 
-                
-                displayComments()
+            displayComments()
                   )}
             </TabPanel>
             <TabPanel value={value} index={1}>

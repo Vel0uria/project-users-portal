@@ -31,6 +31,7 @@ const useStyles = makeStyles(theme => ({
     backgroundPosition: "center",
     display: "flex",
     flexFlow: "column nowrap",
+    overflow:"hidden",
     height: theme.spacing(120),
     [theme.breakpoints.between("md", "lg")]: {
       height: theme.spacing(80),
@@ -48,15 +49,24 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 4,
     padding: theme.spacing(1),
     [theme.breakpoints.up("lg")]: {
-      fontSize: [20, "!important"]
+      fontSize: [24, "!important"],
+     
     },
     [theme.breakpoints.down("sm")]: {
       fontSize: [16, "!important"]
     }
   },
   card: {
-    padding: theme.spacing(1),
-    textAlign: "justify"
+    padding: theme.spacing(2),
+    textAlign: "justify",
+ 
+    [theme.breakpoints.between("md","lg")]:{
+      fontSize: [16, "!important"],
+    },
+    [theme.breakpoints.down("sm")]:{
+      fontSize: [12, "!important"],
+    },
+  
   },
 
   questions: {
@@ -79,6 +89,7 @@ function Formularios(props) {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [sectionIndex, setSectionIndex] = useState(0);
+ //const [mobile, setMobile] = useState(false);
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion";
   useEffect(
     () => {
@@ -119,7 +130,7 @@ function Formularios(props) {
     
      if (answers.length !== 0) {
     const newArr = questions.map(name => name.catalogo.nombre);
-console.log(newArr);
+
     switch (newArr[index]) {
  
       case "Si /No":
@@ -153,7 +164,7 @@ console.log(newArr);
         );
         case "Sexo":
           return(
-                     <FormGroup>
+<FormGroup>
             <FormControlLabel control={<Checkbox />} label="Masculino" />
             <FormControlLabel control={<Checkbox />} label="Femenino" />
    </FormGroup>
@@ -202,6 +213,7 @@ console.log(newArr);
           "& button": { ml: { lg: 75, md: 55, sm: 35, xs: 3 } }
         }}
       >
+            {!start &&
         <Card className={classes.card}>
           <Typography variant="h6" component="div">
             Instrucciones:
@@ -212,9 +224,9 @@ console.log(newArr);
             </Typography>
           </CardContent>
           <CardActions>
-            {!start &&
+        
               <Button
-                size="large"
+               // size="large"
                 color="info"
                 variant="outlined"
                 onClick={() => {
@@ -223,9 +235,9 @@ console.log(newArr);
                 }}
               >
                 Iniciar cuestionario
-              </Button>}
+              </Button>
           </CardActions>
-        </Card>
+        </Card>}
       </Box>
       <Divider />
       {start &&
@@ -248,7 +260,7 @@ console.log(newArr);
                 flexDirection: "column",
                 maxHeight: 650,
                 overflow: "scroll",
-                "& button": { mt: 4, ml: 12 },
+                "& button":{ fontSize:{xs:12,lg:14, xl:14}, m:1.5, ml:{s:4, md:12, lg:14, xl:18}},
                 "& p": {
                   fontSize: { xs: 14, sm: 18, md: 18, lg: 20, xl: 22 },
                   pt: 3
@@ -265,8 +277,7 @@ console.log(newArr);
              ${sections[sectionIndex].nombreSeccion}`}
               </Typography>
               <Divider />
-              {questions.map((question, i) => {
-                
+              {questions.map((question, i) => {   
                 return (
                   <div key={i}>
                     <Typography variant="body1">
