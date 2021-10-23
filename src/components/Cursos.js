@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, setState } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import axios from "axios"
 import { Link } from "react-router-dom"
 import {
@@ -21,8 +21,7 @@ import {
   Tab,
   Tabs,
   ListItem,
-  ListItemButton,
-  FormControl,
+  ListItemButton
 } from "@mui/material"
 import {
   ExpandLess,
@@ -33,7 +32,7 @@ import {
   MenuTwoTone,
   MenuBookTwoTone,
   CloudDownload,
-  SendRounded,
+  SendRounded
 } from "@material-ui/icons"
 import { makeStyles } from "@material-ui/core/styles"
 import bgImage from "../assets/dashboard.jpg"
@@ -51,11 +50,11 @@ const useStyles = makeStyles(theme => ({
     flexFlow: "column nowrap",
     [theme.breakpoints.between("md", "lg")]: {
       height: theme.spacing(80),
-      marginTop: 0,
+      marginTop: 0
     },
     [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(175),
-    },
+      height: theme.spacing(175)
+    }
   },
   title: {
     textAlign: "center",
@@ -69,14 +68,14 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
     [theme.breakpoints.between("sm", "md")]: {
       fontSize: ["1.5rem", "!important"],
-      width: 700,
+      width: 700
     },
     [theme.breakpoints.down("sm")]: {
       fontSize: ["1.2rem", "!important"],
       marginLeft: 0,
       marginTop: 0,
-      width: 190,
-    },
+      width: 190
+    }
   },
   card: {
     marginTop: theme.spacing(1),
@@ -84,12 +83,12 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
     "& .MuiCardMedia-root": {
       [theme.breakpoints.only("md")]: {
-        marginLeft: 40,
+        marginLeft: 40
       },
       [theme.breakpoints.up("lg")]: {
-        marginLeft: 110,
-      },
-    },
+        marginLeft: 110
+      }
+    }
   },
   tabs: {
     //width:750,
@@ -97,42 +96,42 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     [theme.breakpoints.between("md", "lg")]: {
       padding: theme.spacing(2),
-      marginLeft: theme.spacing(2),
-    },
+      marginLeft: theme.spacing(2)
+    }
   },
   list: {
-    backgroundColor: "#b5c6da",
+    backgroundColor: "#b5c6da"
   },
   permanetDrawer: {
     height: "windowHeight",
     backgroundColor: "#3979a078",
     [theme.breakpoints.between("md", "lg")]: {
-      backgroundColor: "#FFFFFF9E",
+      backgroundColor: "#FFFFFF9E"
     },
     [theme.breakpoints.down("sm")]: {
-      display: "none",
+      display: "none"
     },
     [theme.breakpoints.only("sm")]: {
-      display: "block",
+      display: "block"
     },
     "& .MuiDrawer-paper": {
       boxSizing: "border-box",
-      width: drawerWidth,
-    },
+      width: drawerWidth
+    }
   },
   drawer: {
     backgroundColor: "#3979a078",
     "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
     [theme.breakpoints.down("sm")]: {
-      display: "block",
+      display: "block"
     },
     [theme.breakpoints.only("sm")]: {
-      display: "none",
-    },
+      display: "none"
+    }
   },
   expandIcon: {
-    justifyContent: "flex-end",
-  },
+    justifyContent: "flex-end"
+  }
 }))
 
 //PENDIENTES:
@@ -156,14 +155,15 @@ function Cursos(props) {
   const [value, setValue] = useState(0)
   const [lessonId, setLessonId] = useState(null)
   const [comments, setComments] = useState([])
+  const [comment, updateComment] = useState({})
   const [form, handleInputs] = useForm()
-  const [lessonValue, setLessonValue] = useState({ id: "" })
+
   useEffect(
     () => {
       changePlace("Cursos")
       axios
         .get(`${baseURL}/api/listadoLecciones/${id}`, {
-          headers: { Authorization: token },
+          headers: { Authorization: token }
         })
         .then(({ data }) => {
           const courses = data.result
@@ -182,9 +182,10 @@ function Cursos(props) {
   function getComments(id) {
     //   if (lessonId !== null) {
     setLessonId(id)
+    form.idLeccion = lessonId
     axios
       .get(`${baseURL}/api/obtenerComentarios/${id}`, {
-        headers: { Authorization: token },
+        headers: { Authorization: token }
       })
       .then(({ data }) => {
         setComments(data.result)
@@ -199,7 +200,24 @@ function Cursos(props) {
     return (
       <List sx={{ width: "100%", maxWidth: 1200, bgcolor: "background.paper" }}>
         {/* <ListItem alignItems="center"> */}
-
+        {lessonId !== null &&
+          <TextField
+            fullWidth
+            label="Agrega un comentario"
+            id="1"
+            variant="filled"
+            name="comentario"
+            onChange={handleInputs}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleNewComment}>
+                    <SendRounded fontSize="large" />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+          />}
         {/* </ListItem> */}
         {comments.length !== 0 &&
           comments.map((comment, i) => {
@@ -219,18 +237,21 @@ function Cursos(props) {
       </List>
     )
   }
-  function handleNewComment(e) {
-    setLessonValue({ ...lessonValue, id: e.target.value })
-    console.log(lessonValue)
-    // authService
-    //   .postComment(form, token)
-    //   .then(res => {
-    //     console.log(res.data)
-    //   })
-    //   .catch(err => {
-    //     console.log(err)
-    //   })
+
+  const handleNewComment = () => {
+    authService
+      .postComment(form, token)
+      .then(({ res }) => {
+        updateComment(prevState => {
+          console.log(res.data)
+          return { ...prevState, ...res.data }
+        })
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
+
   const handleClick = i => {
     if (i === index) {
       setIndex([])
@@ -265,7 +286,7 @@ function Cursos(props) {
             color: "textSecondary",
             letterSpacing: 1.5,
             fontWeight: "bolder",
-            variant: "subtitle1",
+            variant: "subtitle1"
           }}
         />
       </Toolbar>
@@ -283,7 +304,7 @@ function Cursos(props) {
                   primary={section.titulo}
                   primaryTypographyProps={{
                     variant: "h6",
-                    color: "textPrimary",
+                    color: "textPrimary"
                   }}
                 />
                 <ListItemIcon className={classes.expandIcon}>
@@ -305,7 +326,7 @@ function Cursos(props) {
                           primary={lesson.nombre}
                           primaryTypographyProps={{
                             variant: "subtitle2",
-                            color: "textPrimary",
+                            color: "textPrimary"
                           }}
                         />
                       </ListItemButton>
@@ -336,6 +357,7 @@ function Cursos(props) {
       </div>
     )
   }
+
   return (
     <div className={classes.root}>
       <Toolbar>
@@ -360,7 +382,7 @@ function Cursos(props) {
           p: 3,
           display: "flex",
           justifyContent: "center",
-          ml: { sm: `calc(10px + ${drawerWidth}px)` },
+          ml: { sm: `calc(10px + ${drawerWidth}px)` }
         }}
       >
         <Card variant="outlined" className={classes.card}>
@@ -397,23 +419,6 @@ function Cursos(props) {
                 <Typography>
                   Elige una lección para mostrar los comentarios
                 </Typography>}
-              <TextField
-                fullWidth
-                label="Agrega un comentario"
-                id="1"
-                variant="filled"
-                name="comentario"
-                onChange={() => handleInputs}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => handleNewComment(lessonId)}>
-                        <SendRounded fontSize="large" />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
               <DisplayComments />
             </TabPanel>
             <TabPanel value={value} index={1}>
