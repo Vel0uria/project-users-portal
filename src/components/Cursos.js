@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react"
+import React, { useEffect, useState, useContext, setState } from "react"
 import axios from "axios"
 import { Link } from "react-router-dom"
 import {
@@ -22,8 +22,8 @@ import {
   Tabs,
   ListItem,
   ListItemButton,
+  FormControl,
 } from "@mui/material"
-
 import {
   ExpandLess,
   ExpandMore,
@@ -40,6 +40,7 @@ import bgImage from "../assets/dashboard.jpg"
 import { MyContext } from "../services/Context"
 import useForm from "./useForm"
 import AuthService from "../services/auth"
+import { InputAdornment } from "@material-ui/core"
 const drawerWidth = 300
 const useStyles = makeStyles(theme => ({
   root: {
@@ -156,6 +157,7 @@ function Cursos(props) {
   const [lessonId, setLessonId] = useState(null)
   const [comments, setComments] = useState([])
   const [form, handleInputs] = useForm()
+  const [lessonValue, setLessonValue] = useState({ id: "" })
   useEffect(
     () => {
       changePlace("Cursos")
@@ -176,42 +178,29 @@ function Cursos(props) {
     },
     [baseURL, id, token, changePlace]
   )
-  useEffect(
-    () => {
-      if (lessonId !== null) {
-        axios
-          .get(`${baseURL}/api/obtenerComentarios/${lessonId}`, {
-            headers: { Authorization: token },
-          })
-          .then(({ data }) => {
-            setComments(data.result)
-          })
-          .catch(err => console.log(err))
-      }
-    },
-    [lessonId, token]
-  )
+
+  function getComments(id) {
+    //   if (lessonId !== null) {
+    setLessonId(id)
+    axios
+      .get(`${baseURL}/api/obtenerComentarios/${id}`, {
+        headers: { Authorization: token },
+      })
+      .then(({ data }) => {
+        setComments(data.result)
+      })
+      .catch(err => console.log(err))
+    //  }
+    // },
+    // [lessonId, token]
+  }
 
   function DisplayComments() {
     return (
       <List sx={{ width: "100%", maxWidth: 1200, bgcolor: "background.paper" }}>
-        <ListItem alignItems="center">
-          <TextField
-            fullWidth
-            label="Agrega un comentario"
-            id="comment-input"
-            variant="filled"
-            name="comentario"
-            onChange={handleInputs}
-            InputProps={{
-              endAdornment: (
-                <IconButton onClick={handleNewComment}>
-                  <SendRounded fontSize="large" />
-                </IconButton>
-              ),
-            }}
-          />
-        </ListItem>
+        {/* <ListItem alignItems="center"> */}
+
+        {/* </ListItem> */}
         {comments.length !== 0 &&
           comments.map((comment, i) => {
             return (
@@ -230,15 +219,17 @@ function Cursos(props) {
       </List>
     )
   }
-  function handleNewComment() {
-    authService
-      .postComment(form, token)
-      .then(res => {
-        console.log(res)
-      })
-      .catch(err => {
-        console.log(err)
-      })
+  function handleNewComment(e) {
+    setLessonValue({ ...lessonValue, id: e.target.value })
+    console.log(lessonValue)
+    // authService
+    //   .postComment(form, token)
+    //   .then(res => {
+    //     console.log(res.data)
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
   }
   const handleClick = i => {
     if (i === index) {
@@ -307,7 +298,7 @@ function Cursos(props) {
                         key={i}
                         onClick={() => {
                           handleMedia(lesson.url)
-                          setLessonId(lesson.idleccion)
+                          getComments(lesson.idleccion)
                         }}
                       >
                         <ListItemText
@@ -402,11 +393,28 @@ function Cursos(props) {
           </CardActions>
           <CardContent>
             <TabPanel value={value} index={0}>
-              {lessonId === null
-                ? <Typography>
-                    Elige una lección para mostrar los comentarios
-                  </Typography>
-                : <DisplayComments />}
+              {lessonId === null &&
+                <Typography>
+                  Elige una lección para mostrar los comentarios
+                </Typography>}
+              <TextField
+                fullWidth
+                label="Agrega un comentario"
+                id="1"
+                variant="filled"
+                name="comentario"
+                onChange={() => handleInputs}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => handleNewComment(lessonId)}>
+                        <SendRounded fontSize="large" />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <DisplayComments />
             </TabPanel>
             <TabPanel value={value} index={1}>
               {files.map((file, i) => {

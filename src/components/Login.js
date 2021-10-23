@@ -2,14 +2,13 @@ import React, { useContext, useEffect, useState } from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import Swal from "sweetalert2"
 import {
-  Card,
   Button,
   Typography,
   TextField,
   InputAdornment,
   ButtonGroup,
   FormControl,
-  Box,
+  Paper,
 } from "@mui/material"
 import MailOutlineIcon from "@material-ui/icons/MailOutline"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
@@ -56,14 +55,15 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(6),
     backgroundColor: "Snow",
     borderRadius: 10,
-    position: "relative",
+    // position: "relative",
     [theme.breakpoints.between("md", "lg")]: {
       marginLeft: theme.spacing(70),
       padding: theme.spacing(7),
     },
     [theme.breakpoints.up("lg")]: {
       marginLeft: theme.spacing(100),
-      width: 340,
+      padding: theme.spacing(8),
+      //width: 340,
     },
   },
   textField: {
@@ -103,12 +103,11 @@ const Login = props => {
     authService
       .login(form)
       .then(res => {
-        //  console.log(res)
         if (res.data.status === 200) {
           login(res.data.result)
           // setPassword(1);
           localStorage.setItem("USER", JSON.stringify(res.data.result))
-          //   props.history.push("/dashboard")
+          props.history.push("/dashboard")
         } else {
           setHelpText("datos incorrectos")
           setErrorState(true)
@@ -133,15 +132,13 @@ const Login = props => {
 
   return (
     <div className={classes.root}>
-      <Box component="form" className={classes.formControl}>
+      <Paper className={classes.formControl}>
         <FormControl>
-          {/* <Card className={classes.title} variant="outlined"> */}
-          <Typography variant="h4">Login</Typography>
-          {/* </Card> */}
-          {/* <Grid item className={classes.textField}> */}
+          <Typography variant="h4" className={classes.title}>
+            Login
+          </Typography>
           <TextField
             error={errorState}
-            // className={classes.textField}
             fullWidth
             variant="outlined"
             id="1"
@@ -158,10 +155,7 @@ const Login = props => {
             }}
             margin="normal"
           />
-          {/* </Grid> */}
-          {/* <Grid item> */}
           <TextField
-            // className={classes.textField}
             fullWidth
             error={errorState}
             variant="outlined"
@@ -179,7 +173,6 @@ const Login = props => {
             }}
             margin="normal"
           />
-          {/* </Grid> */}
           <ButtonGroup
             orientation="vertical"
             color="primary"
@@ -200,7 +193,7 @@ const Login = props => {
             </Button>
           </ButtonGroup>
         </FormControl>
-      </Box>
+      </Paper>
     </div>
   )
 }

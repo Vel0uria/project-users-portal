@@ -3,7 +3,7 @@ import { useState } from "react"
 const useForm = () => {
   const [form, setForm] = useState({})
 
-  const handleInputs = prop => event => {
+  const handleInputs = event => {
     event.persist()
     setForm(prevState => ({
       ...prevState,
