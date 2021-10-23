@@ -1,5 +1,5 @@
-import axios from "axios";
-import React, { useEffect, useState, useContext } from "react";
+import axios from "axios"
+import React, { useEffect, useState, useContext } from "react"
 import {
   Card,
   CardContent,
@@ -13,15 +13,15 @@ import {
   Tabs,
   Paper,
   Box,
-  IconButton
-} from "@material-ui/core";
-import PlayCircleOutlineOutlinedIcon from "@material-ui/icons/PlayCircleOutlineOutlined";
-import QuizIcon from "@mui/icons-material/Quiz";
-import { Link } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import bgImage from "../assets/dashboard.jpg";
-import { MyContext } from "../services/Context";
-import placeholder from "../assets/placeholder.png";
+  IconButton,
+} from "@material-ui/core"
+import PlayCircleOutlineOutlinedIcon from "@material-ui/icons/PlayCircleOutlineOutlined"
+import QuizIcon from "@mui/icons-material/Quiz"
+import { Link } from "react-router-dom"
+import { makeStyles } from "@material-ui/core/styles"
+import bgImage from "../assets/dashboard.jpg"
+import { MyContext } from "../services/Context"
+import placeholder from "../assets/placeholder.png"
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
@@ -39,8 +39,8 @@ const useStyles = makeStyles(theme => ({
     //   height: theme.spacing(130)
     // },
     [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(140)
-    }
+      height: theme.spacing(140),
+    },
   },
   title: {
     textAlign: "center",
@@ -48,19 +48,19 @@ const useStyles = makeStyles(theme => ({
     color: "white",
     fontSize: "1.7rem",
     [theme.breakpoints.up("lg")]: {
-      fontSize: "2rem"
+      fontSize: "2rem",
     },
     [theme.breakpoints.down("sm")]: {
-      fontSize: "1.2rem"
-    }
+      fontSize: "1.2rem",
+    },
   },
   userData: {
     display: "flex",
     margin: theme.spacing(0.5),
     backgroundColor: "#FFFFFF9E",
     [theme.breakpoints.down("sm")]: {
-      flexFlow: "column"
-    }
+      flexFlow: "column",
+    },
   },
 
   courses: {
@@ -69,13 +69,13 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
     marginTop: 40,
     minWidth: 200,
-    maxWidth: 300
+    maxWidth: 300,
   },
   tabs: {
     padding: theme.spacing(1),
-    backgroundColor: "#FFFFFF78"
-  }
-}));
+    backgroundColor: "#FFFFFF78",
+  },
+}))
 
 // PENDIENTES DASHBOARD:
 
@@ -85,74 +85,73 @@ const useStyles = makeStyles(theme => ({
 // 1. Responsivo
 
 function Dashboard() {
-  const classes = useStyles();
-  const [categories, setCategory] = useState([]);
-  const [courses, setCourses] = useState([]);
-  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
-  const [value, setValue] = useState(0);
-  const user = JSON.parse(localStorage.getItem("USER"));
-  const token = user.token;
-  const { changePlace } = useContext(MyContext);
+  const classes = useStyles()
+  const [categories, setCategory] = useState([])
+  const [courses, setCourses] = useState([])
+  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/"
+  const [value, setValue] = useState(0)
+  const user = JSON.parse(localStorage.getItem("USER"))
+  const token = user.token
+  const { changePlace } = useContext(MyContext)
 
   function handleMedia(img) {
-    const imageArr = [];
-    imageArr.push(img);
+    const imageArr = []
+    imageArr.push(img)
     // eslint-disable-next-line array-callback-return
     const newArr = imageArr.map(i => {
-   
-      if (i !== "") return `${baseURL}/${i}`;
-    });
-    const index = newArr.indexOf(undefined);
+      if (i !== "") return `${baseURL}/${i}`
+    })
+    const index = newArr.indexOf(undefined)
     if (index !== -1) {
-      newArr[index] = placeholder;
+      newArr[index] = placeholder
     }
-    return newArr;
+    return newArr
   }
 
   useEffect(
     () => {
-      changePlace("Dashboard");
+      changePlace("Dashboard")
 
       axios
         .get(`${baseURL}/api/listadoModulosCursos/1`, {
-          headers: { Authorization: token }
+          headers: { Authorization: token },
         })
         .then(({ data }) => {
-          const category = data.result;
-          setCategory(category);
+          const category = data.result
+          setCategory(category)
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
     [baseURL, token, changePlace]
-  );
+  )
 
   useEffect(
     () => {
       if (categories.length !== 0) {
-        const id = categories[value].idCategoria;
+        const id = categories[value].idCategoria
 
         axios
           .get(`${baseURL}/api/listadoUsuariosCursos/${id}`, {
             headers: {
-              Authorization: token
-            }
+              Authorization: token,
+            },
           })
           .then(({ data }) => {
-            const courses = data.result;
-            setCourses(courses);
+            const courses = data.result
+            setCourses(courses)
           })
           .catch(err => {
-            console.log(err);
-          });
+            console.log(err)
+          })
       }
     },
     [categories, token, value]
-  );
+  )
 
   function TabPanel(props) {
-    const { value, index } = props;
+    const { value, index } = props
 
     return (
       <div
@@ -167,11 +166,11 @@ function Dashboard() {
               display: "flex",
               justifyContent: "space-evenly",
               backgroundColor: "#FFFFFF80",
-              flexWrap: { xs: "wrap", md: "wrap", lg: "nowrap" }
+              flexWrap: { xs: "wrap", md: "wrap", lg: "nowrap" },
             }}
           >
             {courses.map((course, i) => {
-              if (!courses) return <Typography>Cargando</Typography>;
+              if (!courses) return <Typography>Cargando</Typography>
               else {
                 return (
                   <Card className={classes.courses} variant="outlined" key={i}>
@@ -206,19 +205,19 @@ function Dashboard() {
                       </Typography>
                     </CardContent> */}
                   </Card>
-                );
+                )
               }
             })}
           </Box>}
       </div>
-    );
+    )
   }
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+    setValue(newValue)
+  }
 
-  if (!user) return <p>Cargando</p>;
+  if (!user) return <p>Cargando</p>
   return (
     <div className={classes.root}>
       <Typography variant="h1" className={classes.title}>
@@ -259,7 +258,7 @@ function Dashboard() {
           scrollButtons="auto"
         >
           {categories.map((category, i) => {
-            if (!categories) return <Typography>Cargando</Typography>;
+            if (!categories) return <Typography>Cargando</Typography>
             else {
               return (
                 <Tab
@@ -267,14 +266,14 @@ function Dashboard() {
                   id={category.idCategoria}
                   label={category.categoria}
                 />
-              );
+              )
             }
           })}
         </Tabs>
       </Paper>
       <TabPanel value={value} index={0} />
     </div>
-  );
+  )
 }
 
-export default Dashboard;
+export default Dashboard

@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react"
+import axios from "axios"
+import { Link } from "react-router-dom"
 import {
   Typography,
   List,
@@ -18,8 +18,11 @@ import {
   Tooltip,
   CardActions,
   TextField,
-  Tab, Tabs, ListItem, ListItemButton
-} from "@mui/material";
+  Tab,
+  Tabs,
+  ListItem,
+  ListItemButton,
+} from "@mui/material"
 
 import {
   ExpandLess,
@@ -29,12 +32,15 @@ import {
   QuestionAnswerTwoTone,
   MenuTwoTone,
   MenuBookTwoTone,
-  CloudDownload
-} from "@material-ui/icons";
-import { makeStyles } from "@material-ui/core/styles";
-import bgImage from "../assets/dashboard.jpg";
-import { MyContext } from "../services/Context";
-const drawerWidth = 300;
+  CloudDownload,
+  SendRounded,
+} from "@material-ui/icons"
+import { makeStyles } from "@material-ui/core/styles"
+import bgImage from "../assets/dashboard.jpg"
+import { MyContext } from "../services/Context"
+import useForm from "./useForm"
+import AuthService from "../services/auth"
+const drawerWidth = 300
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundImage: `url(${bgImage})`,
@@ -44,11 +50,11 @@ const useStyles = makeStyles(theme => ({
     flexFlow: "column nowrap",
     [theme.breakpoints.between("md", "lg")]: {
       height: theme.spacing(80),
-      marginTop: 0
+      marginTop: 0,
     },
     [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(175)
-    }
+      height: theme.spacing(175),
+    },
   },
   title: {
     textAlign: "center",
@@ -62,169 +68,199 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
     [theme.breakpoints.between("sm", "md")]: {
       fontSize: ["1.5rem", "!important"],
-      width: 700
+      width: 700,
     },
     [theme.breakpoints.down("sm")]: {
       fontSize: ["1.2rem", "!important"],
       marginLeft: 0,
       marginTop: 0,
-      width: 190
-    }
+      width: 190,
+    },
   },
   card: {
     marginTop: theme.spacing(1),
-    backgroundColor: "#FFFFFF9E", 
-    width:"100%", 
-    "& .MuiCardMedia-root":{
-    [theme.breakpoints.only("md")]: {
-      marginLeft:40
+    backgroundColor: "#FFFFFF9E",
+    width: "100%",
+    "& .MuiCardMedia-root": {
+      [theme.breakpoints.only("md")]: {
+        marginLeft: 40,
+      },
+      [theme.breakpoints.up("lg")]: {
+        marginLeft: 110,
+      },
     },
-    [theme.breakpoints.up("lg")]: {
-      marginLeft:110
-    }
-  },
   },
   tabs: {
     //width:750,
-  padding: theme.spacing(1),
-   marginLeft:theme.spacing(1),
+    padding: theme.spacing(1),
+    marginLeft: theme.spacing(1),
     [theme.breakpoints.between("md", "lg")]: {
       padding: theme.spacing(2),
-      marginLeft: theme.spacing(2)
-    }
+      marginLeft: theme.spacing(2),
+    },
   },
   list: {
-    backgroundColor: "#b5c6da"
+    backgroundColor: "#b5c6da",
   },
   permanetDrawer: {
     height: "windowHeight",
     backgroundColor: "#3979a078",
     [theme.breakpoints.between("md", "lg")]: {
-      backgroundColor: "#FFFFFF9E"
+      backgroundColor: "#FFFFFF9E",
     },
     [theme.breakpoints.down("sm")]: {
-      display: "none"
+      display: "none",
     },
     [theme.breakpoints.only("sm")]: {
-      display: "block"
+      display: "block",
     },
     "& .MuiDrawer-paper": {
       boxSizing: "border-box",
-      width: drawerWidth
-    }
+      width: drawerWidth,
+    },
   },
   drawer: {
     backgroundColor: "#3979a078",
     "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
     [theme.breakpoints.down("sm")]: {
-      display: "block"
+      display: "block",
     },
     [theme.breakpoints.only("sm")]: {
-      display: "none"
-    }
+      display: "none",
+    },
   },
   expandIcon: {
-    justifyContent: "flex-end"
-  }
-}));
+    justifyContent: "flex-end",
+  },
+}))
 
 //PENDIENTES:
 //Card y Tabs: Responsivo en móvil
 
 function Cursos(props) {
-  const classes = useStyles();
-  const { id } = props.match.params;
-  const { changePlace } = useContext(MyContext);
-  const user = JSON.parse(localStorage.getItem("USER"));
-  const token = user.token;
-  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/";
-  const [courses, setCourses] = useState({});
-  const [files, setFiles] = useState([]);
-  const [sections, setSections] = useState([]);
-  const [media, setMedia] = useState({});
-  const [mediaType, setMediaType] = useState("img");
-  const [index, setIndex] = useState([]);
-  const [mobile, setMobile] = useState(false);
-  const [value, setValue] = useState(0);
-  const[ lessonId, setLessonId] = useState(null)
-  const[comments, setComments] = useState([])
+  const classes = useStyles()
+  const { id } = props.match.params
+  const { changePlace } = useContext(MyContext)
+  const user = JSON.parse(localStorage.getItem("USER"))
+  const token = user.token
+  const authService = new AuthService()
+  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/"
+  const [courses, setCourses] = useState({})
+  const [files, setFiles] = useState([])
+  const [sections, setSections] = useState([])
+  const [media, setMedia] = useState({})
+  const [mediaType, setMediaType] = useState("img")
+  const [index, setIndex] = useState([])
+  const [mobile, setMobile] = useState(false)
+  const [value, setValue] = useState(0)
+  const [lessonId, setLessonId] = useState(null)
+  const [comments, setComments] = useState([])
+  const [form, handleInputs] = useForm()
   useEffect(
     () => {
-      changePlace("Cursos");
+      changePlace("Cursos")
       axios
         .get(`${baseURL}/api/listadoLecciones/${id}`, {
-          headers: { Authorization: token }
+          headers: { Authorization: token },
         })
         .then(({ data }) => {
-          const courses = data.result;
-          setCourses(courses);
-          setSections(courses.listaContenido);
-          setFiles(courses.listaArchivos);
-          setMedia(courses.urlImagen);
+          const courses = data.result
+          setCourses(courses)
+          setSections(courses.listaContenido)
+          setFiles(courses.listaArchivos)
+          setMedia(courses.urlImagen)
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
     [baseURL, id, token, changePlace]
-  );
-useEffect(()=>{
-  if(lessonId !== null){
- axios.get(`${baseURL}/api/obtenerComentarios/${lessonId}`, {
-          headers: { Authorization: token }})
- .then(({data})=>{
-   setComments(data.result)
- }).catch(err => console.log(err))
-} 
-},[ lessonId, token])
-
-
-const displayComments = () => {
-return( 
-comments.length !== 0 &&
-  <List  sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-    <ListItem alignItems="center">
-     <TextField fullWidth label="Agrega un comentario" variant="filled"/>
-     </ListItem>
-{comments.map((comment,i)=>{
-  return(
-    <div key={i}>
-    <ListItem >
-      <ListItemText primary={comment.comentario} secondary={comment.fecha}      
-      primaryTypographyProps={{
-            variant:"h6"
-          }}/>
-    </ListItem>
-    <Divider variant="fullWidth" component="li" />
-    </div>
   )
-})}
+  useEffect(
+    () => {
+      if (lessonId !== null) {
+        axios
+          .get(`${baseURL}/api/obtenerComentarios/${lessonId}`, {
+            headers: { Authorization: token },
+          })
+          .then(({ data }) => {
+            setComments(data.result)
+          })
+          .catch(err => console.log(err))
+      }
+    },
+    [lessonId, token]
+  )
 
-   </List> 
-)
-}
-
+  function DisplayComments() {
+    return (
+      <List sx={{ width: "100%", maxWidth: 1200, bgcolor: "background.paper" }}>
+        <ListItem alignItems="center">
+          <TextField
+            fullWidth
+            label="Agrega un comentario"
+            id="comment-input"
+            variant="filled"
+            name="comentario"
+            onChange={handleInputs}
+            InputProps={{
+              endAdornment: (
+                <IconButton onClick={handleNewComment}>
+                  <SendRounded fontSize="large" />
+                </IconButton>
+              ),
+            }}
+          />
+        </ListItem>
+        {comments.length !== 0 &&
+          comments.map((comment, i) => {
+            return (
+              <div key={i}>
+                <ListItem>
+                  <ListItemText
+                    primary={comment.comentario}
+                    secondary={comment.fecha}
+                    primaryTypographyProps={{ variant: "h6" }}
+                  />
+                </ListItem>
+                <Divider variant="fullWidth" component="li" />
+              </div>
+            )
+          })}
+      </List>
+    )
+  }
+  function handleNewComment() {
+    authService
+      .postComment(form, token)
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
   const handleClick = i => {
     if (i === index) {
-      setIndex([]);
+      setIndex([])
     } else {
-      setIndex(i);
+      setIndex(i)
     }
-  };
+  }
   const handleDrawer = () => {
-    setMobile(!mobile);
-  };
+    setMobile(!mobile)
+  }
 
   const handleMedia = video => {
-    setMedia(video);
-    setMediaType("iframe");
+    setMedia(video)
+    setMediaType("iframe")
     if (mobile === true) {
-      setMobile(!mobile);
+      setMobile(!mobile)
     }
-  };
+  }
   const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+    setValue(newValue)
+  }
 
   const drawer = (
     <div className={classes.list}>
@@ -238,25 +274,25 @@ comments.length !== 0 &&
             color: "textSecondary",
             letterSpacing: 1.5,
             fontWeight: "bolder",
-            variant: "subtitle1"
+            variant: "subtitle1",
           }}
         />
       </Toolbar>
       <Divider />
       <List>
-        {sections.map((section, i) => {     
+        {sections.map((section, i) => {
           return (
             <div key={i}>
               <ListItemButton
                 onClick={() => {
-                  handleClick(i);
+                  handleClick(i)
                 }}
               >
                 <ListItemText
                   primary={section.titulo}
                   primaryTypographyProps={{
                     variant: "h6",
-                    color: "textPrimary"
+                    color: "textPrimary",
                   }}
                 />
                 <ListItemIcon className={classes.expandIcon}>
@@ -270,7 +306,7 @@ comments.length !== 0 &&
                       <ListItemButton
                         key={i}
                         onClick={() => {
-                          handleMedia(lesson.url);
+                          handleMedia(lesson.url)
                           setLessonId(lesson.idleccion)
                         }}
                       >
@@ -278,23 +314,23 @@ comments.length !== 0 &&
                           primary={lesson.nombre}
                           primaryTypographyProps={{
                             variant: "subtitle2",
-                            color: "textPrimary"
+                            color: "textPrimary",
                           }}
                         />
                       </ListItemButton>
-                    );
+                    )
                   })}
                 </List>
               </Collapse>
               <Divider />
             </div>
-          );
+          )
         })}
       </List>
     </div>
-  );
+  )
   function TabPanel(props) {
-    const { value, index, children } = props;
+    const { value, index, children } = props
     return (
       <div
         role="tabpanel"
@@ -307,7 +343,7 @@ comments.length !== 0 &&
             {children}
           </Box>}
       </div>
-    );
+    )
   }
   return (
     <div className={classes.root}>
@@ -333,7 +369,7 @@ comments.length !== 0 &&
           p: 3,
           display: "flex",
           justifyContent: "center",
-          ml: { sm: `calc(10px + ${drawerWidth}px)` }
+          ml: { sm: `calc(10px + ${drawerWidth}px)` },
         }}
       >
         <Card variant="outlined" className={classes.card}>
@@ -350,7 +386,7 @@ comments.length !== 0 &&
             </Typography>
           </CardContent>
           <Divider />
-          <CardActions sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <CardActions sx={{ borderBottom: 1, borderColor: "divider" }}>
             <Tabs
               className={classes.tabs}
               value={value}
@@ -362,15 +398,15 @@ comments.length !== 0 &&
               <Tab label="Comentarios" icon={<CommentTwoTone />} />
               <Tab label="Recursos" icon={<FolderOpen />} />
               <Tab label="Cuestionario" icon={<QuestionAnswerTwoTone />} />
-            </Tabs> 
+            </Tabs>
           </CardActions>
           <CardContent>
             <TabPanel value={value} index={0}>
-              {lessonId === null ? (
-                <Typography>Elige una lección para mostrar los comentarios</Typography>
-              ) : ( 
-            displayComments()
-                  )}
+              {lessonId === null
+                ? <Typography>
+                    Elige una lección para mostrar los comentarios
+                  </Typography>
+                : <DisplayComments />}
             </TabPanel>
             <TabPanel value={value} index={1}>
               {files.map((file, i) => {
@@ -392,7 +428,7 @@ comments.length !== 0 &&
                     >
                       <ListItemButton
                         onClick={() => {
-                          setMedia(file.urlArchivo);
+                          setMedia(file.urlArchivo)
                           setMediaType("iframe")
                         }}
                       >
@@ -400,7 +436,7 @@ comments.length !== 0 &&
                       </ListItemButton>
                     </ListItem>
                   </List>
-                );
+                )
               })}
             </TabPanel>
           </CardContent>
@@ -425,6 +461,6 @@ comments.length !== 0 &&
         </Drawer>
       </Box>
     </div>
-  );
+  )
 }
-export default Cursos;
+export default Cursos
