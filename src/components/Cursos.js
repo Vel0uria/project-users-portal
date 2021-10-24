@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react"
 import axios from "axios"
+import Swal from "sweetalert2"
 import { Link } from "react-router-dom"
 import {
   Typography,
@@ -21,8 +22,7 @@ import {
   Tab,
   Tabs,
   ListItem,
-  ListItemButton,
-  FormControl
+  ListItemButton
 } from "@mui/material"
 import {
   ExpandLess,
@@ -78,13 +78,13 @@ const useStyles = makeStyles(theme => ({
   card: {
     marginTop: theme.spacing(1),
     backgroundColor: "#FFFFFF9E",
-    width: "100%",
+    width: "95%",
     "& .MuiCardMedia-root": {
       [theme.breakpoints.only("md")]: {
         marginLeft: 40
       },
       [theme.breakpoints.up("lg")]: {
-        marginLeft: 110
+        //  marginLeft: 110
       }
     }
   },
@@ -153,7 +153,6 @@ const Cursos = props => {
   const [val, setValue] = useState(0)
   const [lessonId, setLessonId] = useState(null)
   const [comments, setComments] = useState([])
-  const [comment, updateComment] = useState({})
   const [form, handleInputs] = useForm()
 
   useEffect(
@@ -177,9 +176,9 @@ const Cursos = props => {
     [baseURL, id, token, changePlace]
   )
 
-  function getComments(id) {
+  function getComments(id, mediaId) {
     setLessonId(id)
-
+    handleMedia(mediaId)
     axios
       .get(`${baseURL}/api/obtenerComentarios/${id}`, {
         headers: { Authorization: token }
@@ -190,19 +189,30 @@ const Cursos = props => {
       .catch(err => console.log(err))
   }
 
-  const handleNewComment = id => {
+  const handleNewComment = (id, e) => {
     form.idLeccion = id
-    console.log(form)
-    // authService
-    //   .postComment(form, token)
-    //   .then(({ res }) => {
-    //     updateComment(prevState => {
-    //       return { ...prevState, ...res.data }
-    //     })
-    //   })
-    //   .catch(err => {
-    //     console.log(err)
-    //   })
+
+    Swal.fire({
+      title: "¿Deseas guardar tu comentario?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirmar",
+      cancelButtonText: "Cancelar"
+    }).then(result => {
+      if (result.isConfirmed) {
+        authService
+          .postComment(form, token)
+          .then(res => {
+            Swal.fire("Comentario guardado", res.data.message, "success")
+            getComments(id, media)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      }
+    })
   }
 
   const handleClick = i => {
@@ -271,8 +281,7 @@ const Cursos = props => {
                       <ListItemButton
                         key={i}
                         onClick={() => {
-                          handleMedia(lesson.url)
-                          getComments(lesson.idleccion)
+                          getComments(lesson.idleccion, lesson.url)
                         }}
                       >
                         <ListItemText
@@ -341,7 +350,7 @@ const Cursos = props => {
         <Card variant="outlined" className={classes.card}>
           <CardMedia
             className={classes.media}
-            height="350"
+            height="450"
             component={mediaType}
             src={`${baseURL}/${media}`}
             allowFullScreen
@@ -364,7 +373,7 @@ const Cursos = props => {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={() => handleNewComment(lessonId)}>
+                      <IconButton onClick={e => handleNewComment(lessonId, e)}>
                         <SendRounded fontSize="large" />
                       </IconButton>
                     </InputAdornment>
