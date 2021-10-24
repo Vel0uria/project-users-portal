@@ -8,7 +8,7 @@ import {
   InputAdornment,
   ButtonGroup,
   FormControl,
-  Paper,
+  Paper
 } from "@mui/material"
 import MailOutlineIcon from "@material-ui/icons/MailOutline"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
@@ -30,14 +30,14 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
 
     [theme.breakpoints.between("sm", "md")]: {
-      height: theme.spacing(120),
+      height: theme.spacing(120)
     },
     [theme.breakpoints.between("md", "lg")]: {
-      height: theme.spacing(130),
+      height: theme.spacing(130)
     },
     [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(150),
-    },
+      height: theme.spacing(150)
+    }
   },
 
   title: {
@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
     textAlign: "center",
     backgroundColor: "#FF6347",
-    color: "white",
+    color: "white"
   },
   formControl: {
     margin: theme.spacing(1),
@@ -58,30 +58,25 @@ const useStyles = makeStyles(theme => ({
     // position: "relative",
     [theme.breakpoints.between("md", "lg")]: {
       marginLeft: theme.spacing(70),
-      padding: theme.spacing(7),
+      padding: theme.spacing(7)
     },
     [theme.breakpoints.up("lg")]: {
       marginLeft: theme.spacing(100),
-      padding: theme.spacing(8),
+      padding: theme.spacing(8)
       //width: 340,
-    },
-  },
-  textField: {
-    marginBottom: theme.spacing(1),
-    display: "flex",
-    flexDirection: "row",
+    }
   },
   passwordbtn: {
     [theme.breakpoints.down("md")]: {
-      marginLeft: theme.spacing(8),
+      marginLeft: theme.spacing(8)
     },
     [theme.breakpoints.between("md", "lg")]: {
-      marginLeft: theme.spacing(10),
+      marginLeft: theme.spacing(10)
     },
     [theme.breakpoints.up("lg")]: {
-      marginLeft: theme.spacing(14),
-    },
-  },
+      marginLeft: theme.spacing(14)
+    }
+  }
 }))
 
 const Login = props => {
@@ -105,7 +100,6 @@ const Login = props => {
       .then(res => {
         if (res.data.status === 200) {
           login(res.data.result)
-          // setPassword(1);
           localStorage.setItem("USER", JSON.stringify(res.data.result))
           props.history.push("/dashboard")
         } else {
@@ -126,7 +120,7 @@ const Login = props => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Confirmar",
-      cancelButtonText: "Cancelar",
+      cancelButtonText: "Cancelar"
     })
   }
 
@@ -144,14 +138,13 @@ const Login = props => {
             id="1"
             label="Correo electrónico"
             name="usuario"
-            onChange={handleInputs}
-            helperText={helpText}
+            onChange={handleInputs} // helperText={helpText}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
                   <MailOutlineIcon />
                 </InputAdornment>
-              ),
+              )
             }}
             margin="normal"
           />
@@ -169,7 +162,7 @@ const Login = props => {
                 <InputAdornment position="start">
                   <LockOutlinedIcon />
                 </InputAdornment>
-              ),
+              )
             }}
             margin="normal"
           />

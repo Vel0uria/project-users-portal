@@ -21,14 +21,12 @@ import {
   Tab,
   Tabs,
   ListItem,
-  ListItemButton
+  ListItemButton,
+  FormControl
 } from "@mui/material"
 import {
   ExpandLess,
   ExpandMore,
-  FolderOpen,
-  CommentTwoTone,
-  QuestionAnswerTwoTone,
   MenuTwoTone,
   MenuBookTwoTone,
   CloudDownload,
@@ -137,7 +135,7 @@ const useStyles = makeStyles(theme => ({
 //PENDIENTES:
 //Card y Tabs: Responsivo en móvil
 
-function Cursos(props) {
+const Cursos = props => {
   const classes = useStyles()
   const { id } = props.match.params
   const { changePlace } = useContext(MyContext)
@@ -152,7 +150,7 @@ function Cursos(props) {
   const [mediaType, setMediaType] = useState("img")
   const [index, setIndex] = useState([])
   const [mobile, setMobile] = useState(false)
-  const [value, setValue] = useState(0)
+  const [val, setValue] = useState(0)
   const [lessonId, setLessonId] = useState(null)
   const [comments, setComments] = useState([])
   const [comment, updateComment] = useState({})
@@ -180,9 +178,8 @@ function Cursos(props) {
   )
 
   function getComments(id) {
-    //   if (lessonId !== null) {
     setLessonId(id)
-    form.idLeccion = lessonId
+
     axios
       .get(`${baseURL}/api/obtenerComentarios/${id}`, {
         headers: { Authorization: token }
@@ -191,65 +188,21 @@ function Cursos(props) {
         setComments(data.result)
       })
       .catch(err => console.log(err))
-    //  }
-    // },
-    // [lessonId, token]
   }
 
-  function DisplayComments() {
-    return (
-      <List sx={{ width: "100%", maxWidth: 1200, bgcolor: "background.paper" }}>
-        {/* <ListItem alignItems="center"> */}
-        {lessonId !== null &&
-          <TextField
-            fullWidth
-            label="Agrega un comentario"
-            id="1"
-            variant="filled"
-            name="comentario"
-            onChange={handleInputs}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={handleNewComment}>
-                    <SendRounded fontSize="large" />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-          />}
-        {/* </ListItem> */}
-        {comments.length !== 0 &&
-          comments.map((comment, i) => {
-            return (
-              <div key={i}>
-                <ListItem>
-                  <ListItemText
-                    primary={comment.comentario}
-                    secondary={comment.fecha}
-                    primaryTypographyProps={{ variant: "h6" }}
-                  />
-                </ListItem>
-                <Divider variant="fullWidth" component="li" />
-              </div>
-            )
-          })}
-      </List>
-    )
-  }
-
-  const handleNewComment = () => {
-    authService
-      .postComment(form, token)
-      .then(({ res }) => {
-        updateComment(prevState => {
-          console.log(res.data)
-          return { ...prevState, ...res.data }
-        })
-      })
-      .catch(err => {
-        console.log(err)
-      })
+  const handleNewComment = id => {
+    form.idLeccion = id
+    console.log(form)
+    // authService
+    //   .postComment(form, token)
+    //   .then(({ res }) => {
+    //     updateComment(prevState => {
+    //       return { ...prevState, ...res.data }
+    //     })
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
   }
 
   const handleClick = i => {
@@ -342,15 +295,15 @@ function Cursos(props) {
     </div>
   )
   function TabPanel(props) {
-    const { value, index, children } = props
+    const { v, index, children } = props
     return (
       <div
         role="tabpanel"
-        hidden={value !== index}
+        hidden={v !== index}
         id={`simple-tabpanel-${index}`}
         aria-labelledby={`simple-tab-${index}`}
       >
-        {value === index &&
+        {v === index &&
           <Box sx={{ p: 3 }}>
             {children}
           </Box>}
@@ -398,30 +351,73 @@ function Cursos(props) {
               En este curso {courses.descripcionGeneral}
             </Typography>
           </CardContent>
+
+          {lessonId !== null &&
+            <CardActions>
+              <TextField
+                fullWidth
+                variant="filled"
+                id="1"
+                label="Agrega un comentario"
+                name="comentario"
+                onChange={handleInputs}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => handleNewComment(lessonId)}>
+                        <SendRounded fontSize="large" />
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              />
+            </CardActions>}
           <Divider />
           <CardActions sx={{ borderBottom: 1, borderColor: "divider" }}>
             <Tabs
               className={classes.tabs}
-              value={value}
+              value={val}
               onChange={handleChange}
               variant="scrollable"
               scrollButtons="auto"
               allowScrollButtonsMobile
             >
-              <Tab label="Comentarios" icon={<CommentTwoTone />} />
-              <Tab label="Recursos" icon={<FolderOpen />} />
-              <Tab label="Cuestionario" icon={<QuestionAnswerTwoTone />} />
+              <Tab label="Comentarios" />
+              <Tab label="Recursos" />
+              <Tab label="Cuestionario" />
             </Tabs>
           </CardActions>
           <CardContent>
-            <TabPanel value={value} index={0}>
+            <TabPanel v={val} index={0}>
               {lessonId === null &&
                 <Typography>
                   Elige una lección para mostrar los comentarios
                 </Typography>}
-              <DisplayComments />
+              <List
+                sx={{
+                  width: "100%",
+                  maxWidth: 1200,
+                  bgcolor: "background.paper"
+                }}
+              >
+                {comments.length !== 0 &&
+                  comments.map((comment, i) => {
+                    return (
+                      <div key={i}>
+                        <ListItem>
+                          <ListItemText
+                            primary={comment.comentario}
+                            secondary={comment.fecha}
+                            primaryTypographyProps={{ variant: "h6" }}
+                          />
+                        </ListItem>
+                        <Divider variant="fullWidth" component="li" />
+                      </div>
+                    )
+                  })}
+              </List>
             </TabPanel>
-            <TabPanel value={value} index={1}>
+            <TabPanel v={val} index={1}>
               {files.map((file, i) => {
                 return (
                   <List key={i}>
