@@ -112,16 +112,20 @@ const Login = props => {
       })
   }
   const passwordChange = () => {
-    Swal.fire({
-      title: "Introduce tu correo electrónico",
-      icon: "success",
-      html: `<input type="text" id="mail" class="swal2-input" placeholder="E-mail">`,
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Confirmar",
-      cancelButtonText: "Cancelar"
-    })
+    ;(async () => {
+      const { value: email } = await Swal.fire({
+        icon: "info",
+        title: "Reestablecer constraseña",
+        input: "email",
+        inputLabel: "Ingresa tu correo para reestablecer tu contraseña",
+        inputPlaceholder: "Correo electrónico"
+      })
+      if (email) {
+        Swal.fire(
+          "En breve recibirás un correo con instrucciones para reestablecer tu contraseña"
+        )
+      }
+    })()
   }
 
   return (

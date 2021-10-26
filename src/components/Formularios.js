@@ -1,7 +1,7 @@
-import React, { useEffect, useContext, useState } from "react";
-import axios from "axios";
-import Swal from "sweetalert2";
-import { MyContext } from "../services/Context";
+import React, { useEffect, useContext, useState } from "react"
+import axios from "axios"
+import Swal from "sweetalert2"
+import { MyContext } from "../services/Context"
 import {
   Box,
   Slider,
@@ -17,10 +17,16 @@ import {
   CardActions,
   CardContent,
   ImageList,
-  ImageListItem
-} from "@mui/material";
-import { makeStyles } from "@material-ui/core/styles";
-import bgImage from "../assets/dashboard.jpg";
+  ImageListItem,
+  RadioGroup,
+  Radio,
+  FormControl,
+  ImageListItemBar,
+  IconButton
+} from "@mui/material"
+import { makeStyles } from "@material-ui/core/styles"
+import bgImage from "../assets/dashboard.jpg"
+import { CheckBox } from "@mui/icons-material"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -31,7 +37,7 @@ const useStyles = makeStyles(theme => ({
     backgroundPosition: "center",
     display: "flex",
     flexFlow: "column nowrap",
-    overflow:"hidden",
+    overflow: "hidden",
     height: theme.spacing(120),
     [theme.breakpoints.between("md", "lg")]: {
       height: theme.spacing(80),
@@ -45,12 +51,11 @@ const useStyles = makeStyles(theme => ({
     textAlign: "center",
     backgroundColor: "#FF6347",
     color: "white",
-    fontSize: "1.7rem",
+
     borderRadius: 4,
     padding: theme.spacing(1),
     [theme.breakpoints.up("lg")]: {
-      fontSize: [24, "!important"],
-     
+      fontSize: [24, "!important"]
     },
     [theme.breakpoints.down("sm")]: {
       fontSize: [16, "!important"]
@@ -59,137 +64,145 @@ const useStyles = makeStyles(theme => ({
   card: {
     padding: theme.spacing(2),
     textAlign: "justify",
- 
-    [theme.breakpoints.between("md","lg")]:{
-      fontSize: [16, "!important"],
-    },
-    [theme.breakpoints.down("sm")]:{
-      fontSize: [12, "!important"],
-    },
-  
-  },
 
-  questions: {
-    padding: theme.spacing(1),
-    paddingTop: theme.spacing(3)
+    [theme.breakpoints.between("md", "lg")]: {
+      fontSize: [16, "!important"]
+    },
+    [theme.breakpoints.down("sm")]: {
+      fontSize: [12, "!important"]
+    }
   }
-}));
+}))
 
 //PENDIENTES: mapear questions.catalogo.nombre para saber el tipo de respuesta
 
 function Formularios(props) {
-  const { id } = props.match.params;
-  const classes = useStyles();
-  const { changePlace } = useContext(MyContext);
-  const user = JSON.parse(localStorage.getItem("USER"));
-  const token = user.token;
-  const [start, setStart] = useState(false);
-  const [quiz, setQuiz] = useState({});
-  const [sections, setSections] = useState([]);
-  const [questions, setQuestions] = useState([]);
-  const [answers, setAnswers] = useState([]);
-  const [sectionIndex, setSectionIndex] = useState(0);
- //const [mobile, setMobile] = useState(false);
-  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion";
+  const { id } = props.match.params
+  const classes = useStyles()
+  const { changePlace } = useContext(MyContext)
+  const user = JSON.parse(localStorage.getItem("USER"))
+  const token = user.token
+  const [start, setStart] = useState(false)
+  const [quiz, setQuiz] = useState({})
+  const [sections, setSections] = useState([])
+  const [questions, setQuestions] = useState([])
+  const [answers, setAnswers] = useState([])
+  const [sectionIndex, setSectionIndex] = useState(0)
+  //const [mobile, setMobile] = useState(false);
+  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
   useEffect(
     () => {
-      changePlace("quiz");
+      changePlace("quiz")
       axios
-        .get(
-          `${baseURL}/portafolio/obtenerFormulario/${id}`,
-          {
-            headers: { Authorization: token }
-          }
-        )
+        .get(`${baseURL}/portafolio/obtenerFormulario/${id}`, {
+          headers: { Authorization: token }
+        })
         .then(({ data }) => {
-          const quiz = data.result;
-          const sections = data.result.secciones;
-          const questions = sections[sectionIndex].preguntas;
-          const answers = questions.map(a => a.catalogo.respuestas);
-          setQuiz(quiz);
-          setSections(sections);
-          setQuestions(questions);
-          setAnswers(answers);
+          const quiz = data.result
+          const sections = data.result.secciones
+          const questions = sections[sectionIndex].preguntas
+          const answers = questions.map(a => a.catalogo.respuestas)
+          setQuiz(quiz)
+          setSections(sections)
+          setQuestions(questions)
+          setAnswers(answers)
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
     [token, id, changePlace, sectionIndex]
-  );
+  )
   function handlePrevious() {
-    setSectionIndex(sectionIndex - 1);
+    setSectionIndex(sectionIndex - 1)
   }
   function handleNext() {
     if (sectionIndex <= sections.length) {
-      setSectionIndex(sectionIndex + 1);
+      setSectionIndex(sectionIndex + 1)
     }
   }
 
-  const displayAnswers = (index) => {
-    
-     if (answers.length !== 0) {
-    const newArr = questions.map(name => name.catalogo.nombre);
+  const displayAnswers = index => {
+    if (answers.length !== 0) {
+      const newArr = questions.map(name => name.catalogo.nombre)
 
-    switch (newArr[index]) {
- 
-      case "Si /No":
-        return (  
-           <FormGroup>
-            <FormControlLabel control={<Checkbox />} label="Sí" />
-            <FormControlLabel control={<Checkbox />} label="No" />
-   </FormGroup>
- );
-      case "Respuestas del 1-10":
-        const marks = answers[0].map(e => {
-          return { value: Number(e["nombre"]), label: e["nombre"] };
-        });
-        return (
-          <Slider
-            valueLabelDisplay="auto"
-            aria-label="Custom marks"
-            min={1}
-            marks={marks}
-            max={10}
-            step={1}
-          />
-        );
-      case "Texto":
-        return (
-          <TextField
-            label="Introduce tu respuesta"
-            variant="standard"
-            fullWidth
-          />
-        );
-        case "Sexo":
-          return(
-<FormGroup>
-            <FormControlLabel control={<Checkbox />} label="Masculino" />
-            <FormControlLabel control={<Checkbox />} label="Femenino" />
-   </FormGroup>
+      switch (newArr[index]) {
+        case "Si /No":
+          return (
+            <FormGroup>
+              <FormControlLabel control={<Checkbox />} label="Sí" />
+              <FormControlLabel control={<Checkbox />} label="No" />
+            </FormGroup>
           )
-      case "Autos":
-        const imageArr = answers.map(i => i.map(pic => pic.nombre))
-       return( 
-         <ImageList>
-        { imageArr[index].map(pics => {
-
-          return(
-     <ImageListItem key={pics}>
-         <img alt="imagen" src={`${baseURL}${pics}`}/>
-         </ImageListItem>
-          )}      
-)}
-         </ImageList>
-       )
-      default:
-        <Typography>Cargando respuestas</Typography>;
-    }
-     } else return <Typography>Cargando</Typography>
-  };
+        case "Respuestas del 1-10":
+          const marks = answers[0].map(e => {
+            return { value: Number(e["nombre"]), label: e["nombre"] }
+          })
+          return (
+            <Slider
+              valueLabelDisplay="auto"
+              aria-label="Custom marks"
+              min={1}
+              marks={marks}
+              max={10}
+              step={1}
+            />
+          )
+        case "Texto":
+          return (
+            <TextField
+              label="Introduce tu respuesta"
+              variant="standard"
+              fullWidth
+            />
+          )
+        case "Sexo":
+          return (
+            <FormControl component="fieldset">
+              <RadioGroup row>
+                <FormControlLabel
+                  value="Masculino"
+                  control={<Radio />}
+                  label="Masculino"
+                />
+                <FormControlLabel
+                  value="Femenino"
+                  control={<Radio />}
+                  label="Femenino"
+                />
+              </RadioGroup>
+            </FormControl>
+          )
+        case "Autos":
+          const imageArr = answers.map(i => i.map(pic => pic.nombre))
+          return (
+            <ImageList>
+              {imageArr[index].map(pics => {
+                return (
+                  <ImageListItem key={pics}>
+                    <img alt="imagen" src={`${baseURL}${pics}`} />
+                    <ImageListItemBar
+                      title="Elegir"
+                      position="top"
+                      actionIcon={
+                        <IconButton sx={{ color: "white" }}>
+                          <CheckBox size="large" />
+                        </IconButton>
+                      }
+                      //  actionPosition="left"
+                    />
+                  </ImageListItem>
+                )
+              })}
+            </ImageList>
+          )
+        default:
+          ;<Typography>Cargando respuestas</Typography>
+      }
+    } else return <Typography>Cargando</Typography>
+  }
   const sendAnswers = e => {
-    e.preventDefault();
+    e.preventDefault()
     Swal.fire({
       title: "¿Deseas enviar tus respuestas?",
       icon: "question",
@@ -198,8 +211,8 @@ function Formularios(props) {
       cancelButtonColor: "#d33",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar"
-    });
-  };
+    })
+  }
 
   return (
     <div className={classes.root}>
@@ -213,31 +226,29 @@ function Formularios(props) {
           "& button": { ml: { lg: 75, md: 55, sm: 35, xs: 3 } }
         }}
       >
-            {!start &&
-        <Card className={classes.card}>
-          <Typography variant="h6" component="div">
-            Instrucciones:
-          </Typography>
-          <CardContent>
-            <Typography variant="body1">
-              {quiz.indicaciones}
+        {!start &&
+          <Card className={classes.card}>
+            <Typography variant="h6" component="div">
+              Instrucciones:
             </Typography>
-          </CardContent>
-          <CardActions>
-        
+            <CardContent>
+              <Typography variant="body1">
+                {quiz.indicaciones}
+              </Typography>
+            </CardContent>
+            <CardActions>
               <Button
-               // size="large"
                 color="info"
                 variant="outlined"
                 onClick={() => {
-                  // variant="contained"
-                  setStart(!start);
+                  // size="large"
+                  setStart(!start)
                 }}
               >
                 Iniciar cuestionario
               </Button>
-          </CardActions>
-        </Card>}
+            </CardActions>
+          </Card>}
       </Box>
       <Divider />
       {start &&
@@ -246,8 +257,9 @@ function Formularios(props) {
           sx={{
             mt: 3,
             display: "flex",
-
-            alignSelf: "center"
+            alignSelf: "center",
+            width: "80%",
+            overflow: "scroll"
           }}
         >
           {sections.length !== 0 &&
@@ -258,26 +270,37 @@ function Formularios(props) {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                maxHeight: 650,
-                overflow: "scroll",
-                "& button":{ fontSize:{xs:12,lg:14, xl:14}, m:1.5, ml:{s:4, md:12, lg:14, xl:18}},
+                width: "100%",
+                "& button": {
+                  fontSize: { xs: 12, lg: 14, xl: 14 },
+                  m: 2,
+                  mt: 4,
+                  ml: { s: 4, md: 12, lg: 14, xl: 18 }
+                },
                 "& p": {
                   fontSize: { xs: 14, sm: 18, md: 18, lg: 20, xl: 22 },
                   pt: 3
                 },
                 "& h4": {
                   textAlign: "center",
-                  fontSize: { xs: 16, lg: 22 },
-                  fontWeight: "bold"
+                  alignSelf: "center",
+                  fontSize: { xs: 16, lg: 22, xl: 26 },
+                  fontWeight: "bold",
+                  width: 350,
+                  color: "white",
+                  borderRadius: 4,
+                  backgroundColor: "darkviolet",
+                  p: 2
                 }
-              }}
+              } // maxHeight: 650,
+              }
             >
               <Typography variant="h4">
                 {`Sección ${sectionIndex + 1}: 
              ${sections[sectionIndex].nombreSeccion}`}
               </Typography>
-              <Divider />
-              {questions.map((question, i) => {   
+              {/* <Divider /> */}
+              {questions.map((question, i) => {
                 return (
                   <div key={i}>
                     <Typography variant="body1">
@@ -285,7 +308,7 @@ function Formularios(props) {
                     </Typography>
                     {displayAnswers(i)}
                   </div>
-                );
+                )
               })}
               <div>
                 {sectionIndex !== 0 &&
@@ -312,7 +335,7 @@ function Formularios(props) {
             </Box>}
         </Box>}
     </div>
-  );
+  )
 }
 
-export default Formularios;
+export default Formularios

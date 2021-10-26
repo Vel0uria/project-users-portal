@@ -1,6 +1,6 @@
-import React, { useEffect, useContext, useState } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import React, { useEffect, useContext, useState } from "react"
+import axios from "axios"
+import { Link } from "react-router-dom"
 import {
   Table,
   TableBody,
@@ -14,14 +14,15 @@ import {
   Typography,
   TextField,
   Toolbar,
-  Box, InputAdornment
-} from "@mui/material";
-import ForwardIcon from "@mui/icons-material/Forward";
-import FolderSharedIcon from "@mui/icons-material/FolderShared";
-import  SearchTwoTone from "@mui/icons-material/SearchTwoTone"
-import { makeStyles } from "@material-ui/core/styles";
-import bgImage from "../assets/dashboard.jpg";
-import { MyContext } from "../services/Context";
+  Box,
+  InputAdornment
+} from "@mui/material"
+import ForwardIcon from "@mui/icons-material/Forward"
+import FolderSharedIcon from "@mui/icons-material/FolderShared"
+import SearchTwoTone from "@mui/icons-material/SearchTwoTone"
+import { makeStyles } from "@material-ui/core/styles"
+import bgImage from "../assets/dashboard.jpg"
+import { MyContext } from "../services/Context"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -65,21 +66,21 @@ const useStyles = makeStyles(theme => ({
   tableContainer: {
     marginTop: theme.spacing(5)
   }
-}));
+}))
 //PENDIENTES:
 //Ajustar posición de items en Toolbar
 function Diagnosticos() {
-  const classes = useStyles();
-  const user = JSON.parse(localStorage.getItem("USER"));
-  const token = user.token;
-  const { changePlace } = useContext(MyContext);
-  const [dataRows, setRows] = useState([]);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [page, setPage] = useState(0);
+  const classes = useStyles()
+  const user = JSON.parse(localStorage.getItem("USER"))
+  const token = user.token
+  const { changePlace } = useContext(MyContext)
+  const [dataRows, setRows] = useState([])
+  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [page, setPage] = useState(0)
 
   useEffect(
     () => {
-      changePlace("Diagnósticos");
+      changePlace("Diagnósticos")
       axios
         .get(
           "https://impulsorintelectualhumanista.com/capacitacion/portafolio/consultarPortafolio",
@@ -88,24 +89,24 @@ function Diagnosticos() {
           }
         )
         .then(({ data }) => {
-          const category = data.result.portafolio;
+          const category = data.result.portafolio
 
-          setRows(category);
+          setRows(category)
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
     [token, changePlace, setRows]
-  );
+  )
   const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+    setPage(newPage)
+  }
 
   const handleChangeRowsPerPage = event => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+    setRowsPerPage(parseInt(event.target.value, 10))
+    setPage(0)
+  }
   // console.log(
   //   dataRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
   // );
@@ -118,36 +119,48 @@ function Diagnosticos() {
         <Toolbar
           sx={{
             mt: 1,
-            pl: { sm: 2, md:3, lg:4, xl:4 },
-            pr: { xs: 1, sm: 1,  },
+            pl: { sm: 2, md: 3, lg: 4, xl: 4 },
+            pr: { xs: 1, sm: 1 },
             "& .MuiTextField-root": {
-              mt:1,
-              ml: { xl: 180, lg: 115, md: 65, sm: 45, xs: 0 },
-              width: { xs: "15ch", sm:"18ch", md:"20ch", lg:"25ch", xl:"25ch" }
-            }, 
+              mt: 1,
+              ml: { xl: 130, lg: 115, md: 65, sm: 45, xs: 0 },
+              width: {
+                xs: "15ch",
+                sm: "18ch",
+                md: "20ch",
+                lg: "25ch",
+                xl: "25ch"
+              }
+            }
           }}
         >
           <Box
             type="div"
             mt={0.5}
             p={1}
-            sx={{ display: "flex", "& h4": { p: 1, fontSize: { xs: 14, s:16, md:18, lg:20, xl:22 } } }}
+            sx={{
+              display: "flex",
+              "& h4": {
+                p: 1,
+                fontSize: { xs: 14, s: 16, md: 18, lg: 20, xl: 22 }
+              }
+            }}
           >
             <FolderSharedIcon fontSize="large" color="primary" />
             <Typography variant="h4">Mi portafolio </Typography>
           </Box>
           <TextField
             label="Buscar registros"
-            //variant="standard"
+            variant="outlined"
             size="small"
             type="search"
-             InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchTwoTone />
-            </InputAdornment>
-          ),
-        }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchTwoTone />
+                </InputAdornment>
+              )
+            }}
           />
         </Toolbar>
         <Table className={classes.table} aria-label="simple table">
@@ -214,7 +227,7 @@ function Diagnosticos() {
         />
       </TableContainer>
     </div>
-  );
+  )
 }
 
-export default Diagnosticos;
+export default Diagnosticos

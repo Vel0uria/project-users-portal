@@ -19,18 +19,20 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "#b5c6da"
   },
   backIcon: {
-    marginRight: theme.spacing(10),
+    [theme.breakpoints.down("sm")]: {
+      marginRight: theme.spacing(10)
+    },
     [theme.breakpoints.between("sm", "md")]: {
       marginRight: theme.spacing(60)
     },
     [theme.breakpoints.between("md", "lg")]: {
-      marginRight: theme.spacing(144)
+      marginRight: theme.spacing(100)
     },
-    [theme.breakpoints.only("md")]: {
-      marginRight: theme.spacing(115)
+    [theme.breakpoints.between("lg", "xl")]: {
+      marginRight: theme.spacing(120)
     },
-    [theme.breakpoints.up("lg")]: {
-      marginRight: theme.spacing(215)
+    [theme.breakpoints.up("xl")]: {
+      marginRight: theme.spacing(200)
     }
   }
 }))
@@ -62,7 +64,7 @@ const NavBar = props => {
       <Toolbar className={classes.toolBar}>
         {state.place !== "Dashboard" &&
           <IconButton className={classes.backIcon} onClick={history.goBack}>
-            <ArrowBackIcon fontSize="large" />
+            <ArrowBackIcon fontSize="large" color="primary" />
           </IconButton>}
         {state.place !== "Dashboard" &&
           <Link to="/dashboard">
