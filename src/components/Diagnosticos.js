@@ -23,6 +23,7 @@ import SearchTwoTone from "@mui/icons-material/SearchTwoTone"
 import { makeStyles } from "@material-ui/core/styles"
 import bgImage from "../assets/dashboard.jpg"
 import { MyContext } from "../services/Context"
+import { Divider } from "@material-ui/core"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,12 +43,12 @@ const useStyles = makeStyles(theme => ({
     }
   },
   title: {
-    textAlign: "center",
-    backgroundColor: "#FF6347DA",
-    alignSelf: "center",
-    width: 900,
-    color: "white",
-    borderRadius: 4,
+    //textAlign: "center",
+    // backgroundColor: "#FF6347DA",
+    //alignSelf: "center",
+    //width: 900,
+    color: "#2383d3",
+    //borderRadius: 4,
     [theme.breakpoints.between("sm", "md")]: {
       fontSize: "1.5rem",
       width: 700
@@ -67,8 +68,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(5)
   }
 }))
-//PENDIENTES:
-//Ajustar posición de items en Toolbar
+
 function Diagnosticos() {
   const classes = useStyles()
   const user = JSON.parse(localStorage.getItem("USER"))
@@ -107,23 +107,22 @@ function Diagnosticos() {
     setRowsPerPage(parseInt(event.target.value, 10))
     setPage(0)
   }
-  // console.log(
-  //   dataRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-  // );
+
   return (
     <div className={classes.root}>
-      <Typography variant="h3" className={classes.title}>
+      <Typography variant="h2" className={classes.title}>
         Diagnósticos
       </Typography>
+      <Divider />
       <TableContainer component={Paper} className={classes.tableContainer}>
         <Toolbar
           sx={{
-            mt: 1,
+            mt: 1.5,
             pl: { sm: 2, md: 3, lg: 4, xl: 4 },
             pr: { xs: 1, sm: 1 },
             "& .MuiTextField-root": {
               mt: 1,
-              ml: { xl: 130, lg: 115, md: 65, sm: 45, xs: 0 },
+              ml: { xl: 170, lg: 115, md: 65, sm: 45, xs: 0 },
               width: {
                 xs: "15ch",
                 sm: "18ch",
@@ -142,11 +141,11 @@ function Diagnosticos() {
               display: "flex",
               "& h4": {
                 p: 1,
-                fontSize: { xs: 14, s: 16, md: 18, lg: 20, xl: 22 }
+                fontSize: { xs: 14, s: 16, md: 18, lg: 26, xl: 22 }
               }
             }}
           >
-            <FolderSharedIcon fontSize="large" color="primary" />
+            <FolderSharedIcon fontSize="large" color="info" />
             <Typography variant="h4">Mi portafolio </Typography>
           </Box>
           <TextField

@@ -12,7 +12,7 @@ import {
   CardMedia,
   CardContent,
   IconButton,
-  Divider,
+  //Divider,
   Drawer,
   Toolbar,
   ListItemIcon,
@@ -22,8 +22,10 @@ import {
   Tab,
   Tabs,
   ListItem,
-  ListItemButton
+  ListItemButton,
+  CardHeader
 } from "@mui/material"
+import Divider from "@mui/material/Divider"
 import {
   ExpandLess,
   ExpandMore,
@@ -32,6 +34,7 @@ import {
   CloudDownload,
   SendRounded
 } from "@material-ui/icons"
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks"
 import { makeStyles } from "@material-ui/core/styles"
 import bgImage from "../assets/dashboard.jpg"
 import { MyContext } from "../services/Context"
@@ -52,18 +55,19 @@ const useStyles = makeStyles(theme => ({
     },
     [theme.breakpoints.up("lg")]: {
       height: theme.spacing(175)
+    },
+    "& h3": {
+      marginLeft: drawerWidth,
+      //reemplazar valores negativos
+      marginTop: -20
     }
   },
   title: {
-    textAlign: "center",
-    marginLeft: drawerWidth,
-    marginTop: -30,
-    backgroundColor: "#FF6347DA",
-    alignSelf: "center",
-    width: 900,
-    color: "white",
-    borderRadius: 4,
-    padding: theme.spacing(1),
+    //textAlign: "center",
+    //backgroundColor: "#FF6347DA",
+    //alignSelf: "center",
+    color: "grey",
+    padding: theme.spacing(1.5),
     [theme.breakpoints.between("sm", "md")]: {
       fontSize: ["1.5rem", "!important"],
       width: 700
@@ -77,14 +81,14 @@ const useStyles = makeStyles(theme => ({
   },
   card: {
     marginTop: theme.spacing(1),
-    backgroundColor: "#FFFFFF9E",
+    backgroundColor: ["#F8F8FFb3", "!important"],
     width: "95%",
     "& .MuiCardMedia-root": {
       [theme.breakpoints.only("md")]: {
         marginLeft: 40
       },
       [theme.breakpoints.up("lg")]: {
-        //  marginLeft: 110
+        //marginLeft: 100
       }
     }
   },
@@ -133,7 +137,10 @@ const useStyles = makeStyles(theme => ({
 }))
 
 //PENDIENTES:
+
 //Card y Tabs: Responsivo en móvil
+//Agregar descripción en otra Tab
+//Título
 
 const Cursos = props => {
   const classes = useStyles()
@@ -305,6 +312,7 @@ const Cursos = props => {
   )
   function TabPanel(props) {
     const { v, index, children } = props
+
     return (
       <div
         role="tabpanel"
@@ -335,9 +343,16 @@ const Cursos = props => {
           </IconButton>
         </Tooltip>
       </Toolbar>
-      <Typography variant="h3" className={classes.title}>
+      {/* <Box> */}
+      {/* <Typography variant="h3" className={classes.title}>
         {courses.nombreCurso}
       </Typography>
+      <Divider flexItem orientation="vertical" /> */}
+      {/* </Box> */}
+      {/* <IconButton>
+          <LibraryBooksIcon fontSize="large" />
+        </IconButton> */}
+
       <Box
         component="main"
         sx={{
@@ -348,6 +363,17 @@ const Cursos = props => {
         }}
       >
         <Card variant="outlined" className={classes.card}>
+          <CardHeader
+            sx={{
+              alignSelf: "center",
+              background:
+                "linear-gradient(to bottom, rgba(181,198,218) 0%, " +
+                "rgba(191,208,228) 70%, rgba(0,0,0,0) 100%)"
+            }}
+            title={courses.nombreCurso}
+            avatar={<LibraryBooksIcon color="warning" fontSize="large" />}
+            titleTypographyProps={{ fontSize: "2.5rem", color: "SlateGrey" }}
+          />
           <CardMedia
             className={classes.media}
             height="450"
@@ -355,12 +381,6 @@ const Cursos = props => {
             src={`${baseURL}/${media}`}
             allowFullScreen
           />
-          <CardContent>
-            <Typography align="justify" variant="h6">
-              En este curso {courses.descripcionGeneral}
-            </Typography>
-          </CardContent>
-
           {lessonId !== null &&
             <CardActions>
               <TextField
@@ -391,13 +411,19 @@ const Cursos = props => {
               scrollButtons="auto"
               allowScrollButtonsMobile
             >
+              <Tab label="Descripción" />
               <Tab label="Comentarios" />
               <Tab label="Recursos" />
-              <Tab label="Cuestionario" />
+              <Tab label="Evaluación" />
             </Tabs>
           </CardActions>
           <CardContent>
             <TabPanel v={val} index={0}>
+              <Typography align="justify" variant="h6">
+                En este curso {courses.descripcionGeneral}
+              </Typography>
+            </TabPanel>
+            <TabPanel v={val} index={1}>
               {lessonId === null &&
                 <Typography>
                   Elige una lección para mostrar los comentarios
@@ -426,7 +452,7 @@ const Cursos = props => {
                   })}
               </List>
             </TabPanel>
-            <TabPanel v={val} index={1}>
+            <TabPanel v={val} index={2}>
               {files.map((file, i) => {
                 return (
                   <List key={i}>

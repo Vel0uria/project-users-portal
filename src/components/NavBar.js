@@ -16,7 +16,8 @@ const useStyles = makeStyles(theme => ({
   toolBar: {
     display: "flex",
     justifyContent: "flex-end",
-    backgroundColor: "#b5c6da"
+    backgroundColor: "#b5c6da",
+    padding: 1
   },
   backIcon: {
     [theme.breakpoints.down("sm")]: {
@@ -70,23 +71,23 @@ const NavBar = props => {
           <Link to="/dashboard">
             <IconButton>
               <Tooltip title="dashboard">
-                <HomeTwoTone />
+                <HomeTwoTone fontSize="large" />
               </Tooltip>
             </IconButton>
           </Link>}
         <Tooltip title="bandeja de entrada">
           <IconButton>
-            <InboxTwoTone />
+            <InboxTwoTone fontSize="large" />
           </IconButton>
         </Tooltip>
         <Tooltip title="notificaciones">
           <IconButton>
-            <NotificationsActiveTwoTone />
+            <NotificationsActiveTwoTone fontSize="large" />
           </IconButton>
         </Tooltip>
         <Tooltip title="cerrar sesión">
           <IconButton onClick={handleLogout}>
-            <ExitToApp />
+            <ExitToApp fontSize="large" />
           </IconButton>
         </Tooltip>
       </Toolbar>

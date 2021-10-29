@@ -7,7 +7,6 @@ import {
   Slider,
   Typography,
   Button,
-  Divider,
   Paper,
   FormGroup,
   FormControlLabel,
@@ -22,8 +21,9 @@ import {
   Radio,
   FormControl,
   ImageListItemBar,
-  IconButton
+  Divider
 } from "@mui/material"
+
 import { makeStyles } from "@material-ui/core/styles"
 import bgImage from "../assets/dashboard.jpg"
 import { CheckBox } from "@mui/icons-material"
@@ -102,6 +102,7 @@ function Formularios(props) {
           const sections = data.result.secciones
           const questions = sections[sectionIndex].preguntas
           const answers = questions.map(a => a.catalogo.respuestas)
+          //console.log(questions)
           setQuiz(quiz)
           setSections(sections)
           setQuestions(questions)
@@ -175,21 +176,24 @@ function Formularios(props) {
           )
         case "Autos":
           const imageArr = answers.map(i => i.map(pic => pic.nombre))
+
           return (
             <ImageList>
               {imageArr[index].map(pics => {
                 return (
-                  <ImageListItem key={pics}>
+                  <ImageListItem key={pics} loading="cargando imagen">
                     <img alt="imagen" src={`${baseURL}${pics}`} />
                     <ImageListItemBar
+                      sx={{
+                        pl: 2,
+                        background:
+                          "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
+                          "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
+                      }}
                       title="Elegir"
                       position="top"
-                      actionIcon={
-                        <IconButton sx={{ color: "white" }}>
-                          <CheckBox size="large" />
-                        </IconButton>
-                      }
-                      //  actionPosition="left"
+                      actionIcon={<CheckBox size="large" color="primary" />}
+                      actionPosition="left"
                     />
                   </ImageListItem>
                 )
@@ -292,14 +296,12 @@ function Formularios(props) {
                   backgroundColor: "darkviolet",
                   p: 2
                 }
-              } // maxHeight: 650,
-              }
+              }}
             >
               <Typography variant="h4">
                 {`Sección ${sectionIndex + 1}: 
              ${sections[sectionIndex].nombreSeccion}`}
               </Typography>
-              {/* <Divider /> */}
               {questions.map((question, i) => {
                 return (
                   <div key={i}>
