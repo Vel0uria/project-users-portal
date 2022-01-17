@@ -43,12 +43,8 @@ const useStyles = makeStyles(theme => ({
     }
   },
   title: {
-    //textAlign: "center",
-    // backgroundColor: "#FF6347DA",
-    //alignSelf: "center",
-    //width: 900,
     color: "#2383d3",
-    //borderRadius: 4,
+
     [theme.breakpoints.between("sm", "md")]: {
       fontSize: "1.5rem",
       width: 700

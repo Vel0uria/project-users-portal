@@ -5,7 +5,7 @@ const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/api"
 class AuthService {
   constructor() {
     this.service = axios.create({
-      baseURL,
+      baseURL
     })
   }
 
@@ -14,7 +14,12 @@ class AuthService {
   }
   postComment(data, token) {
     return this.service.post("/guardarComentarios", data, {
-      headers: { Authorization: token },
+      headers: { Authorization: token }
+    })
+  }
+  postForm(data, token) {
+    return this.service.post("/formularios/guardarEjecucion", data, {
+      headers: { Authorization: token, plataforma: 1 }
     })
   }
 }

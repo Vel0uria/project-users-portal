@@ -88,6 +88,21 @@ function Formularios(props) {
   const [questions, setQuestions] = useState([])
   const [answers, setAnswers] = useState([])
   const [sectionIndex, setSectionIndex] = useState(0)
+  const currentDate = new Date()
+  const currentDayOfMonth = currentDate.getDate()
+  const currentMonth = currentDate.getMonth()
+  const currentYear = currentDate.getFullYear()
+  const timestamp = currentDate.toLocaleTimeString()
+
+  const dateString =
+    currentYear +
+    "-" +
+    (currentMonth + 1) +
+    "-" +
+    currentDayOfMonth +
+    " " +
+    timestamp
+  console.log(typeof dateString)
   //const [mobile, setMobile] = useState(false);
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
   useEffect(
@@ -102,7 +117,7 @@ function Formularios(props) {
           const sections = data.result.secciones
           const questions = sections[sectionIndex].preguntas
           const answers = questions.map(a => a.catalogo.respuestas)
-          //console.log(questions)
+
           setQuiz(quiz)
           setSections(sections)
           setQuestions(questions)
