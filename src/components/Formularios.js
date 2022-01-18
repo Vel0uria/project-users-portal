@@ -2,6 +2,8 @@ import React, { useEffect, useContext, useState } from "react"
 import axios from "axios"
 import Swal from "sweetalert2"
 import { MyContext } from "../services/Context"
+import AuthService from "../services/auth"
+import useForm from "./useForm"
 import {
   Box,
   Slider,
@@ -75,19 +77,26 @@ const useStyles = makeStyles(theme => ({
 }))
 
 //PENDIENTES: mapear questions.catalogo.nombre para saber el tipo de respuesta
-
+//Replantear según tipo de respuesta con idTipoRespuesta dentro de "preguntas":
+//1.- Texto (textbox)
+//2.- Única (radioButon, select, dezplazamiento )
+//3.- Múltiple (checkbox)
+//Validaciones para textbox: limitar entrada de caracteres según idTipoValidacion dentro de "preguntas"
 function Formularios(props) {
   const { id } = props.match.params
   const classes = useStyles()
   const { changePlace } = useContext(MyContext)
   const user = JSON.parse(localStorage.getItem("USER"))
   const token = user.token
+  const authService = new AuthService()
   const [start, setStart] = useState(false)
   const [quiz, setQuiz] = useState({})
   const [sections, setSections] = useState([])
   const [questions, setQuestions] = useState([])
   const [answers, setAnswers] = useState([])
+  // const [requiredText, setRequired] = useState(true)
   const [sectionIndex, setSectionIndex] = useState(0)
+  const [form, handleInputs] = useForm()
   const currentDate = new Date()
   const currentDayOfMonth = currentDate.getDate()
   const currentMonth = currentDate.getMonth()
@@ -102,8 +111,7 @@ function Formularios(props) {
     currentDayOfMonth +
     " " +
     timestamp
-  console.log(typeof dateString)
-  //const [mobile, setMobile] = useState(false);
+
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
   useEffect(
     () => {
@@ -117,7 +125,6 @@ function Formularios(props) {
           const sections = data.result.secciones
           const questions = sections[sectionIndex].preguntas
           const answers = questions.map(a => a.catalogo.respuestas)
-
           setQuiz(quiz)
           setSections(sections)
           setQuestions(questions)
@@ -138,21 +145,40 @@ function Formularios(props) {
     }
   }
 
+  function setRequiredAnswer(question, required) {
+    if (required === 1) {
+      return (
+        <Typography variant="body1">
+          {question}*
+        </Typography>
+      )
+    } else {
+      return (
+        <Typography variant="body1">
+          {question} (opcional)
+        </Typography>
+      )
+    }
+  }
+
   const displayAnswers = index => {
     if (answers.length !== 0) {
       const newArr = questions.map(name => name.catalogo.nombre)
-
       switch (newArr[index]) {
         case "Si /No":
           return (
             <FormGroup>
               <FormControlLabel control={<Checkbox />} label="Sí" />
+
               <FormControlLabel control={<Checkbox />} label="No" />
             </FormGroup>
           )
         case "Respuestas del 1-10":
           const marks = answers[0].map(e => {
-            return { value: Number(e["nombre"]), label: e["nombre"] }
+            return {
+              value: Number(e["nombre"]),
+              label: e["nombre"]
+            }
           })
           return (
             <Slider
@@ -167,7 +193,8 @@ function Formularios(props) {
         case "Texto":
           return (
             <TextField
-              label="Introduce tu respuesta"
+              label=""
+              onChange={handleInputs}
               variant="standard"
               fullWidth
             />
@@ -230,9 +257,19 @@ function Formularios(props) {
       cancelButtonColor: "#d33",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar"
+    }).then(result => {
+      if (result.isConfirmed) {
+        authService
+          .postForm(dateString, token)
+          .then(res => {
+            console.log(res)
+          })
+          .catch(err => {
+            console.log(err, token)
+          })
+      }
     })
   }
-
   return (
     <div className={classes.root}>
       <Typography variant="h3" className={classes.title}>
@@ -309,7 +346,8 @@ function Formularios(props) {
                   color: "white",
                   borderRadius: 4,
                   backgroundColor: "darkviolet",
-                  p: 2
+                  p: 2,
+                  mb: 6
                 }
               }}
             >
@@ -317,12 +355,13 @@ function Formularios(props) {
                 {`Sección ${sectionIndex + 1}: 
              ${sections[sectionIndex].nombreSeccion}`}
               </Typography>
+              <Typography variant="h6" color="royalblue">
+                Las preguntas marcadas con asterisco (*) son obligatorias
+              </Typography>
               {questions.map((question, i) => {
                 return (
                   <div key={i}>
-                    <Typography variant="body1">
-                      {question.pregunta}
-                    </Typography>
+                    {setRequiredAnswer(question.pregunta, question.obligatorio)}
                     {displayAnswers(i)}
                   </div>
                 )

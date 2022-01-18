@@ -19,7 +19,7 @@ class AuthService {
   }
   postForm(data, token) {
     return this.service.post("/formularios/guardarEjecucion", data, {
-      headers: { Authorization: token, plataforma: 1 }
+      headers: { Authorization: token }
     })
   }
 }
