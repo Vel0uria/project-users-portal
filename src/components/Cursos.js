@@ -32,7 +32,8 @@ import {
   MenuTwoTone,
   MenuBookTwoTone,
   CloudDownload,
-  SendRounded
+  SendRounded,
+  SchoolRounded
 } from "@material-ui/icons"
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks"
 import { makeStyles } from "@material-ui/core/styles"
@@ -45,6 +46,7 @@ const drawerWidth = 300
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundImage: `url(${bgImage})`,
+
     backgroundSize: "cover",
     backgroundPosition: "center",
     display: "flex",
@@ -54,7 +56,10 @@ const useStyles = makeStyles(theme => ({
       marginTop: 0
     },
     [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(175)
+      height: theme.spacing(125)
+    },
+    [theme.breakpoints.up("xl")]: {
+      height: theme.spacing(140)
     },
     "& h3": {
       marginLeft: drawerWidth,
@@ -102,11 +107,15 @@ const useStyles = makeStyles(theme => ({
     }
   },
   list: {
-    backgroundColor: "#b5c6da"
+    backgroundColor: "#b5c6da",
+    height: "100%"
   },
   permanetDrawer: {
-    height: "windowHeight",
-    backgroundColor: "#3979a078",
+    height: theme.spacing(80),
+    backgroundColor: "#b5c6da",
+    //backgroundColor: "#3979a078",
+    overflow: "scroll",
+    scrollBehavior: "smooth",
     [theme.breakpoints.between("md", "lg")]: {
       backgroundColor: "#FFFFFF9E"
     },
@@ -139,8 +148,6 @@ const useStyles = makeStyles(theme => ({
 //PENDIENTES:
 
 //Card y Tabs: Responsivo en móvil
-//Agregar descripción en otra Tab
-//Título
 
 const Cursos = props => {
   const classes = useStyles()
@@ -170,6 +177,7 @@ const Cursos = props => {
           headers: { Authorization: token }
         })
         .then(({ data }) => {
+          console.log(data)
           const courses = data.result
           setCourses(courses)
           setSections(courses.listaContenido)
@@ -307,6 +315,16 @@ const Cursos = props => {
             </div>
           )
         })}
+        <ListItemButton>
+          <ListItemIcon>
+            <SchoolRounded fontSize="large" color="primary" />
+          </ListItemIcon>
+          <ListItemText
+            primary="Presentar examen"
+            primaryTypographyProps={{ variant: "h6", color: "textPrimary" }}
+          />
+        </ListItemButton>
+        <Divider />
       </List>
     </div>
   )
