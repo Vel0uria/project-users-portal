@@ -4,6 +4,7 @@ import Swal from "sweetalert2"
 import { MyContext } from "../services/Context"
 import AuthService from "../services/auth"
 import useForm from "./useForm"
+import ValidateText from "./validateText"
 import {
   Box,
   Slider,
@@ -12,7 +13,6 @@ import {
   Paper,
   FormGroup,
   FormControlLabel,
-  TextField,
   Checkbox,
   Card,
   CardActions,
@@ -94,7 +94,6 @@ function Formularios(props) {
   const [sections, setSections] = useState([])
   const [questions, setQuestions] = useState([])
   const [answers, setAnswers] = useState([])
-  // const [requiredText, setRequired] = useState(true)
   const [sectionIndex, setSectionIndex] = useState(0)
   const [form, handleInputs] = useForm()
   const currentDate = new Date()
@@ -163,10 +162,12 @@ function Formularios(props) {
       )
     }
   }
+
+
+
   const displayAnswers = index => {
     if (answers.length !== 0) {
       const newArr = questions.map(name => name.catalogo.nombre)
-    
       switch (newArr[index]) {
         case "Si /No":
           return (
@@ -194,21 +195,15 @@ function Formularios(props) {
             />
           )
         case "Texto":
+         
           return (
-            <TextField
-              label=""
-              onChange={handleInputs}
-              variant="standard"
-              fullWidth
-              name="respuesta"
-            />
+            ValidateText(questions[index].idTipoValidacion, handleInputs)
           )
         case "Sexo":
           return (
             <FormControl component="fieldset" style={{ display: "block" }}>
               <RadioGroup row>
-                <FormControlLabel
-                
+                <FormControlLabel   
                   value="Masculino"
                   control={<Radio />}
                   label="Masculino"
@@ -260,6 +255,7 @@ function Formularios(props) {
   }
 
 
+
   const sendAnswers = e => {
     e.preventDefault()
     Swal.fire({
@@ -272,9 +268,8 @@ function Formularios(props) {
       cancelButtonText: "Cancelar"
     }).then(result => {
       if (result.isConfirmed) {
-     
    getEndDate(form.fechaHoraTermino)
-      console.log(form);
+
         // authService
         //   .postForm(form, token)
         //   .then(res => {

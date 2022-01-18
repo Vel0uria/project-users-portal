@@ -161,6 +161,7 @@ const Login = props => {
             name="contrasena"
             onChange={handleInputs}
             helperText={helpText}
+            type="password"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
