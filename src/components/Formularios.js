@@ -102,7 +102,6 @@ function Formularios(props) {
   const currentMonth = currentDate.getMonth()
   const currentYear = currentDate.getFullYear()
   const timestamp = currentDate.toLocaleTimeString()
-
   const dateString =
     currentYear +
     "-" +
@@ -144,14 +143,18 @@ function Formularios(props) {
       setSectionIndex(sectionIndex + 1)
     }
   }
-
   function setRequiredAnswer(question, required) {
+
     if (required === 1) {
       return (
-        <Typography variant="body1">
-          {question}*
+        <>
+      <Typography variant="body1" style={{ display: "inline-block" }}>
+          {question}
         </Typography>
-      )
+        <Typography style={{ display: "inline-block", color:"crimson"}}>
+          *
+        </Typography>
+        </>)
     } else {
       return (
         <Typography variant="body1">
@@ -160,10 +163,10 @@ function Formularios(props) {
       )
     }
   }
-
   const displayAnswers = index => {
     if (answers.length !== 0) {
       const newArr = questions.map(name => name.catalogo.nombre)
+    
       switch (newArr[index]) {
         case "Si /No":
           return (
@@ -197,13 +200,15 @@ function Formularios(props) {
               onChange={handleInputs}
               variant="standard"
               fullWidth
+              name="respuesta"
             />
           )
         case "Sexo":
           return (
-            <FormControl component="fieldset">
+            <FormControl component="fieldset" style={{ display: "block" }}>
               <RadioGroup row>
                 <FormControlLabel
+                
                   value="Masculino"
                   control={<Radio />}
                   label="Masculino"
@@ -247,6 +252,14 @@ function Formularios(props) {
       }
     } else return <Typography>Cargando</Typography>
   }
+  const getStartDate = () =>{
+    form.fechaHoraInicio = dateString
+  }
+  const getEndDate = () =>{
+    form.echaHoraTermino = dateString
+  }
+
+
   const sendAnswers = e => {
     e.preventDefault()
     Swal.fire({
@@ -259,14 +272,17 @@ function Formularios(props) {
       cancelButtonText: "Cancelar"
     }).then(result => {
       if (result.isConfirmed) {
-        authService
-          .postForm(dateString, token)
-          .then(res => {
-            console.log(res)
-          })
-          .catch(err => {
-            console.log(err, token)
-          })
+     
+   getEndDate(form.fechaHoraTermino)
+      console.log(form);
+        // authService
+        //   .postForm(form, token)
+        //   .then(res => {
+        //     console.log(res)
+        //   })
+        //   .catch(err => {
+        //     console.log(err, token)
+        //   })
       }
     })
   }
@@ -298,7 +314,9 @@ function Formularios(props) {
                 variant="outlined"
                 onClick={() => {
                   // size="large"
+                getStartDate()
                   setStart(!start)
+
                 }}
               >
                 Iniciar cuestionario
