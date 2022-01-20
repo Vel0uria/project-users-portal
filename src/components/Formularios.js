@@ -81,7 +81,6 @@ const useStyles = makeStyles(theme => ({
 //1.- Texto (textbox)
 //2.- Única (radioButon, select, dezplazamiento )
 //3.- Múltiple (checkbox)
-//Validaciones para textbox: limitar entrada de caracteres según idTipoValidacion dentro de "preguntas"
 function Formularios(props) {
   const { id } = props.match.params
   const classes = useStyles()
@@ -96,6 +95,7 @@ function Formularios(props) {
   const [answers, setAnswers] = useState([])
   const [sectionIndex, setSectionIndex] = useState(0)
   const [form, handleInputs] = useForm()
+  const [checkedValue, setChecked] = useState("");
   const currentDate = new Date()
   const currentDayOfMonth = currentDate.getDate()
   const currentMonth = currentDate.getMonth()
@@ -111,6 +111,7 @@ function Formularios(props) {
     timestamp
 
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
+
   useEffect(
     () => {
       changePlace("quiz")
@@ -119,7 +120,6 @@ function Formularios(props) {
           headers: { Authorization: token }
         })
         .then(({ data }) => {
-          form.idEnvio = data.result.idEnvioUnique
           const quiz = data.result
           const sections = data.result.secciones
           const questions = sections[sectionIndex].preguntas
@@ -133,7 +133,7 @@ function Formularios(props) {
           console.log(err)
         })
     },
-    [token, id, changePlace, sectionIndex, form]
+    [token, id, changePlace, sectionIndex]
   )
   function handlePrevious() {
     setSectionIndex(sectionIndex - 1)
@@ -163,17 +163,52 @@ function Formularios(props) {
       )
     }
   }
+  const handleCheck = (event) => {
+    setChecked(event.target.value);
+
+  };
+
   const displayAnswers = index => {
     if (answers.length !== 0) {
       const newArr = questions.map(name => name.catalogo.nombre)
+      //console.log(questions[index].catalogo.respuestas);
       switch (newArr[index]) {
         case "Si /No":
           return (
-            <FormGroup>
-              <FormControlLabel control={<Checkbox />} label="Sí" />
-
-              <FormControlLabel control={<Checkbox />} label="No" />
-            </FormGroup>
+//      <FormControl component="fieldset" style={{ display: "block" }}>
+//  {          questions[index].catalogo.respuestas.map((e,i) => {
+//              return ( 
+//        <RadioGroup
+//        key={i}
+//     aria-labelledby="demo-controlled-radio-buttons-group"
+//     name="controlled-radio-buttons-group"
+//     value={checkedValue}
+//     onChange={handleCheck}
+//   >
+// <FormControlLabel  value={e.nombre} control={<Radio />} label={e.nombre} />
+//   </RadioGroup>)
+//     })}
+//   </FormControl>
+           <div>
+                  <Radio 
+                checked={checkedValue === "si"}
+                 onChange={handleCheck}
+                  value="si"
+ name="radio-buttons"
+        inputProps={{ 'aria-label': 'SI' }}
+                />
+                <Radio
+                 checked={checkedValue === "no"}
+                   onChange={handleCheck}
+                  value="no"
+                   name="radio-buttons"
+        inputProps={{ 'aria-label': 'NO' }}
+                  
+                />  
+           </div>
+              
+   
+           
           )
         case "Respuestas del 1-10":
           const marks = answers[0].map(e => {
@@ -200,16 +235,17 @@ function Formularios(props) {
         case "Sexo":
           return (
             <FormControl component="fieldset" style={{ display: "block" }}>
-              <RadioGroup row>
+              <RadioGroup row value={checkedValue} onChange={handleCheck}> 
                 <FormControlLabel   
                   value="Masculino"
+                  
                   control={<Radio />}
-                  label="Masculino"
+                  label="Femenino"
                 />
                 <FormControlLabel
                   value="Femenino"
                   control={<Radio />}
-                  label="Femenino"
+                  label="Masculino"
                 />
               </RadioGroup>
             </FormControl>
@@ -246,14 +282,24 @@ function Formularios(props) {
     } else return <Typography>Cargando</Typography>
   }
  function  getStartDate(){
-    form.fechaHoraInicio = dateString
+    formData.fechaHoraInicio = dateString
+
   }
 function getEndDate(){
-    form.fechaHoraTermino = dateString
+    formData.fechaHoraTermino = dateString
   }
-
+const questionsForm = questions.map(e => e = {pregunta:e.pregunta, respuesta:checkedValue, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, comentarios:e.comentarios})
+const formData = {
+idEnvio: quiz.idEnvioUnique, 
+tipoEnvio:2,
+nombreFormulario: quiz.nombreFormulario,
+latitud:"",
+longitud:"",
+comentariosGenerales:"",
+secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsForm})
+}
+console.log(formData);
   const sendAnswers = e => {
-    form.tipoEnvio = 2
     e.preventDefault()
     Swal.fire({
       title: "¿Deseas enviar tus respuestas?",
@@ -266,13 +312,11 @@ function getEndDate(){
     }).then(result => {
       if (result.isConfirmed) {
    getEndDate()
-   form.nombreFormulario = quiz.nombreFormulario
-   form.secciones = [{
-     nombreSeccion: sections[sectionIndex].nombreSeccion,
-     preguntas: questions.map(e => e = {pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, comentarios:e.comentarios})
-   }
-  ]
-  console.log(form);
+
+   //form.nombreFormulario = quiz.nombreFormulario
+   //form.secciones = sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsForm})
+
+  
         // authService
         //   .postForm(form, token)
         //   .then(res => {
