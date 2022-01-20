@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useState } from "react"
 import axios from "axios"
 import Swal from "sweetalert2"
 import { MyContext } from "../services/Context"
-import AuthService from "../services/auth"
+//import AuthService from "../services/auth"
 import useForm from "./useForm"
 import ValidateText from "./validateText"
 import {
@@ -88,7 +88,7 @@ function Formularios(props) {
   const { changePlace } = useContext(MyContext)
   const user = JSON.parse(localStorage.getItem("USER"))
   const token = user.token
-  const authService = new AuthService()
+ // const authService = new AuthService()
   const [start, setStart] = useState(false)
   const [quiz, setQuiz] = useState({})
   const [sections, setSections] = useState([])
@@ -119,6 +119,7 @@ function Formularios(props) {
           headers: { Authorization: token }
         })
         .then(({ data }) => {
+          form.idEnvio = data.result.idEnvioUnique
           const quiz = data.result
           const sections = data.result.secciones
           const questions = sections[sectionIndex].preguntas
@@ -132,7 +133,7 @@ function Formularios(props) {
           console.log(err)
         })
     },
-    [token, id, changePlace, sectionIndex]
+    [token, id, changePlace, sectionIndex, form]
   )
   function handlePrevious() {
     setSectionIndex(sectionIndex - 1)
@@ -162,9 +163,6 @@ function Formularios(props) {
       )
     }
   }
-
-
-
   const displayAnswers = index => {
     if (answers.length !== 0) {
       const newArr = questions.map(name => name.catalogo.nombre)
@@ -247,16 +245,15 @@ function Formularios(props) {
       }
     } else return <Typography>Cargando</Typography>
   }
-  const getStartDate = () =>{
+ function  getStartDate(){
     form.fechaHoraInicio = dateString
   }
-  const getEndDate = () =>{
-    form.echaHoraTermino = dateString
+function getEndDate(){
+    form.fechaHoraTermino = dateString
   }
 
-
-
   const sendAnswers = e => {
+    form.tipoEnvio = 2
     e.preventDefault()
     Swal.fire({
       title: "¿Deseas enviar tus respuestas?",
@@ -268,8 +265,14 @@ function Formularios(props) {
       cancelButtonText: "Cancelar"
     }).then(result => {
       if (result.isConfirmed) {
-   getEndDate(form.fechaHoraTermino)
-
+   getEndDate()
+   form.nombreFormulario = quiz.nombreFormulario
+   form.secciones = [{
+     nombreSeccion: sections[sectionIndex].nombreSeccion,
+     preguntas: questions.map(e => e = {pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, comentarios:e.comentarios})
+   }
+  ]
+  console.log(form);
         // authService
         //   .postForm(form, token)
         //   .then(res => {
@@ -281,6 +284,7 @@ function Formularios(props) {
       }
     })
   }
+
   return (
     <div className={classes.root}>
       <Typography variant="h3" className={classes.title}>

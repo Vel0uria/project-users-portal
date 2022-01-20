@@ -177,7 +177,6 @@ const Cursos = props => {
           headers: { Authorization: token }
         })
         .then(({ data }) => {
-          console.log(data)
           const courses = data.result
           setCourses(courses)
           setSections(courses.listaContenido)
