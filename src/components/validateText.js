@@ -13,7 +13,7 @@ const ValidateText = (id, input) => {
           onChange={input}
           variant="standard"
           fullWidth
-          //name="respuesta"
+          name="respuesta"
           type="text"
           required={true}
           //  id={id}

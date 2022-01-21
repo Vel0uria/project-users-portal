@@ -101,6 +101,7 @@ function Formularios(props) {
   const currentMonth = currentDate.getMonth()
   const currentYear = currentDate.getFullYear()
   const timestamp = currentDate.toLocaleTimeString()
+
   const dateString =
     currentYear +
     "-" +
@@ -110,8 +111,9 @@ function Formularios(props) {
     " " +
     timestamp
 
-  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
+const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
 
+// console.log(questionsTest[]);
   useEffect(
     () => {
       changePlace("quiz")
@@ -135,6 +137,22 @@ function Formularios(props) {
     },
     [token, id, changePlace, sectionIndex]
   )
+  function testingQuestions(){
+          const questionsTest = sections.map(e => e.preguntas)
+          const questionsForm = questions.map(e => e = {pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, comentarios:e.comentarios})
+          //const questionsForm = questionsTest.map( val => val.map(e => e[sectionIndex] = {pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, comentarios:e.comentarios}))
+          const formData = {
+idEnvio: quiz.idEnvioUnique, 
+tipoEnvio:2,
+nombreFormulario: quiz.nombreFormulario,
+latitud:"",
+longitud:"",
+comentariosGenerales:"",
+secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsForm})
+}
+return console.log(sections);
+  }
+  console.log(testingQuestions());
   function handlePrevious() {
     setSectionIndex(sectionIndex - 1)
   }
@@ -165,13 +183,13 @@ function Formularios(props) {
   }
   const handleCheck = (event) => {
     setChecked(event.target.value);
-
   };
 
   const displayAnswers = index => {
     if (answers.length !== 0) {
+    //const questionsTest = sections[sectionIndex].preguntas.map(e => e = {pregunta: e.pregunta})
+     
       const newArr = questions.map(name => name.catalogo.nombre)
-      //console.log(questions[index].catalogo.respuestas);
       switch (newArr[index]) {
         case "Si /No":
           return (
@@ -189,6 +207,7 @@ function Formularios(props) {
 //   </RadioGroup>)
 //     })}
 //   </FormControl>
+
            <div>
                   <Radio 
                 checked={checkedValue === "si"}
@@ -205,10 +224,7 @@ function Formularios(props) {
         inputProps={{ 'aria-label': 'NO' }}
                   
                 />  
-           </div>
-              
-   
-           
+           </div>           
           )
         case "Respuestas del 1-10":
           const marks = answers[0].map(e => {
@@ -227,25 +243,25 @@ function Formularios(props) {
               step={1}
             />
           )
-        case "Texto":
-         
+        case "Texto":  
+    //  questionsForm[index].respuesta = form.respuesta
           return (
             ValidateText(questions[index].idTipoValidacion, handleInputs)
           )
         case "Sexo":
+            // questionsForm[index].respuesta = checkedValue
           return (
             <FormControl component="fieldset" style={{ display: "block" }}>
               <RadioGroup row value={checkedValue} onChange={handleCheck}> 
                 <FormControlLabel   
                   value="Masculino"
-                  
                   control={<Radio />}
-                  label="Femenino"
+                  label="Masculino"
                 />
                 <FormControlLabel
                   value="Femenino"
                   control={<Radio />}
-                  label="Masculino"
+                  label="Femenino"
                 />
               </RadioGroup>
             </FormControl>
@@ -282,23 +298,13 @@ function Formularios(props) {
     } else return <Typography>Cargando</Typography>
   }
  function  getStartDate(){
-    formData.fechaHoraInicio = dateString
+  //  formData.fechaHoraInicio = dateString
 
   }
 function getEndDate(){
-    formData.fechaHoraTermino = dateString
+  //  formData.fechaHoraTermino = dateString
   }
-const questionsForm = questions.map(e => e = {pregunta:e.pregunta, respuesta:checkedValue, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, comentarios:e.comentarios})
-const formData = {
-idEnvio: quiz.idEnvioUnique, 
-tipoEnvio:2,
-nombreFormulario: quiz.nombreFormulario,
-latitud:"",
-longitud:"",
-comentariosGenerales:"",
-secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsForm})
-}
-console.log(formData);
+
   const sendAnswers = e => {
     e.preventDefault()
     Swal.fire({
@@ -329,6 +335,8 @@ console.log(formData);
     })
   }
 
+
+
   return (
     <div className={classes.root}>
       <Typography variant="h3" className={classes.title}>
@@ -357,8 +365,9 @@ console.log(formData);
                 variant="outlined"
                 onClick={() => {
                   // size="large"
-                getStartDate()
+             //   getStartDate()
                   setStart(!start)
+                  testingQuestions()
 
                 }}
               >
