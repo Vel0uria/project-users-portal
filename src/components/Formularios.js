@@ -101,6 +101,7 @@ function Formularios(props) {
   const currentMonth = currentDate.getMonth()
   const currentYear = currentDate.getFullYear()
   const timestamp = currentDate.toLocaleTimeString()
+  let getQuestions 
 
   const dateString =
     currentYear +
@@ -137,22 +138,23 @@ const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
     },
     [token, id, changePlace, sectionIndex]
   )
-  function testingQuestions(){
-          const questionsTest = sections.map(e => e.preguntas)
-          const questionsForm = questions.map(e => e = {pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, comentarios:e.comentarios})
-          //const questionsForm = questionsTest.map( val => val.map(e => e[sectionIndex] = {pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, comentarios:e.comentarios}))
-          const formData = {
+
+ const questionsSections = (val) => {
+
+ getQuestions =  val.map(e => e = {pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, comentarios:e.comentarios})
+return getQuestions
+        }
+const formData = {
 idEnvio: quiz.idEnvioUnique, 
 tipoEnvio:2,
 nombreFormulario: quiz.nombreFormulario,
 latitud:"",
 longitud:"",
 comentariosGenerales:"",
-secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsForm})
+secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsSections(e.preguntas)})
 }
-return console.log(sections);
-  }
-  console.log(testingQuestions());
+console.log(formData.secciones);
+;
   function handlePrevious() {
     setSectionIndex(sectionIndex - 1)
   }
@@ -187,9 +189,8 @@ return console.log(sections);
 
   const displayAnswers = index => {
     if (answers.length !== 0) {
-    //const questionsTest = sections[sectionIndex].preguntas.map(e => e = {pregunta: e.pregunta})
-     
       const newArr = questions.map(name => name.catalogo.nombre)
+      const assignAnswer = formData.secciones[sectionIndex].preguntas[index]
       switch (newArr[index]) {
         case "Si /No":
           return (
@@ -244,12 +245,12 @@ return console.log(sections);
             />
           )
         case "Texto":  
-    //  questionsForm[index].respuesta = form.respuesta
+            assignAnswer.respuesta = form.respuesta
           return (
             ValidateText(questions[index].idTipoValidacion, handleInputs)
           )
         case "Sexo":
-            // questionsForm[index].respuesta = checkedValue
+            assignAnswer.respuesta = checkedValue
           return (
             <FormControl component="fieldset" style={{ display: "block" }}>
               <RadioGroup row value={checkedValue} onChange={handleCheck}> 
@@ -268,7 +269,6 @@ return console.log(sections);
           )
         case "Autos":
           const imageArr = answers.map(i => i.map(pic => pic.nombre))
-
           return (
             <ImageList>
               {imageArr[index].map(pics => {
@@ -318,7 +318,7 @@ function getEndDate(){
     }).then(result => {
       if (result.isConfirmed) {
    getEndDate()
-
+console.log(formData);
    //form.nombreFormulario = quiz.nombreFormulario
    //form.secciones = sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsForm})
 
@@ -367,8 +367,6 @@ function getEndDate(){
                   // size="large"
              //   getStartDate()
                   setStart(!start)
-                  testingQuestions()
-
                 }}
               >
                 Iniciar cuestionario
