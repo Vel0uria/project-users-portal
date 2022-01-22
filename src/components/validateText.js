@@ -1,42 +1,43 @@
 import { TextField } from "@mui/material"
-//import useForm from "./useForm"
 
-const ValidateText = (id, input) => {
-  // const [form, handleInputs] = useForm()
-  // const textType = id => {
+import useForm from "./useForm"
+
+function ValidateText({ id, assignAnswer }) {
+  const [form, handleInputs] = useForm()
+  //console.log(assignAnswer)
   switch (id) {
     case 1:
+      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label="Este campo sólo admite letras"
           pattern="[A-Za-z]"
-          onChange={input}
+          onChange={handleInputs}
           variant="standard"
           fullWidth
           name="respuesta"
           type="text"
-          required={true}
-          //  id={id}
-        />
-      )
-    case 2:
-      return (
-        <TextField
-          label="Este campo sólo admite números"
-          onChange={input}
-          variant="standard"
-          fullWidth
-          name="respuesta"
-          type="number"
-          //   id={id}
         />
       )
 
+    case 2:
+      assignAnswer.respuesta = form.respuesta
+      return (
+        <TextField
+          label="Este campo sólo admite números"
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          type="number"
+          name="respuesta"
+        />
+      )
     case 3:
+      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
-          onChange={input}
+          onChange={handleInputs}
           variant="standard"
           fullWidth
           name="respuesta"
@@ -44,10 +45,11 @@ const ValidateText = (id, input) => {
         />
       )
     case 4:
+      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
-          onChange={input}
+          onChange={handleInputs}
           variant="standard"
           fullWidth
           name="respuesta"
@@ -56,10 +58,11 @@ const ValidateText = (id, input) => {
       )
 
     case 5:
+      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
-          onChange={input}
+          onChange={() => handleInputs}
           variant="standard"
           fullWidth
           name="respuesta"
@@ -68,10 +71,11 @@ const ValidateText = (id, input) => {
       )
 
     case 6:
+      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
-          onChange={input}
+          onChange={() => handleInputs}
           variant="standard"
           fullWidth
           name="respuesta"
@@ -80,10 +84,11 @@ const ValidateText = (id, input) => {
       )
 
     case 7:
+      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
-          onChange={input}
+          onChange={() => handleInputs}
           variant="standard"
           fullWidth
           name="respuesta"
@@ -91,10 +96,11 @@ const ValidateText = (id, input) => {
         />
       )
     case 8:
+      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
-          onChange={input}
+          onChange={handleInputs}
           variant="standard"
           fullWidth
           name="respuesta"
@@ -102,10 +108,11 @@ const ValidateText = (id, input) => {
         />
       )
     case 9:
+      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
-          onChange={input}
+          onChange={handleInputs}
           variant="standard"
           fullWidth
           name="respuesta"
@@ -113,10 +120,11 @@ const ValidateText = (id, input) => {
         />
       )
     case 10:
+      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label="Este campo sólo admite números"
-          onChange={input}
+          onChange={handleInputs}
           variant="standard"
           fullWidth
           name="respuesta"
@@ -124,10 +132,11 @@ const ValidateText = (id, input) => {
         />
       )
     case 11:
+      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label="Este campo sólo admite números"
-          onChange={input}
+          onChange={handleInputs}
           variant="standard"
           fullWidth
           name="respuesta"
@@ -136,29 +145,28 @@ const ValidateText = (id, input) => {
       )
 
     case 12:
+      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
-          label={id}
-          onChange={input}
+          onChange={handleInputs}
           variant="standard"
           fullWidth
           name="respuesta"
           type="number"
         />
       )
-
     default:
+      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
-          onChange={input}
+          onChange={handleInputs}
           variant="standard"
           fullWidth
           name="respuesta"
           type="text"
         />
       )
-    // }
   }
 }
 

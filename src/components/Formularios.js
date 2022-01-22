@@ -3,8 +3,8 @@ import axios from "axios"
 import Swal from "sweetalert2"
 import { MyContext } from "../services/Context"
 //import AuthService from "../services/auth"
-import useForm from "./useForm"
-import ValidateText from "./validateText"
+
+import ValidateText from "./ValidateText"
 import {
   Box,
   Slider,
@@ -94,7 +94,6 @@ function Formularios(props) {
   const [questions, setQuestions] = useState([])
   const [answers, setAnswers] = useState([])
   const [sectionIndex, setSectionIndex] = useState(0)
-  const [form, handleInputs] = useForm()
   const [checkedValue, setChecked] = useState("");
   const currentDate = new Date()
   const currentDayOfMonth = currentDate.getDate()
@@ -114,7 +113,7 @@ function Formularios(props) {
 
 const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
 
-// console.log(questionsTest[]);
+
   useEffect(
     () => {
       changePlace("quiz")
@@ -144,6 +143,7 @@ const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
  getQuestions =  val.map(e => e = {pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, comentarios:e.comentarios})
 return getQuestions
         }
+     
 const formData = {
 idEnvio: quiz.idEnvioUnique, 
 tipoEnvio:2,
@@ -153,12 +153,12 @@ longitud:"",
 comentariosGenerales:"",
 secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsSections(e.preguntas)})
 }
-console.log(formData.secciones);
-;
+
   function handlePrevious() {
     setSectionIndex(sectionIndex - 1)
   }
   function handleNext() {
+        console.log(formData.secciones);
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
     }
@@ -183,14 +183,22 @@ console.log(formData.secciones);
       )
     }
   }
-  const handleCheck = (event) => {
+  const handleCheck = (event,val) => {
     setChecked(event.target.value);
+
   };
 
   const displayAnswers = index => {
     if (answers.length !== 0) {
       const newArr = questions.map(name => name.catalogo.nombre)
-      const assignAnswer = formData.secciones[sectionIndex].preguntas[index]
+      
+      const id = questions[index].idTipoValidacion
+
+function answerTest(i, value){
+  const assignAnswer = formData.secciones[i].preguntas[index]
+  return assignAnswer.respuesta = value
+}
+
       switch (newArr[index]) {
         case "Si /No":
           return (
@@ -245,12 +253,17 @@ console.log(formData.secciones);
             />
           )
         case "Texto":  
-            assignAnswer.respuesta = form.respuesta
-          return (
-            ValidateText(questions[index].idTipoValidacion, handleInputs)
-          )
+
+          return ""
+          //(<ValidateText id={id} assignAnswer={assignAnswer}/>)
+
         case "Sexo":
-            assignAnswer.respuesta = checkedValue
+       
+            const q = sections.map(s => s.preguntas.map(p => p.pregunta === newArr[index]))
+           const newQ = q.map(e => e.findIndex(q => q === true))
+           const finalIndex = newQ.findIndex(e => e !== -1)
+
+   answerTest(finalIndex,checkedValue)
           return (
             <FormControl component="fieldset" style={{ display: "block" }}>
               <RadioGroup row value={checkedValue} onChange={handleCheck}> 
@@ -334,8 +347,6 @@ console.log(formData);
       }
     })
   }
-
-
 
   return (
     <div className={classes.root}>
