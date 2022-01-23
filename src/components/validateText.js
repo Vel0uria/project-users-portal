@@ -4,10 +4,9 @@ import useForm from "./useForm"
 
 function ValidateText({ id, assignAnswer }) {
   const [form, handleInputs] = useForm()
-  //console.log(assignAnswer)
+  assignAnswer.respuesta = form.respuesta
   switch (id) {
     case 1:
-      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label="Este campo sólo admite letras"
@@ -21,7 +20,6 @@ function ValidateText({ id, assignAnswer }) {
       )
 
     case 2:
-      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label="Este campo sólo admite números"
@@ -33,7 +31,6 @@ function ValidateText({ id, assignAnswer }) {
         />
       )
     case 3:
-      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
@@ -45,7 +42,6 @@ function ValidateText({ id, assignAnswer }) {
         />
       )
     case 4:
-      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
@@ -58,7 +54,6 @@ function ValidateText({ id, assignAnswer }) {
       )
 
     case 5:
-      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
@@ -71,7 +66,6 @@ function ValidateText({ id, assignAnswer }) {
       )
 
     case 6:
-      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
@@ -84,7 +78,6 @@ function ValidateText({ id, assignAnswer }) {
       )
 
     case 7:
-      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
@@ -96,7 +89,6 @@ function ValidateText({ id, assignAnswer }) {
         />
       )
     case 8:
-      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
@@ -108,7 +100,6 @@ function ValidateText({ id, assignAnswer }) {
         />
       )
     case 9:
-      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""
@@ -120,7 +111,6 @@ function ValidateText({ id, assignAnswer }) {
         />
       )
     case 10:
-      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label="Este campo sólo admite números"
@@ -132,7 +122,6 @@ function ValidateText({ id, assignAnswer }) {
         />
       )
     case 11:
-      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label="Este campo sólo admite números"
@@ -145,7 +134,6 @@ function ValidateText({ id, assignAnswer }) {
       )
 
     case 12:
-      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           onChange={handleInputs}
@@ -156,7 +144,6 @@ function ValidateText({ id, assignAnswer }) {
         />
       )
     default:
-      assignAnswer.respuesta = form.respuesta
       return (
         <TextField
           label=""

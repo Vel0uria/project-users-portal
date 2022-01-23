@@ -158,7 +158,7 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
     setSectionIndex(sectionIndex - 1)
   }
   function handleNext() {
-        console.log(formData.secciones);
+ 
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
     }
@@ -183,23 +183,23 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
       )
     }
   }
-  const handleCheck = (event,val) => {
+  const handleCheck = (event) => {
     setChecked(event.target.value);
-
   };
 
   const displayAnswers = index => {
     if (answers.length !== 0) {
       const newArr = questions.map(name => name.catalogo.nombre)
-      
       const id = questions[index].idTipoValidacion
 
-function answerTest(i, value){
-  const assignAnswer = formData.secciones[i].preguntas[index]
-  return assignAnswer.respuesta = value
+function assignAnswer(questionIndex){
+     const q = sections.map(s => s.preguntas.map(p => p.pregunta === questionIndex))
+           const newQ = q.map(e => e.findIndex(q => q === true))
+           const finalIndex = newQ.findIndex(e => e !== -1)
+  const assignAnswer = formData.secciones[finalIndex].preguntas[index]
+  return assignAnswer
 }
-
-      switch (newArr[index]) {
+    switch (newArr[index]) {
         case "Si /No":
           return (
 //      <FormControl component="fieldset" style={{ display: "block" }}>
@@ -253,17 +253,9 @@ function answerTest(i, value){
             />
           )
         case "Texto":  
-
-          return ""
-          //(<ValidateText id={id} assignAnswer={assignAnswer}/>)
-
-        case "Sexo":
-       
-            const q = sections.map(s => s.preguntas.map(p => p.pregunta === newArr[index]))
-           const newQ = q.map(e => e.findIndex(q => q === true))
-           const finalIndex = newQ.findIndex(e => e !== -1)
-
-   answerTest(finalIndex,checkedValue)
+        return  <ValidateText id={id} assignAnswer={assignAnswer(questions[index].pregunta)}/>
+        case "Sexo": 
+          assignAnswer(newArr[index]).respuesta = checkedValue
           return (
             <FormControl component="fieldset" style={{ display: "block" }}>
               <RadioGroup row value={checkedValue} onChange={handleCheck}> 
@@ -281,6 +273,7 @@ function answerTest(i, value){
             </FormControl>
           )
         case "Autos":
+          console.log(formData);
           const imageArr = answers.map(i => i.map(pic => pic.nombre))
           return (
             <ImageList>
@@ -310,12 +303,12 @@ function answerTest(i, value){
       }
     } else return <Typography>Cargando</Typography>
   }
- function  getStartDate(){
-  //  formData.fechaHoraInicio = dateString
+const  getStartDate = () =>{
 
+ formData.fechaHoraInicio = dateString
   }
-function getEndDate(){
-  //  formData.fechaHoraTermino = dateString
+const  getEndDate = () =>{
+   formData.fechaHoraTermino = dateString
   }
 
   const sendAnswers = e => {
@@ -375,9 +368,11 @@ console.log(formData);
                 color="info"
                 variant="outlined"
                 onClick={() => {
-                  // size="large"
-             //   getStartDate()
+                  // size="large" 
                   setStart(!start)
+                    getStartDate()
+                    console.log(formData);
+                
                 }}
               >
                 Iniciar cuestionario
