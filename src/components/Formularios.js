@@ -11,9 +11,7 @@ import {
   Typography,
   Button,
   Paper,
-  FormGroup,
   FormControlLabel,
-  Checkbox,
   Card,
   CardActions,
   CardContent,
@@ -23,12 +21,14 @@ import {
   Radio,
   FormControl,
   ImageListItemBar,
-  Divider
+  Divider, 
+ // IconButton
+  Checkbox
 } from "@mui/material"
 
 import { makeStyles } from "@material-ui/core/styles"
 import bgImage from "../assets/dashboard.jpg"
-import { CheckBox } from "@mui/icons-material"
+//import { CheckBox } from "@mui/icons-material"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -95,23 +95,10 @@ function Formularios(props) {
   const [answers, setAnswers] = useState([])
   const [sectionIndex, setSectionIndex] = useState(0)
   const [checkedValue, setChecked] = useState("");
-  const currentDate = new Date()
-  const currentDayOfMonth = currentDate.getDate()
-  const currentMonth = currentDate.getMonth()
-  const currentYear = currentDate.getFullYear()
-  const timestamp = currentDate.toLocaleTimeString()
+  const [multipleAnswer, setMultiple] = useState([])
   let getQuestions 
 
-  const dateString =
-    currentYear +
-    "-" +
-    (currentMonth + 1) +
-    "-" +
-    currentDayOfMonth +
-    " " +
-    timestamp
-
-const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
+  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
 
 
   useEffect(
@@ -137,7 +124,22 @@ const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
     },
     [token, id, changePlace, sectionIndex]
   )
-
+  const  getCurrentDate =() =>{
+  const currentDate = new Date()
+  const currentDayOfMonth = currentDate.getDate()
+  const currentMonth = currentDate.getMonth()
+  const currentYear = currentDate.getFullYear()
+  const timestamp = currentDate.toLocaleTimeString()
+    const dateString =
+    currentYear +
+    "-" +
+    (currentMonth + 1) +
+    "-" +
+    currentDayOfMonth +
+    " " +
+    timestamp
+    return dateString
+  }
  const questionsSections = (val) => {
 
  getQuestions =  val.map(e => e = {pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, comentarios:e.comentarios})
@@ -145,6 +147,7 @@ return getQuestions
         }
      
 const formData = {
+fechaHoraInicio:getCurrentDate(),
 idEnvio: quiz.idEnvioUnique, 
 tipoEnvio:2,
 nombreFormulario: quiz.nombreFormulario,
@@ -158,7 +161,6 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
     setSectionIndex(sectionIndex - 1)
   }
   function handleNext() {
- 
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
     }
@@ -255,6 +257,7 @@ function assignAnswer(questionIndex){
         case "Texto":  
         return  <ValidateText id={id} assignAnswer={assignAnswer(questions[index].pregunta)}/>
         case "Sexo": 
+        
           assignAnswer(newArr[index]).respuesta = checkedValue
           return (
             <FormControl component="fieldset" style={{ display: "block" }}>
@@ -273,8 +276,8 @@ function assignAnswer(questionIndex){
             </FormControl>
           )
         case "Autos":
-          console.log(formData);
           const imageArr = answers.map(i => i.map(pic => pic.nombre))
+          console.log(questions[index]);
           return (
             <ImageList>
               {imageArr[index].map(pics => {
@@ -283,16 +286,21 @@ function assignAnswer(questionIndex){
                     <img alt="imagen" src={`${baseURL}${pics}`} />
                     <ImageListItemBar
                       sx={{
-                        pl: 2,
+                        pl: 3,
                         background:
                           "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
                           "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
                       }}
                       title="Elegir"
                       position="top"
-                      actionIcon={<CheckBox size="large" color="primary" />}
+                    //   actionIcon={
+                    //     <IconButton onClick={console.log("test")}>
+                    //        <CheckBox size="large" color="inherit" />
+                    //     </IconButton>
+                    //  }
                       actionPosition="left"
                     />
+                    <Checkbox sx={{position:"absolute"}}/>
                   </ImageListItem>
                 )
               })}
@@ -303,13 +311,13 @@ function assignAnswer(questionIndex){
       }
     } else return <Typography>Cargando</Typography>
   }
-const  getStartDate = () =>{
+// const  getStartDate = () =>{
 
- formData.fechaHoraInicio = dateString
-  }
-const  getEndDate = () =>{
-   formData.fechaHoraTermino = dateString
-  }
+//  formData.fechaHoraInicio = dateString
+//   }
+// const  getEndDate = () =>{
+//    formData.fechaHoraTermino = getCurrentDate()
+//   }
 
   const sendAnswers = e => {
     e.preventDefault()
@@ -323,7 +331,7 @@ const  getEndDate = () =>{
       cancelButtonText: "Cancelar"
     }).then(result => {
       if (result.isConfirmed) {
-   getEndDate()
+   formData.fechaHoraTermino = getCurrentDate()
 console.log(formData);
    //form.nombreFormulario = quiz.nombreFormulario
    //form.secciones = sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsForm})
@@ -370,8 +378,8 @@ console.log(formData);
                 onClick={() => {
                   // size="large" 
                   setStart(!start)
-                    getStartDate()
-                    console.log(formData);
+                getCurrentDate()
+
                 
                 }}
               >
