@@ -95,7 +95,7 @@ function Formularios(props) {
   const [answers, setAnswers] = useState([])
   const [sectionIndex, setSectionIndex] = useState(0)
   const [checkedValue, setChecked] = useState("");
-  const [multipleAnswer, setMultiple] = useState([])
+
   let getQuestions 
 
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
@@ -163,6 +163,7 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
   function handleNext() {
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
+       console.log(formData.secciones[sectionIndex].preguntas)
     }
   }
   function setRequiredAnswer(question, required) {
@@ -191,17 +192,108 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
 
   const displayAnswers = index => {
     if (answers.length !== 0) {
-      const newArr = questions.map(name => name.catalogo.nombre)
+      const newArr = questions.map(id => id.idTipoRespuesta)
       const id = questions[index].idTipoValidacion
-
-function assignAnswer(questionIndex){
+    function assignAnswer(questionIndex){
      const q = sections.map(s => s.preguntas.map(p => p.pregunta === questionIndex))
            const newQ = q.map(e => e.findIndex(q => q === true))
            const finalIndex = newQ.findIndex(e => e !== -1)
   const assignAnswer = formData.secciones[finalIndex].preguntas[index]
   return assignAnswer
+  }
+    function sliderOrRadio (answers){
+
+   function que( i, a){
+   assignAnswer(i).respuesta = a
 }
-    switch (newArr[index]) {
+    if(questions[index].catalogo.respuestas.length === 2){
+   //  assignAnswer(questions[index].pregunta).respuesta = checkedValue
+
+   
+
+   return ( 
+      <FormControl component="fieldset" style={{ display: "block" }}>
+      <RadioGroup  row > 
+      {answers.map((answer, i) => {
+   
+          return (
+     <FormControlLabel 
+          value={answer.nombre}
+          label={answer.nombre}
+         control={<Radio />}
+         onChange={()=>{
+           que(questions[index].pregunta, answer.nombre)   
+        } }
+        
+ />
+
+      ) 
+})}
+</RadioGroup>
+    </FormControl>
+   )
+  
+} else {
+ //  assignAnswer(questions[index].pregunta).respuesta = checkedValue  
+  //
+           const marks = answers.map(e => {
+             return {
+             value: e["nombre"],
+            label: e["nombre"]
+          }
+           })
+         //console.log(checkedValue);
+   //    console.log(formData.secciones[sectionIndex].preguntas);
+          return (
+            <Slider
+              valueLabelDisplay="auto"
+              aria-label="Custom marks"
+             min={1}
+              marks={marks}
+              max={marks.length}
+             step={1}
+             onChange={handleCheck}
+            />
+          )
+}
+  }
+
+ switch (newArr[index]) {
+        case 1:  
+        return  <ValidateText id={id} assignAnswer={assignAnswer(questions[index].pregunta)}/>
+        case 2:    
+          return  sliderOrRadio(questions[index].catalogo.respuestas )
+        case 3:
+            const imageArr = answers.map(i => i.map(pic => pic.nombre))
+          return (
+            <ImageList>
+              {imageArr[index].map(pics => {
+                return (
+                  <ImageListItem key={pics} loading="cargando imagen">
+                    <img alt="imagen" src={`${baseURL}${pics}`} />
+                    <ImageListItemBar
+                      sx={{
+                        pl: 3,
+                        background:
+                          "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
+                          "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
+                      }}
+                      title="Elegir"
+                      position="top"
+                    //   actionIcon={
+                    //     <IconButton onClick={console.log("test")}>
+                    //        <CheckBox size="large" color="inherit" />
+                    //     </IconButton>
+                    //  }
+                      actionPosition="left"
+                    />
+                    <Checkbox sx={{position:"absolute"}}/>
+                  </ImageListItem>
+                )
+              })}
+            </ImageList>
+          )
+
         case "Si /No":
           return (
 //      <FormControl component="fieldset" style={{ display: "block" }}>
@@ -237,75 +329,11 @@ function assignAnswer(questionIndex){
                 />  
            </div>           
           )
-        case "Respuestas del 1-10":
-          const marks = answers[0].map(e => {
-            return {
-              value: Number(e["nombre"]),
-              label: e["nombre"]
-            }
-          })
-          return (
-            <Slider
-              valueLabelDisplay="auto"
-              aria-label="Custom marks"
-              min={1}
-              marks={marks}
-              max={10}
-              step={1}
-            />
-          )
-        case "Texto":  
-        return  <ValidateText id={id} assignAnswer={assignAnswer(questions[index].pregunta)}/>
-        case "Sexo": 
-        
-          assignAnswer(newArr[index]).respuesta = checkedValue
-          return (
-            <FormControl component="fieldset" style={{ display: "block" }}>
-              <RadioGroup row value={checkedValue} onChange={handleCheck}> 
-                <FormControlLabel   
-                  value="Masculino"
-                  control={<Radio />}
-                  label="Masculino"
-                />
-                <FormControlLabel
-                  value="Femenino"
-                  control={<Radio />}
-                  label="Femenino"
-                />
-              </RadioGroup>
-            </FormControl>
-          )
-        case "Autos":
-          const imageArr = answers.map(i => i.map(pic => pic.nombre))
-          console.log(questions[index]);
-          return (
-            <ImageList>
-              {imageArr[index].map(pics => {
-                return (
-                  <ImageListItem key={pics} loading="cargando imagen">
-                    <img alt="imagen" src={`${baseURL}${pics}`} />
-                    <ImageListItemBar
-                      sx={{
-                        pl: 3,
-                        background:
-                          "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
-                          "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
-                      }}
-                      title="Elegir"
-                      position="top"
-                    //   actionIcon={
-                    //     <IconButton onClick={console.log("test")}>
-                    //        <CheckBox size="large" color="inherit" />
-                    //     </IconButton>
-                    //  }
-                      actionPosition="left"
-                    />
-                    <Checkbox sx={{position:"absolute"}}/>
-                  </ImageListItem>
-                )
-              })}
-            </ImageList>
-          )
+
+   
+      
+
+       
         default:
           ;<Typography>Cargando respuestas</Typography>
       }
