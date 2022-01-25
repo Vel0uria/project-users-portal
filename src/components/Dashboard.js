@@ -13,7 +13,7 @@ import {
   Tabs,
   Paper,
   Box,
-  IconButton,
+  IconButton
 } from "@material-ui/core"
 import PlayCircleOutlineOutlinedIcon from "@material-ui/icons/PlayCircleOutlineOutlined"
 import QuizIcon from "@mui/icons-material/Quiz"
@@ -39,8 +39,8 @@ const useStyles = makeStyles(theme => ({
     //   height: theme.spacing(130)
     // },
     [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(140),
-    },
+      height: theme.spacing(140)
+    }
   },
   title: {
     textAlign: "center",
@@ -48,19 +48,19 @@ const useStyles = makeStyles(theme => ({
     color: "white",
     fontSize: "1.7rem",
     [theme.breakpoints.up("lg")]: {
-      fontSize: "2rem",
+      fontSize: "2rem"
     },
     [theme.breakpoints.down("sm")]: {
-      fontSize: "1.2rem",
-    },
+      fontSize: "1.2rem"
+    }
   },
   userData: {
     display: "flex",
     margin: theme.spacing(0.5),
     backgroundColor: "#FFFFFF9E",
     [theme.breakpoints.down("sm")]: {
-      flexFlow: "column",
-    },
+      flexFlow: "column"
+    }
   },
 
   courses: {
@@ -69,12 +69,12 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
     marginTop: 40,
     minWidth: 200,
-    maxWidth: 300,
+    maxWidth: 300
   },
   tabs: {
     padding: theme.spacing(1),
-    backgroundColor: "#FFFFFF78",
-  },
+    backgroundColor: "#FFFFFF78"
+  }
 }))
 
 // PENDIENTES DASHBOARD:
@@ -88,25 +88,11 @@ function Dashboard() {
   const classes = useStyles()
   const [categories, setCategory] = useState([])
   const [courses, setCourses] = useState([])
-  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/"
+  const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
   const [value, setValue] = useState(0)
   const user = JSON.parse(localStorage.getItem("USER"))
   const token = user.token
   const { changePlace } = useContext(MyContext)
-
-  function handleMedia(img) {
-    const imageArr = []
-    imageArr.push(img)
-    // eslint-disable-next-line array-callback-return
-    const newArr = imageArr.map(i => {
-      if (i !== "") return `${baseURL}/${i}`
-    })
-    const index = newArr.indexOf(undefined)
-    if (index !== -1) {
-      newArr[index] = placeholder
-    }
-    return newArr
-  }
 
   useEffect(
     () => {
@@ -114,7 +100,7 @@ function Dashboard() {
 
       axios
         .get(`${baseURL}/api/listadoModulosCursos/1`, {
-          headers: { Authorization: token },
+          headers: { Authorization: token }
         })
         .then(({ data }) => {
           const category = data.result
@@ -135,8 +121,8 @@ function Dashboard() {
         axios
           .get(`${baseURL}/api/listadoUsuariosCursos/${id}`, {
             headers: {
-              Authorization: token,
-            },
+              Authorization: token
+            }
           })
           .then(({ data }) => {
             const courses = data.result
@@ -149,10 +135,12 @@ function Dashboard() {
     },
     [categories, token, value]
   )
+  const onMediaFallBack = event => {
+    event.target.src = placeholder
+  }
 
   function TabPanel(props) {
     const { value, index } = props
-
     return (
       <div
         role="tabpanel"
@@ -166,7 +154,7 @@ function Dashboard() {
               display: "flex",
               justifyContent: "space-evenly",
               backgroundColor: "#FFFFFF80",
-              flexWrap: { xs: "wrap", md: "wrap", lg: "nowrap" },
+              flexWrap: { xs: "wrap", md: "wrap", lg: "nowrap" }
             }}
           >
             {courses.map((course, i) => {
@@ -182,7 +170,8 @@ function Dashboard() {
                     <CardMedia
                       component="img"
                       height="194"
-                      image={handleMedia(course.urlImagen)}
+                      image={`${baseURL}${course.urlImagen}`}
+                      onError={onMediaFallBack}
                       alt="URLimagen"
                       className={classes.coursesImg}
                     />

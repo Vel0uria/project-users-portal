@@ -76,10 +76,8 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-//PENDIENTES: mapear questions.catalogo.nombre para saber el tipo de respuesta
+//PENDIENTES: 
 //Replantear según tipo de respuesta con idTipoRespuesta dentro de "preguntas":
-//1.- Texto (textbox)
-//2.- Única (radioButon, select, dezplazamiento )
 //3.- Múltiple (checkbox)
 function Formularios(props) {
   const { id } = props.match.params
@@ -94,12 +92,10 @@ function Formularios(props) {
   const [questions, setQuestions] = useState([])
   const [answers, setAnswers] = useState([])
   const [sectionIndex, setSectionIndex] = useState(0)
-  const [checkedValue, setChecked] = useState("");
+
 
   let getQuestions 
-
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
-
 
   useEffect(
     () => {
@@ -124,6 +120,7 @@ function Formularios(props) {
     },
     [token, id, changePlace, sectionIndex]
   )
+
   const  getCurrentDate =() =>{
   const currentDate = new Date()
   const currentDayOfMonth = currentDate.getDate()
@@ -163,7 +160,7 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
   function handleNext() {
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
-       console.log(formData.secciones[sectionIndex].preguntas)
+      console.log(formData.secciones[sectionIndex].preguntas)
     }
   }
   function setRequiredAnswer(question, required) {
@@ -186,12 +183,10 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
       )
     }
   }
-  const handleCheck = (event) => {
-    setChecked(event.target.value);
-  };
 
   const displayAnswers = index => {
     if (answers.length !== 0) {
+
       const newArr = questions.map(id => id.idTipoRespuesta)
       const id = questions[index].idTipoValidacion
     function assignAnswer(questionIndex){
@@ -203,68 +198,56 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
   }
     function sliderOrRadio (answers){
 
-   function que( i, a){
+   function assignQuestion( i, a){
+
    assignAnswer(i).respuesta = a
+
 }
     if(questions[index].catalogo.respuestas.length === 2){
-   //  assignAnswer(questions[index].pregunta).respuesta = checkedValue
-
-   
 
    return ( 
       <FormControl component="fieldset" style={{ display: "block" }}>
       <RadioGroup  row > 
       {answers.map((answer, i) => {
-   
           return (
-     <FormControlLabel 
+     <FormControlLabel key={i}
           value={answer.nombre}
           label={answer.nombre}
          control={<Radio />}
          onChange={()=>{
-           que(questions[index].pregunta, answer.nombre)   
-        } }
-        
- />
-
-      ) 
+           assignQuestion(questions[index].pregunta, answer.nombre)}}
+        />) 
 })}
-</RadioGroup>
-    </FormControl>
-   )
+    </RadioGroup>
+    </FormControl>)
   
 } else {
- //  assignAnswer(questions[index].pregunta).respuesta = checkedValue  
-  //
            const marks = answers.map(e => {
              return {
-             value: e["nombre"],
+             value: Number(e["nombre"]),
             label: e["nombre"]
-          }
-           })
-         //console.log(checkedValue);
-   //    console.log(formData.secciones[sectionIndex].preguntas);
+          }})
           return (
             <Slider
               valueLabelDisplay="auto"
               aria-label="Custom marks"
-             min={1}
+              defaultValue={1}
+              min={1}
               marks={marks}
               max={marks.length}
              step={1}
-             onChange={handleCheck}
+             onChange={(e)=>{assignQuestion(questions[index].pregunta, e.target.value)}}
             />
-          )
-}
-  }
+          )}}
 
  switch (newArr[index]) {
         case 1:  
         return  <ValidateText id={id} assignAnswer={assignAnswer(questions[index].pregunta)}/>
-        case 2:    
+        case 2:   
           return  sliderOrRadio(questions[index].catalogo.respuestas )
         case 3:
             const imageArr = answers.map(i => i.map(pic => pic.nombre))
+            ;
           return (
             <ImageList>
               {imageArr[index].map(pics => {
@@ -280,11 +263,31 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
                       }}
                       title="Elegir"
                       position="top"
-                    //   actionIcon={
-                    //     <IconButton onClick={console.log("test")}>
-                    //        <CheckBox size="large" color="inherit" />
-                    //     </IconButton>
-                    //  }
+                      actionPosition="left"
+                    />
+                    <Checkbox sx={{position:"absolute"}}/>
+                  </ImageListItem>
+                )
+              })}
+            </ImageList>
+          )
+              case 5: 
+                    const imageArr1 = answers.map(i => i.map(pic => pic.nombre))
+       return (
+            <ImageList>
+              {imageArr1[index].map(pics => {
+                return (
+                  <ImageListItem key={pics} loading="cargando imagen">
+                    <img alt="imagen" src={`${baseURL}${pics}`} />
+                    <ImageListItemBar
+                      sx={{
+                        pl: 3,
+                        background:
+                          "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
+                          "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
+                      }}
+                      title="Elegir"
+                      position="top"
                       actionPosition="left"
                     />
                     <Checkbox sx={{position:"absolute"}}/>
@@ -294,58 +297,12 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
             </ImageList>
           )
 
-        case "Si /No":
-          return (
-//      <FormControl component="fieldset" style={{ display: "block" }}>
-//  {          questions[index].catalogo.respuestas.map((e,i) => {
-//              return ( 
-//        <RadioGroup
-//        key={i}
-//     aria-labelledby="demo-controlled-radio-buttons-group"
-//     name="controlled-radio-buttons-group"
-//     value={checkedValue}
-//     onChange={handleCheck}
-//   >
-// <FormControlLabel  value={e.nombre} control={<Radio />} label={e.nombre} />
-//   </RadioGroup>)
-//     })}
-//   </FormControl>
-
-           <div>
-                  <Radio 
-                checked={checkedValue === "si"}
-                 onChange={handleCheck}
-                  value="si"
- name="radio-buttons"
-        inputProps={{ 'aria-label': 'SI' }}
-                />
-                <Radio
-                 checked={checkedValue === "no"}
-                   onChange={handleCheck}
-                  value="no"
-                   name="radio-buttons"
-        inputProps={{ 'aria-label': 'NO' }}
-                  
-                />  
-           </div>           
-          )
-
-   
-      
-
        
         default:
           ;<Typography>Cargando respuestas</Typography>
       }
     } else return <Typography>Cargando</Typography>
   }
-// const  getStartDate = () =>{
-
-//  formData.fechaHoraInicio = dateString
-//   }
-// const  getEndDate = () =>{
-//    formData.fechaHoraTermino = getCurrentDate()
-//   }
 
   const sendAnswers = e => {
     e.preventDefault()

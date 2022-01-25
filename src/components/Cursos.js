@@ -38,6 +38,7 @@ import {
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks"
 import { makeStyles } from "@material-ui/core/styles"
 import bgImage from "../assets/dashboard.jpg"
+import placeholder from "../assets/courses-placeholder-white.jpg"
 import { MyContext } from "../services/Context"
 import useForm from "./useForm"
 import AuthService from "../services/auth"
@@ -146,7 +147,6 @@ const useStyles = makeStyles(theme => ({
 }))
 
 //PENDIENTES:
-
 //Card y Tabs: Responsivo en móvil
 
 const Cursos = props => {
@@ -178,6 +178,7 @@ const Cursos = props => {
         })
         .then(({ data }) => {
           const courses = data.result
+
           setCourses(courses)
           setSections(courses.listaContenido)
           setFiles(courses.listaArchivos)
@@ -250,7 +251,9 @@ const Cursos = props => {
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
-
+  const onMediaFallBack = event => {
+    event.target.src = placeholder
+  }
   const drawer = (
     <div className={classes.list}>
       <Toolbar>
@@ -329,7 +332,6 @@ const Cursos = props => {
   )
   function TabPanel(props) {
     const { v, index, children } = props
-
     return (
       <div
         role="tabpanel"
@@ -397,6 +399,7 @@ const Cursos = props => {
             component={mediaType}
             src={`${baseURL}/${media}`}
             allowFullScreen
+            onError={onMediaFallBack}
           />
           {lessonId !== null &&
             <CardActions>
