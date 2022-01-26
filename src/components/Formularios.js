@@ -15,20 +15,16 @@ import {
   Card,
   CardActions,
   CardContent,
-  ImageList,
-  ImageListItem,
   RadioGroup,
   Radio,
   FormControl,
-  ImageListItemBar,
+  FormGroup,
   Divider, 
- // IconButton
   Checkbox
 } from "@mui/material"
 
 import { makeStyles } from "@material-ui/core/styles"
 import bgImage from "../assets/dashboard.jpg"
-//import { CheckBox } from "@mui/icons-material"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -160,7 +156,7 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
   function handleNext() {
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
-      console.log(formData.secciones[sectionIndex].preguntas)
+   //   console.log(formData.secciones[sectionIndex].preguntas)
     }
   }
   function setRequiredAnswer(question, required) {
@@ -199,10 +195,8 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
     function sliderOrRadio (answers){
 
    function assignQuestion( i, a){
+   assignAnswer(i).respuesta = a}
 
-   assignAnswer(i).respuesta = a
-
-}
     if(questions[index].catalogo.respuestas.length === 2){
 
    return ( 
@@ -221,7 +215,7 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
     </RadioGroup>
     </FormControl>)
   
-} else {
+} else if(questions[index].catalogo.respuestas.length > 2 && questions[index].pregunta !== "Selecciona el auto que ma te gusta" ) {
            const marks = answers.map(e => {
              return {
              value: Number(e["nombre"]),
@@ -246,58 +240,52 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
         case 2:   
           return  sliderOrRadio(questions[index].catalogo.respuestas )
         case 3:
-            const imageArr = answers.map(i => i.map(pic => pic.nombre))
-            ;
-          return (
-            <ImageList>
-              {imageArr[index].map(pics => {
-                return (
-                  <ImageListItem key={pics} loading="cargando imagen">
-                    <img alt="imagen" src={`${baseURL}${pics}`} />
-                    <ImageListItemBar
-                      sx={{
-                        pl: 3,
-                        background:
-                          "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
-                          "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
-                      }}
-                      title="Elegir"
-                      position="top"
-                      actionPosition="left"
-                    />
-                    <Checkbox sx={{position:"absolute"}}/>
-                  </ImageListItem>
-                )
-              })}
-            </ImageList>
-          )
-              case 5: 
-                    const imageArr1 = answers.map(i => i.map(pic => pic.nombre))
-       return (
-            <ImageList>
-              {imageArr1[index].map(pics => {
-                return (
-                  <ImageListItem key={pics} loading="cargando imagen">
-                    <img alt="imagen" src={`${baseURL}${pics}`} />
-                    <ImageListItemBar
-                      sx={{
-                        pl: 3,
-                        background:
-                          "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
-                          "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
-                      }}
-                      title="Elegir"
-                      position="top"
-                      actionPosition="left"
-                    />
-                    <Checkbox sx={{position:"absolute"}}/>
-                  </ImageListItem>
-                )
-              })}
-            </ImageList>
-          )
-
-       
+          return(
+ <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox  name="gilad" />
+            }
+            label="Gilad Gray"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox  name="jason" />
+            }
+            label="Jason Killian"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox  name="antoine" />
+            }
+            label="Antoine Llorca"
+          />
+        </FormGroup>)
+          //   const imageArr = answers.map(i => i.map(pic => pic.nombre))
+          // return (
+          //   <ImageList>
+          //     {imageArr[index].map(pics => {
+          //       return (
+          //         <ImageListItem key={pics} loading="cargando imagen">
+          //           <img alt="imagen" src={`${baseURL}${pics}`} />
+          //           <ImageListItemBar
+          //             sx={{
+          //               pl: 3,
+          //               background:
+          //                 "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
+          //                 "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
+          //             }}
+          //             title="Elegir"
+          //             position="top"
+          //             actionPosition="left"
+          //           />
+          //           <Checkbox sx={{position:"absolute"}}/>
+          //         </ImageListItem>
+          //       )
+          //     })}
+          //   </ImageList>
+          // )
+     
         default:
           ;<Typography>Cargando respuestas</Typography>
       }
@@ -317,11 +305,8 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
     }).then(result => {
       if (result.isConfirmed) {
    formData.fechaHoraTermino = getCurrentDate()
-console.log(formData);
-   //form.nombreFormulario = quiz.nombreFormulario
-   //form.secciones = sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsForm})
-
-  
+    console.log(formData);
+ 
         // authService
         //   .postForm(form, token)
         //   .then(res => {

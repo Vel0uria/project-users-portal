@@ -47,7 +47,6 @@ const drawerWidth = 300
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundImage: `url(${bgImage})`,
-
     backgroundSize: "cover",
     backgroundPosition: "center",
     display: "flex",
@@ -57,10 +56,10 @@ const useStyles = makeStyles(theme => ({
       marginTop: 0
     },
     [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(125)
+      height: theme.spacing(140)
     },
     [theme.breakpoints.up("xl")]: {
-      height: theme.spacing(140)
+      height: theme.spacing(150)
     },
     "& h3": {
       marginLeft: drawerWidth,
@@ -190,7 +189,6 @@ const Cursos = props => {
     },
     [baseURL, id, token, changePlace]
   )
-
   function getComments(id, mediaId) {
     setLessonId(id)
     handleMedia(mediaId)
@@ -317,15 +315,16 @@ const Cursos = props => {
             </div>
           )
         })}
-        <ListItemButton>
-          <ListItemIcon>
-            <SchoolRounded fontSize="large" color="primary" />
-          </ListItemIcon>
-          <ListItemText
-            primary="Presentar examen"
-            primaryTypographyProps={{ variant: "h6", color: "textPrimary" }}
-          />
-        </ListItemButton>
+        {courses.idEnvioUniqe &&
+          <ListItemButton>
+            <ListItemIcon>
+              <SchoolRounded fontSize="large" color="primary" />
+            </ListItemIcon>
+            <ListItemText
+              primary="Presentar examen"
+              primaryTypographyProps={{ variant: "h6", color: "textPrimary" }}
+            />
+          </ListItemButton>}
         <Divider />
       </List>
     </div>
@@ -362,16 +361,6 @@ const Cursos = props => {
           </IconButton>
         </Tooltip>
       </Toolbar>
-      {/* <Box> */}
-      {/* <Typography variant="h3" className={classes.title}>
-        {courses.nombreCurso}
-      </Typography>
-      <Divider flexItem orientation="vertical" /> */}
-      {/* </Box> */}
-      {/* <IconButton>
-          <LibraryBooksIcon fontSize="large" />
-        </IconButton> */}
-
       <Box
         component="main"
         sx={{
@@ -434,7 +423,6 @@ const Cursos = props => {
               <Tab label="Descripción" />
               <Tab label="Comentarios" />
               <Tab label="Recursos" />
-              <Tab label="Evaluación" />
             </Tabs>
           </CardActions>
           <CardContent>
