@@ -88,8 +88,8 @@ function Formularios(props) {
   const [questions, setQuestions] = useState([])
   const [answers, setAnswers] = useState([])
   const [sectionIndex, setSectionIndex] = useState(0)
-
-
+ // const [multiple, setMultiple] = useState([])
+  const [checked, setChecked] = useState(false)
   let getQuestions 
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
 
@@ -179,6 +179,14 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
       )
     }
   }
+   const handleMultipleAnswers = (event) => {
+
+setChecked({
+
+  [event.target.name] : event.target.checked,
+})
+console.log(checked);
+}
 
   const displayAnswers = index => {
     if (answers.length !== 0) {
@@ -192,10 +200,10 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
   const assignAnswer = formData.secciones[finalIndex].preguntas[index]
   return assignAnswer
   }
-    function sliderOrRadio (answers){
-
-   function assignQuestion( i, a){
+     function assignQuestion( i, a){
    assignAnswer(i).respuesta = a}
+
+    function sliderOrRadio (answers){
 
     if(questions[index].catalogo.respuestas.length === 2){
 
@@ -240,52 +248,22 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
         case 2:   
           return  sliderOrRadio(questions[index].catalogo.respuestas )
         case 3:
+         const getAnswers=questions[index].catalogo.respuestas
+console.log(checked);
           return(
- <FormGroup>
-          <FormControlLabel
+             <FormGroup>
+{getAnswers.map((answer, i) => {
+  return( <FormControlLabel key={i}
+    value={checked}
+    onChange={()=>{setChecked(!checked)}}
             control={
-              <Checkbox  name="gilad" />
+              <Checkbox checked={checked}/>
             }
-            label="Gilad Gray"
+            label={answer.nombre}
           />
-          <FormControlLabel
-            control={
-              <Checkbox  name="jason" />
-            }
-            label="Jason Killian"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox  name="antoine" />
-            }
-            label="Antoine Llorca"
-          />
-        </FormGroup>)
-          //   const imageArr = answers.map(i => i.map(pic => pic.nombre))
-          // return (
-          //   <ImageList>
-          //     {imageArr[index].map(pics => {
-          //       return (
-          //         <ImageListItem key={pics} loading="cargando imagen">
-          //           <img alt="imagen" src={`${baseURL}${pics}`} />
-          //           <ImageListItemBar
-          //             sx={{
-          //               pl: 3,
-          //               background:
-          //                 "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
-          //                 "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
-          //             }}
-          //             title="Elegir"
-          //             position="top"
-          //             actionPosition="left"
-          //           />
-          //           <Checkbox sx={{position:"absolute"}}/>
-          //         </ImageListItem>
-          //       )
-          //     })}
-          //   </ImageList>
-          // )
-     
+  )}) }
+    </FormGroup>
+  )
         default:
           ;<Typography>Cargando respuestas</Typography>
       }

@@ -315,16 +315,18 @@ const Cursos = props => {
             </div>
           )
         })}
-        {courses.idEnvioUniqe &&
-          <ListItemButton>
-            <ListItemIcon>
-              <SchoolRounded fontSize="large" color="primary" />
-            </ListItemIcon>
-            <ListItemText
-              primary="Presentar examen"
-              primaryTypographyProps={{ variant: "h6", color: "textPrimary" }}
-            />
-          </ListItemButton>}
+        {courses.idEnvioUnique &&
+          <Link to={`/formulario/${courses.idEnvioUnique}`} currentPath="">
+            <ListItemButton>
+              <ListItemIcon>
+                <SchoolRounded fontSize="large" color="primary" />
+              </ListItemIcon>
+              <ListItemText
+                primary="Presentar examen"
+                primaryTypographyProps={{ variant: "h6", color: "textPrimary" }}
+              />
+            </ListItemButton>
+          </Link>}
         <Divider />
       </List>
     </div>
