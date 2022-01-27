@@ -88,8 +88,8 @@ function Formularios(props) {
   const [questions, setQuestions] = useState([])
   const [answers, setAnswers] = useState([])
   const [sectionIndex, setSectionIndex] = useState(0)
- // const [multiple, setMultiple] = useState([])
-  const [checked, setChecked] = useState(false)
+ const [multiple, setMultiple] = useState([])
+//  const [checked, setChecked] = useState("")
   let getQuestions 
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
 
@@ -180,12 +180,19 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
     }
   }
    const handleMultipleAnswers = (event) => {
+if(event.target.checked === true){
+setMultiple(multiple.concat(event.target.value)) 
+} 
+unCheckAnswer(event)
+}
 
-setChecked({
+function unCheckAnswer(event){
 
-  [event.target.name] : event.target.checked,
-})
-console.log(checked);
+   if(event.target.checked === false) {
+       console.log(multiple.filter(e =>e !==event.target.value));
+ 
+   } 
+  //console.log(multiple)
 }
 
   const displayAnswers = index => {
@@ -249,17 +256,20 @@ console.log(checked);
           return  sliderOrRadio(questions[index].catalogo.respuestas )
         case 3:
          const getAnswers=questions[index].catalogo.respuestas
-console.log(checked);
+        // function concatenateAnswers(val){
+        //   const answers = []
+        //   val !== undefined && answers.push(val)
+        //   console.log(answers);
+        // }
           return(
              <FormGroup>
 {getAnswers.map((answer, i) => {
-  return( <FormControlLabel key={i}
-    value={checked}
-    onChange={()=>{setChecked(!checked)}}
+  return( <FormControlLabel key={i} onChange={handleMultipleAnswers}
             control={
-              <Checkbox checked={checked}/>
+              <Checkbox   />
             }
             label={answer.nombre}
+            value={answer.nombre}
           />
   )}) }
     </FormGroup>
