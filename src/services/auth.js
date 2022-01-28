@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/api"
+const baseURL = "https://impulsorintelectualhumanista.com/capacitacion/"
 
 class AuthService {
   constructor() {
@@ -10,16 +10,18 @@ class AuthService {
   }
 
   login(data) {
-    return this.service.post("/login", data, { headers: { plataforma: 1 } })
+    return this.service.post("api/login", data, {
+      headers: { plataforma: 1 }
+    })
   }
   postComment(data, token) {
-    return this.service.post("/guardarComentarios", data, {
+    return this.service.post("api/guardarComentarios", data, {
       headers: { Authorization: token }
     })
   }
   postForm(data, token) {
-    return this.service.post("/formularios/guardarEjecucion", data, {
-      headers: { Authorization: token }
+    return this.service.post("formularios/guardarEjecucion", data, {
+      headers: { Authorization: token, plataforma: 1 }
     })
   }
 }

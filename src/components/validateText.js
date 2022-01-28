@@ -2,9 +2,10 @@ import { TextField } from "@mui/material"
 
 import useForm from "./useForm"
 
-function ValidateText({ id, assignAnswer }) {
+function ValidateText({ id, assignAnswer }, props) {
   const [form, handleInputs] = useForm()
-  assignAnswer.respuesta = form.respuesta
+  console.log(props)
+  //assignAnswer.respuesta = form.respuesta
   switch (id) {
     case 1:
       return (

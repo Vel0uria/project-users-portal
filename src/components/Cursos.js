@@ -218,7 +218,7 @@ const Cursos = props => {
         authService
           .postComment(form, token)
           .then(res => {
-            Swal.fire("Comentario guardado", res.data.message, "success")
+            Swal.fire("Comentario guardado", "success")
             getComments(id, media)
           })
           .catch(err => {

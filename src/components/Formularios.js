@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useState } from "react"
 import axios from "axios"
 import Swal from "sweetalert2"
 import { MyContext } from "../services/Context"
-//import AuthService from "../services/auth"
+import AuthService from "../services/auth"
 
 import ValidateText from "./ValidateText"
 import {
@@ -25,6 +25,7 @@ import {
 
 import { makeStyles } from "@material-ui/core/styles"
 import bgImage from "../assets/dashboard.jpg"
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -81,15 +82,16 @@ function Formularios(props) {
   const { changePlace } = useContext(MyContext)
   const user = JSON.parse(localStorage.getItem("USER"))
   const token = user.token
- // const authService = new AuthService()
+  const authService = new AuthService()
   const [start, setStart] = useState(false)
   const [quiz, setQuiz] = useState({})
   const [sections, setSections] = useState([])
   const [questions, setQuestions] = useState([])
   const [answers, setAnswers] = useState([])
   const [sectionIndex, setSectionIndex] = useState(0)
- const [multiple, setMultiple] = useState([])
-//  const [checked, setChecked] = useState("")
+  const [multiple, setMultiple] = useState([])
+  const [unique, setUnique] = useState("")
+
   let getQuestions 
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
 
@@ -101,6 +103,7 @@ function Formularios(props) {
           headers: { Authorization: token }
         })
         .then(({ data }) => {
+    
           const quiz = data.result
           const sections = data.result.secciones
           const questions = sections[sectionIndex].preguntas
@@ -134,20 +137,22 @@ function Formularios(props) {
     return dateString
   }
  const questionsSections = (val) => {
-
- getQuestions =  val.map(e => e = {pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, comentarios:e.comentarios})
+ getQuestions =  val.map(e => e = {pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, urlimagenAyuda:"", comentarios:"", textoAyuda:"",  urlVideoRespuesta:""})
 return getQuestions
         }
-     
+  
 const formData = {
-fechaHoraInicio:getCurrentDate(),
-idEnvio: quiz.idEnvioUnique, 
-tipoEnvio:2,
-nombreFormulario: quiz.nombreFormulario,
-latitud:"",
-longitud:"",
-comentariosGenerales:"",
-secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsSections(e.preguntas)})
+  idEnvio: quiz.idEnvioUnique,
+  tipoEnvio:2, 
+  fechaHoraInicio:getCurrentDate(),  
+  nombreFormulario: quiz.nombreFormulario,
+  latitud:"",
+  longitud:"",
+  comentariosGenerales:"",
+  puntuacionInicial:"",
+  resultadoFinal:"",
+  tipoResultado:"",
+  secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsSections(e.preguntas)})
 }
 
   function handlePrevious() {
@@ -156,9 +161,9 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
   function handleNext() {
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
-   //   console.log(formData.secciones[sectionIndex].preguntas)
     }
   }
+
   function setRequiredAnswer(question, required) {
 
     if (required === 1) {
@@ -180,41 +185,39 @@ secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGene
     }
   }
    const handleMultipleAnswers = (event) => {
-if(event.target.checked === true){
-setMultiple(multiple.concat(event.target.value)) 
-} 
-unCheckAnswer(event)
-}
-
-function unCheckAnswer(event){
-
-   if(event.target.checked === false) {
-       console.log(multiple.filter(e =>e !==event.target.value));
- 
+    setMultiple(multiple.concat(event.target.value)) 
+    if(event.target.checked === false) {
+    setMultiple(multiple.filter(e => e !== event.target.value))
    } 
-  //console.log(multiple)
 }
+
+  const handleUniqueAnswer = (event) => {
+    setUnique(event.target.value)
+  }
+
 
   const displayAnswers = index => {
     if (answers.length !== 0) {
-
       const newArr = questions.map(id => id.idTipoRespuesta)
       const id = questions[index].idTipoValidacion
-    function assignAnswer(questionIndex){
-     const q = sections.map(s => s.preguntas.map(p => p.pregunta === questionIndex))
-           const newQ = q.map(e => e.findIndex(q => q === true))
-           const finalIndex = newQ.findIndex(e => e !== -1)
-  const assignAnswer = formData.secciones[finalIndex].preguntas[index]
-  return assignAnswer
+  function assignAnswer(questionIndex){
+        const q = sections.map(s => s.preguntas.find(p =>  p.pregunta === questionIndex))
+        const finalIndex = q.findIndex(e => e !== undefined)
+        const assignAnswer = formData.secciones[finalIndex].preguntas[index]
+      
+          return assignAnswer
   }
-     function assignQuestion( i, a){
+
+  function sliderOrRadio (answers){
+
+      function assignQuestion(i, a){
+
    assignAnswer(i).respuesta = a}
 
-    function sliderOrRadio (answers){
+      if(questions[index].catalogo.respuestas.length === 2){
 
-    if(questions[index].catalogo.respuestas.length === 2){
-
-   return ( 
+      assignAnswer(questions[index].pregunta).respuesta = unique
+        return ( 
       <FormControl component="fieldset" style={{ display: "block" }}>
       <RadioGroup  row > 
       {answers.map((answer, i) => {
@@ -223,14 +226,12 @@ function unCheckAnswer(event){
           value={answer.nombre}
           label={answer.nombre}
          control={<Radio />}
-         onChange={()=>{
-           assignQuestion(questions[index].pregunta, answer.nombre)}}
+         onChange={handleUniqueAnswer}
         />) 
 })}
     </RadioGroup>
     </FormControl>)
-  
-} else if(questions[index].catalogo.respuestas.length > 2 && questions[index].pregunta !== "Selecciona el auto que ma te gusta" ) {
+      } else if(questions[index].catalogo.respuestas.length > 2) {
            const marks = answers.map(e => {
              return {
              value: Number(e["nombre"]),
@@ -250,38 +251,37 @@ function unCheckAnswer(event){
           )}}
 
  switch (newArr[index]) {
-        case 1:  
+        case 1: 
+         console.log(ValidateText.props);
         return  <ValidateText id={id} assignAnswer={assignAnswer(questions[index].pregunta)}/>
         case 2:   
-          return  sliderOrRadio(questions[index].catalogo.respuestas )
+        return   sliderOrRadio(questions[index].catalogo.respuestas)
         case 3:
-         const getAnswers=questions[index].catalogo.respuestas
-        // function concatenateAnswers(val){
-        //   const answers = []
-        //   val !== undefined && answers.push(val)
-        //   console.log(answers);
-        // }
+          const getAnswers=questions[index].catalogo.respuestas
+          const result = multiple.map(e => e.concat(" | "))
+          assignAnswer(questions[index].pregunta).respuesta = result.join("")
           return(
              <FormGroup>
-{getAnswers.map((answer, i) => {
-  return( <FormControlLabel key={i} onChange={handleMultipleAnswers}
+            {getAnswers.map((answer, i) => {
+            return( 
+            <FormControlLabel key={i} onChange={handleMultipleAnswers}
             control={
               <Checkbox   />
             }
             label={answer.nombre}
             value={answer.nombre}
           />
-  )}) }
-    </FormGroup>
-  )
+          )}) }
+          </FormGroup>
+        )
         default:
           ;<Typography>Cargando respuestas</Typography>
       }
     } else return <Typography>Cargando</Typography>
   }
 
-  const sendAnswers = e => {
-    e.preventDefault()
+  const sendAnswers = () => {
+ 
     Swal.fire({
       title: "¿Deseas enviar tus respuestas?",
       icon: "question",
@@ -292,18 +292,22 @@ function unCheckAnswer(event){
       cancelButtonText: "Cancelar"
     }).then(result => {
       if (result.isConfirmed) {
-   formData.fechaHoraTermino = getCurrentDate()
-    console.log(formData);
- 
-        // authService
-        //   .postForm(form, token)
-        //   .then(res => {
-        //     console.log(res)
-        //   })
-        //   .catch(err => {
-        //     console.log(err, token)
-        //   })
-      }
+    formData.fechaHoraTermino = getCurrentDate()
+     authService.postForm(formData, token)
+           .then(res => {
+           console.log(formData)
+             if(res.data.status === 427){
+               Swal.fire("¡Acción cancelada!", "No tienes permiso para realizar esta acción", "error")
+             } else{
+           Swal.fire("La información se envió de manera correcta", "success")
+               console.log(res.data)
+             }
+         })
+        .catch(err => {
+          Swal.fire("Hubo un error al enviar la información.", "Comunícate con el administrador", "error")
+            console.log(err)
+          })
+        }
     })
   }
 
@@ -338,7 +342,6 @@ function unCheckAnswer(event){
                   setStart(!start)
                 getCurrentDate()
 
-                
                 }}
               >
                 Iniciar cuestionario
