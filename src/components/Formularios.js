@@ -3,8 +3,8 @@ import axios from "axios"
 import Swal from "sweetalert2"
 import { MyContext } from "../services/Context"
 import AuthService from "../services/auth"
-
-import ValidateText from "./ValidateText"
+import useForm from "./useForm"
+//import ValidateText from "./ValidateText"
 import {
   Box,
   Slider,
@@ -74,8 +74,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 //PENDIENTES: 
-//Replantear según tipo de respuesta con idTipoRespuesta dentro de "preguntas":
-//3.- Múltiple (checkbox)
+//reconstruir envío de formulario con useForm()
 function Formularios(props) {
   const { id } = props.match.params
   const classes = useStyles()
@@ -91,8 +90,8 @@ function Formularios(props) {
   const [sectionIndex, setSectionIndex] = useState(0)
   const [multiple, setMultiple] = useState([])
   const [unique, setUnique] = useState("")
-
-  let getQuestions 
+  const [form, handleInputs] = useForm()
+  const [answerTest, setAnswerTest] = useState({})
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
 
   useEffect(
@@ -103,7 +102,6 @@ function Formularios(props) {
           headers: { Authorization: token }
         })
         .then(({ data }) => {
-    
           const quiz = data.result
           const sections = data.result.secciones
           const questions = sections[sectionIndex].preguntas
@@ -137,7 +135,7 @@ function Formularios(props) {
     return dateString
   }
  const questionsSections = (val) => {
- getQuestions =  val.map(e => e = {pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, urlimagenAyuda:"", comentarios:"", textoAyuda:"",  urlVideoRespuesta:""})
+ const getQuestions =  val.map(e => e = {respuesta:"", pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, urlimagenAyuda:"", comentarios:"", textoAyuda:"",  urlVideoRespuesta:""})
 return getQuestions
         }
   
@@ -161,7 +159,9 @@ const formData = {
   function handleNext() {
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
+      setAnswerTest(formData)
     }
+
   }
 
   function setRequiredAnswer(question, required) {
@@ -195,28 +195,41 @@ const formData = {
     setUnique(event.target.value)
   }
 
+  function handleAnswerTest(){
+    setAnswerTest({
+  idEnvio: quiz.idEnvioUnique,
+  tipoEnvio:2, 
+  fechaHoraInicio:getCurrentDate(),  
+  nombreFormulario: quiz.nombreFormulario,
+  latitud:"",
+  longitud:"",
+  comentariosGenerales:"",
+  puntuacionInicial:"",
+  resultadoFinal:"",
+  tipoResultado:"",
+  secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsSections(e.preguntas)})
+    })
+  }
 
   const displayAnswers = index => {
     if (answers.length !== 0) {
-      const newArr = questions.map(id => id.idTipoRespuesta)
-      const id = questions[index].idTipoValidacion
-  function assignAnswer(questionIndex){
-        const q = sections.map(s => s.preguntas.find(p =>  p.pregunta === questionIndex))
+                    handleAnswerTest()
+          function assignAnswer(questionName){
+   
+        const q = sections.map(s => s.preguntas.find(p =>  p.pregunta === questionName))
         const finalIndex = q.findIndex(e => e !== undefined)
-        const assignAnswer = formData.secciones[finalIndex].preguntas[index]
-      
+        const assignAnswer = answerTest.secciones[finalIndex].preguntas[index].respuesta = form.respuesta
           return assignAnswer
   }
+      const newArr = questions.map(id => id.idTipoRespuesta)
+      const id = questions[index].idTipoValidacion
 
   function sliderOrRadio (answers){
-
-      function assignQuestion(i, a){
-
-   assignAnswer(i).respuesta = a}
-
       if(questions[index].catalogo.respuestas.length === 2){
 
-      assignAnswer(questions[index].pregunta).respuesta = unique
+ assignAnswer(questions[index].pregunta)
+
+     
         return ( 
       <FormControl component="fieldset" style={{ display: "block" }}>
       <RadioGroup  row > 
@@ -226,12 +239,13 @@ const formData = {
           value={answer.nombre}
           label={answer.nombre}
          control={<Radio />}
-         onChange={handleUniqueAnswer}
+         onChange={handleInputs}
+         name="respuesta"
         />) 
 })}
     </RadioGroup>
     </FormControl>)
-      } else if(questions[index].catalogo.respuestas.length > 2) {
+      } else if(questions[index].catalogo.respuestas.length > 12) {
            const marks = answers.map(e => {
              return {
              value: Number(e["nombre"]),
@@ -246,25 +260,29 @@ const formData = {
               marks={marks}
               max={marks.length}
              step={1}
-             onChange={(e)=>{assignQuestion(questions[index].pregunta, e.target.value)}}
+            // onChange={(e)=>{assignQuestion(questions[index].pregunta, e.target.value)}}
             />
           )}}
 
  switch (newArr[index]) {
         case 1: 
-         console.log(ValidateText.props);
-        return  <ValidateText id={id} assignAnswer={assignAnswer(questions[index].pregunta)}/>
+        return ""
+        // <ValidateText id={id} assignAnswer={assignAnswer(questions[index].pregunta, index)}/>
         case 2:   
         return   sliderOrRadio(questions[index].catalogo.respuestas)
         case 3:
           const getAnswers=questions[index].catalogo.respuestas
           const result = multiple.map(e => e.concat(" | "))
-          assignAnswer(questions[index].pregunta).respuesta = result.join("")
+         //assignAnswer(questions[index].pregunta, index).respuesta = result.join("")
+         // assignAnswer(questions[index].pregunta, index)
           return(
              <FormGroup>
             {getAnswers.map((answer, i) => {
             return( 
-            <FormControlLabel key={i} onChange={handleMultipleAnswers}
+            <FormControlLabel key={i} 
+           // name="respuesta"
+            onChange={handleMultipleAnswers}
+           // onChange={handleInputs}
             control={
               <Checkbox   />
             }
@@ -280,35 +298,37 @@ const formData = {
     } else return <Typography>Cargando</Typography>
   }
 
-  const sendAnswers = () => {
- 
-    Swal.fire({
-      title: "¿Deseas enviar tus respuestas?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Confirmar",
-      cancelButtonText: "Cancelar"
-    }).then(result => {
-      if (result.isConfirmed) {
-    formData.fechaHoraTermino = getCurrentDate()
-     authService.postForm(formData, token)
-           .then(res => {
-           console.log(formData)
-             if(res.data.status === 427){
-               Swal.fire("¡Acción cancelada!", "No tienes permiso para realizar esta acción", "error")
-             } else{
-           Swal.fire("La información se envió de manera correcta", "success")
-               console.log(res.data)
-             }
-         })
-        .catch(err => {
-          Swal.fire("Hubo un error al enviar la información.", "Comunícate con el administrador", "error")
-            console.log(err)
-          })
-        }
-    })
+ function sendAnswers(){
+
+console.log(answerTest);
+// e.preventDefault()
+    // Swal.fire({
+    //   title: "¿Deseas enviar tus respuestas?",
+    //   icon: "question",
+    //   showCancelButton: true,
+    //   confirmButtonColor: "#3085d6",
+    //   cancelButtonColor: "#d33",
+    //   confirmButtonText: "Confirmar",
+    //   cancelButtonText: "Cancelar"
+    // }).then(result => {
+    //   if (result.isConfirmed) {
+    //formData.fechaHoraTermino = getCurrentDate()
+   // console.log(formData);
+    //  authService.postForm(formData, token)
+    //        .then(res => {
+    //          if(res.data.status === 427){
+    //            Swal.fire("¡Acción cancelada!", "No tienes permiso para realizar esta acción", "error")
+    //          } else{
+    //        Swal.fire("La información se envió de manera correcta", "success")
+    //            console.log(res.data)
+    //          }
+    //      })
+    //     .catch(err => {
+    //       Swal.fire("Hubo un error al enviar la información.", "Comunícate con el administrador", "error")
+    //         console.log(err)
+    //       })
+    //     }
+    // })
   }
 
   return (
@@ -323,7 +343,7 @@ const formData = {
           "& button": { ml: { lg: 75, md: 55, sm: 35, xs: 3 } }
         }}
       >
-        {!start &&
+         {!start && 
           <Card className={classes.card}>
             <Typography variant="h6" component="div">
               Instrucciones:
@@ -334,23 +354,25 @@ const formData = {
               </Typography>
             </CardContent>
             <CardActions>
+       
               <Button
                 color="info"
                 variant="outlined"
-                onClick={() => {
+                onClick= {() => {
                   // size="large" 
-                  setStart(!start)
+                 setStart(!start)
                 getCurrentDate()
-
-                }}
+                }
+                }
               >
                 Iniciar cuestionario
               </Button>
             </CardActions>
-          </Card>}
+          </Card>
+           } 
       </Box>
       <Divider />
-      {start &&
+       {start && 
         <Box
           component={Paper}
           sx={{
@@ -404,6 +426,7 @@ const formData = {
               {questions.map((question, i) => {
                 return (
                   <div key={i}>
+      
                     {setRequiredAnswer(question.pregunta, question.obligatorio)}
                     {displayAnswers(i)}
                   </div>
@@ -418,7 +441,7 @@ const formData = {
                   >
                     Sección anterior
                   </Button>}
-                {sectionIndex === sections.length - 1 &&
+                 {sectionIndex === sections.length - 1 && 
                   <Button variant="contained" onClick={sendAnswers}>
                     Enviar respuestas
                   </Button>}
@@ -432,7 +455,8 @@ const formData = {
                   </Button>}
               </div>
             </Box>}
-        </Box>}
+        </Box>
+         } 
     </div>
   )
 }
