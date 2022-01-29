@@ -4,7 +4,6 @@ import Swal from "sweetalert2"
 import { MyContext } from "../services/Context"
 import AuthService from "../services/auth"
 import useForm from "./useForm"
-//import ValidateText from "./ValidateText"
 import {
   Box,
   Slider,
@@ -74,7 +73,11 @@ const useStyles = makeStyles(theme => ({
 }))
 
 //PENDIENTES: 
-//reconstruir envío de formulario con useForm()
+//reescribir envío de formulario
+//traer función ValidateText
+//Reparar Sliders
+//Enviar fecha inicio-término
+
 function Formularios(props) {
   const { id } = props.match.params
   const classes = useStyles()
@@ -115,9 +118,27 @@ function Formularios(props) {
           console.log(err)
         })
     },
-    [token, id, changePlace, sectionIndex]
-  )
+    [token, id, changePlace, sectionIndex, ])
 
+  function handleAnswerTest(){
+    function questionsSections(val) {
+      const getQuestions = val.map(e => e = { respuesta: "", pregunta: e.pregunta, puntuacion: e.puntuacion, idTipoRespuesta: e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, urlimagenAyuda: "", comentarios: "", textoAyuda: "", urlVideoRespuesta: "" })
+      return getQuestions
+    }
+  setAnswerTest({
+  idEnvio: quiz.idEnvioUnique,
+  tipoEnvio:2, 
+  fechaHoraInicio:getCurrentDate(),  
+  nombreFormulario: quiz.nombreFormulario,
+  latitud:"",
+  longitud:"",
+  comentariosGenerales:"",
+  puntuacionInicial:"",
+  resultadoFinal:"",
+  tipoResultado:"",
+  secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsSections(e.preguntas)})
+    })
+  }
   const  getCurrentDate =() =>{
   const currentDate = new Date()
   const currentDayOfMonth = currentDate.getDate()
@@ -134,24 +155,6 @@ function Formularios(props) {
     timestamp
     return dateString
   }
- const questionsSections = (val) => {
- const getQuestions =  val.map(e => e = {respuesta:"", pregunta:e.pregunta, puntuacion:e.puntuacion, idTipoRespuesta:e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, urlimagenAyuda:"", comentarios:"", textoAyuda:"",  urlVideoRespuesta:""})
-return getQuestions
-        }
-  
-const formData = {
-  idEnvio: quiz.idEnvioUnique,
-  tipoEnvio:2, 
-  fechaHoraInicio:getCurrentDate(),  
-  nombreFormulario: quiz.nombreFormulario,
-  latitud:"",
-  longitud:"",
-  comentariosGenerales:"",
-  puntuacionInicial:"",
-  resultadoFinal:"",
-  tipoResultado:"",
-  secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsSections(e.preguntas)})
-}
 
   function handlePrevious() {
     setSectionIndex(sectionIndex - 1)
@@ -159,9 +162,7 @@ const formData = {
   function handleNext() {
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
-      setAnswerTest(formData)
     }
-
   }
 
   function setRequiredAnswer(question, required) {
@@ -195,41 +196,28 @@ const formData = {
     setUnique(event.target.value)
   }
 
-  function handleAnswerTest(){
-    setAnswerTest({
-  idEnvio: quiz.idEnvioUnique,
-  tipoEnvio:2, 
-  fechaHoraInicio:getCurrentDate(),  
-  nombreFormulario: quiz.nombreFormulario,
-  latitud:"",
-  longitud:"",
-  comentariosGenerales:"",
-  puntuacionInicial:"",
-  resultadoFinal:"",
-  tipoResultado:"",
-  secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsSections(e.preguntas)})
-    })
+  function validateText(id){
+    console.log(id)
   }
 
   const displayAnswers = index => {
     if (answers.length !== 0) {
-                    handleAnswerTest()
-          function assignAnswer(questionName){
-   
+
+        function assignAnswer(questionName, answer){        
         const q = sections.map(s => s.preguntas.find(p =>  p.pregunta === questionName))
         const finalIndex = q.findIndex(e => e !== undefined)
-        const assignAnswer = answerTest.secciones[finalIndex].preguntas[index].respuesta = form.respuesta
-          return assignAnswer
-  }
+          let assignAnswer
+          if(answerTest.secciones !== undefined) {
+          assignAnswer = answerTest.secciones[finalIndex].preguntas[index].respuesta = answer
+          }
+         return assignAnswer
+        }
       const newArr = questions.map(id => id.idTipoRespuesta)
       const id = questions[index].idTipoValidacion
 
   function sliderOrRadio (answers){
       if(questions[index].catalogo.respuestas.length === 2){
-
- assignAnswer(questions[index].pregunta)
-
-     
+      assignAnswer(questions[index].pregunta, form.respuesta)
         return ( 
       <FormControl component="fieldset" style={{ display: "block" }}>
       <RadioGroup  row > 
@@ -263,29 +251,22 @@ const formData = {
             // onChange={(e)=>{assignQuestion(questions[index].pregunta, e.target.value)}}
             />
           )}}
-
  switch (newArr[index]) {
         case 1: 
-        return ""
-        // <ValidateText id={id} assignAnswer={assignAnswer(questions[index].pregunta, index)}/>
+        return validateText(id)
         case 2:   
         return   sliderOrRadio(questions[index].catalogo.respuestas)
         case 3:
           const getAnswers=questions[index].catalogo.respuestas
           const result = multiple.map(e => e.concat(" | "))
-         //assignAnswer(questions[index].pregunta, index).respuesta = result.join("")
-         // assignAnswer(questions[index].pregunta, index)
+         assignAnswer(questions[index].pregunta, result.join(""))
           return(
              <FormGroup>
             {getAnswers.map((answer, i) => {
             return( 
             <FormControlLabel key={i} 
-           // name="respuesta"
             onChange={handleMultipleAnswers}
-           // onChange={handleInputs}
-            control={
-              <Checkbox   />
-            }
+            control={<Checkbox/>}
             label={answer.nombre}
             value={answer.nombre}
           />
@@ -354,22 +335,20 @@ console.log(answerTest);
               </Typography>
             </CardContent>
             <CardActions>
-       
               <Button
                 color="info"
                 variant="outlined"
                 onClick= {() => {
                   // size="large" 
                  setStart(!start)
-                getCurrentDate()
+                handleAnswerTest()
                 }
                 }
               >
                 Iniciar cuestionario
               </Button>
             </CardActions>
-          </Card>
-           } 
+          </Card>} 
       </Box>
       <Divider />
        {start && 
@@ -426,7 +405,6 @@ console.log(answerTest);
               {questions.map((question, i) => {
                 return (
                   <div key={i}>
-      
                     {setRequiredAnswer(question.pregunta, question.obligatorio)}
                     {displayAnswers(i)}
                   </div>
@@ -455,8 +433,7 @@ console.log(answerTest);
                   </Button>}
               </div>
             </Box>}
-        </Box>
-         } 
+        </Box>} 
     </div>
   )
 }
