@@ -19,7 +19,8 @@ import {
   FormControl,
   FormGroup,
   Divider, 
-  Checkbox
+  Checkbox, 
+  TextField
 } from "@mui/material"
 
 import { makeStyles } from "@material-ui/core/styles"
@@ -196,28 +197,188 @@ function Formularios(props) {
     setUnique(event.target.value)
   }
 
-  function validateText(id){
-    console.log(id)
-  }
+  function validateText(id, question, index){
 
+      switch (id) {
+    case 1:
+      return (
+        <TextField
+          label="Este campo sólo admite letras"
+          pattern="[A-Za-z]"
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name="respuesta"
+          type="text"
+        />
+      )
+
+    case 2:
+      return (
+        <TextField
+          label="Este campo sólo admite números"
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          type="number"
+          name="respuesta"
+        />
+      )
+    case 3:
+      return (
+        <TextField
+          label=""
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name="respuesta"
+          type="text"
+        />
+      )
+    case 4:
+      return (
+        <TextField
+          label=""
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name="respuesta"
+          type="email"
+        />
+      )
+
+    case 5:
+      return (
+        <TextField
+          label=""
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name="respuesta"
+          type="date"
+        />
+      )
+
+    case 6:
+      return (
+        <TextField
+          label=""
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name="respuesta"
+          type="time"
+        />
+      )
+
+    case 7:
+      return (
+        <TextField
+          label=""
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name="respuesta"
+          type="datetime-local"
+        />
+      )
+    case 8:
+      return (
+        <TextField
+          label=""
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name="respuesta"
+          type="text"
+        />
+      )
+    case 9:
+      return (
+        <TextField
+          label=""
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name="respuesta"
+          type="text"
+        />
+      )
+    case 10:
+      return (
+        <TextField
+          label="Este campo sólo admite números"
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name="respuesta"
+          type="number"
+        />
+      )
+    case 11:
+      return (
+        <TextField
+          label="Este campo sólo admite números"
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name="respuesta"
+          type="number"
+        />
+      )
+
+    case 12:
+      return (
+        <TextField
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name="respuesta"
+          type="number"
+        />
+      )
+    default:
+      return (
+        <TextField
+          label=""
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name="respuesta"
+          type="text"
+        />
+      )
+  }
+  }
+//console.log(answerTest);
   const displayAnswers = index => {
     if (answers.length !== 0) {
-
-        function assignAnswer(questionName, answer){        
-        const q = sections.map(s => s.preguntas.find(p =>  p.pregunta === questionName))
-        const finalIndex = q.findIndex(e => e !== undefined)
-          let assignAnswer
-          if(answerTest.secciones !== undefined) {
-          assignAnswer = answerTest.secciones[finalIndex].preguntas[index].respuesta = answer
-          }
-         return assignAnswer
-        }
+  
       const newArr = questions.map(id => id.idTipoRespuesta)
       const id = questions[index].idTipoValidacion
 
+      function assignAnswer(questionName, answer){      
+ 
+        const q = sections.map(s => s.preguntas.find(p =>  p.pregunta === questionName))
+        const quests = Object.keys(answer)
+        const answs = Object.values(answer)
+        const section = q.findIndex(e => e !== undefined)
+        if(answerTest.secciones !== undefined){
+        const assignAnswer = answerTest.secciones[section].preguntas[index]
+        for (let question of quests){
+          if(question === assignAnswer.pregunta){
+           return assignAnswer.respuesta = answer[questionName]
+  }
+        }
+        }
+
+
+       //  return assignAnswer 
+         //  console.log(answerTest.secciones[0].preguntas);
+        }
   function sliderOrRadio (answers){
       if(questions[index].catalogo.respuestas.length === 2){
-      assignAnswer(questions[index].pregunta, form.respuesta)
+      assignAnswer(questions[index].pregunta, form)
         return ( 
       <FormControl component="fieldset" style={{ display: "block" }}>
       <RadioGroup  row > 
@@ -228,7 +389,7 @@ function Formularios(props) {
           label={answer.nombre}
          control={<Radio />}
          onChange={handleInputs}
-         name="respuesta"
+         name={questions[index].pregunta}
         />) 
 })}
     </RadioGroup>
@@ -253,7 +414,17 @@ function Formularios(props) {
           )}}
  switch (newArr[index]) {
         case 1: 
-        return validateText(id)
+        assignAnswer(questions[index].pregunta, form)
+     
+        return (
+          <TextField
+          label="Este campo sólo admite números"
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name={questions[index].pregunta}
+        />
+        )
         case 2:   
         return   sliderOrRadio(questions[index].catalogo.respuestas)
         case 3:
@@ -281,7 +452,7 @@ function Formularios(props) {
 
  function sendAnswers(){
 
-console.log(answerTest);
+console.log(answerTest.secciones[0].preguntas);
 // e.preventDefault()
     // Swal.fire({
     //   title: "¿Deseas enviar tus respuestas?",
