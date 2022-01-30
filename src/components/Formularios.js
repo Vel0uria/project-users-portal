@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     overflow: "hidden",
     height: theme.spacing(120),
     [theme.breakpoints.between("md", "lg")]: {
-      height: theme.spacing(80),
+      height: theme.spacing(180),
       marginTop: 0
     },
     [theme.breakpoints.up("lg")]: {
@@ -124,37 +124,6 @@ function Formularios(props) {
     },
     [token, id, changePlace, sectionIndex])
 
-  const validateText = (idText) =>{
-      switch (idText) {
-    case 1:  return (setInputLabel("Este campo sólo admite letras"), setInputTipe("text"))
-    case 2:
-      return (
-        setInputLabel("Este campo sólo admite números"), setInputTipe("number"))
-    case 3:
-      return (setInputLabel(""), setInputTipe("text"))
-    case 4:
-      return (
-        setInputLabel("Ingresa una dirección de e-mail"), setInputTipe("email"))
-    case 5:
-      return (setInputLabel(""), setInputTipe("date"))
-    case 6:
-      return (setInputLabel(""), setInputTipe("time"))
-    case 7:
-      return (setInputLabel(""), setInputTipe("datetime-local"))
-    case 8:
-      return (setInputLabel("Ingresa tu CURP"), setInputTipe("datetime-local"))
-    case 9:
-      return (setInputLabel("Ingresa tu RFC"), setInputTipe("text"))
-    case 10:
-      return (setInputLabel("Ingresa tu código postal"), setInputTipe("number"))
-    case 11:
-      return (setInputLabel("Ingresa un número telefónico activo"), setInputTipe("number"))
-    case 12:
-      return   (setInputLabel("Ingresa tu edad"), setInputTipe("number"))
-    default: 
-    return (setInputLabel(""), setInputTipe("text"))
-  }
-  }
 
   const  getCurrentDate =() =>{
   const currentDate = new Date()
@@ -180,7 +149,6 @@ function Formularios(props) {
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
     }
-      console.log(answerTest.secciones);
   }
 
   function setRequiredAnswer(question, required) {
@@ -235,11 +203,43 @@ setSlider({
   secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsSections(e.preguntas)})
     })
   }
+   const validateText = (val) =>{
+      switch (val) {
+    case 1:  setInputLabel("Este campo sólo admite letras")
+    break
+    case 2: setInputLabel("Este campo sólo admite números")
+    break
+    // case 3:
+    //   return (setInputLabel(""), setInputTipe("text"))
+    // case 4:
+    //   return (
+    //     setInputLabel("Ingresa una dirección de e-mail"), setInputTipe("email"))
+    // case 5:
+    //   return (setInputLabel(""), setInputTipe("date"))
+    // case 6:
+    //   return (setInputLabel(""), setInputTipe("time"))
+    // case 7:
+    //   return (setInputLabel(""), setInputTipe("datetime-local"))
+    // case 8:
+    //   return (setInputLabel("Ingresa tu CURP"), setInputTipe("datetime-local"))
+    // case 9:
+    //   return (setInputLabel("Ingresa tu RFC"), setInputTipe("text"))
+    // case 10:
+    //   return (setInputLabel("Ingresa tu código postal"), setInputTipe("number"))
+    // case 11:
+    //   return (setInputLabel("Ingresa un número telefónico activo"), setInputTipe("number"))
+    // case 12:
+    //   return   (setInputLabel("Ingresa tu edad"), setInputTipe("number"))
+    default: setInputLabel("")
+  }
+  }
+
   const displayAnswers = index => {
     if (answers.length !== 0) {
       const newArr = questions.map(id => id.idTipoRespuesta)
 
-  function assignAnswer(questionName, answer){      
+  function assignAnswer(questionName, answer){   
+   
         const q = sections.map(s => s.preguntas.find(p =>  p.pregunta === questionName))
         const quests = Object.keys(answer)
         const section = q.findIndex(e => e !== undefined)
@@ -252,6 +252,7 @@ setSlider({
 
   function sliderOrRadio (answers){
       if(questions[index].catalogo.respuestas.length === 2){
+          answerTest.fechaHoraInicio = getCurrentDate()
       assignAnswer(questions[index].pregunta, form)
         return ( 
       <FormControl component="fieldset" style={{ display: "block" }}>
@@ -290,9 +291,10 @@ setSlider({
           )}}
  switch (newArr[index]) {
         case 1: 
-        assignAnswer(questions[index].pregunta, form) 
-        validateText(questions[index].idTipoValidacion)
-       // console.log(questions[index].idTipoValidacion);
+      //  console.log(validateText(questions[index].idTipoValidacion));
+        assignAnswer(questions[index].pregunta, form)   
+      //  validateText(questions[index].idTipoValidacion)
+       
         return (
           <TextField
           label={inputLabel}
@@ -332,35 +334,34 @@ setSlider({
 
  function sendAnswers(){
 
-console.log(answerTest.secciones);
 // e.preventDefault()
-    // Swal.fire({
-    //   title: "¿Deseas enviar tus respuestas?",
-    //   icon: "question",
-    //   showCancelButton: true,
-    //   confirmButtonColor: "#3085d6",
-    //   cancelButtonColor: "#d33",
-    //   confirmButtonText: "Confirmar",
-    //   cancelButtonText: "Cancelar"
-    // }).then(result => {
-    //   if (result.isConfirmed) {
-    //formData.fechaHoraTermino = getCurrentDate()
-   // console.log(formData);
-    //  authService.postForm(formData, token)
-    //        .then(res => {
-    //          if(res.data.status === 427){
-    //            Swal.fire("¡Acción cancelada!", "No tienes permiso para realizar esta acción", "error")
-    //          } else{
-    //        Swal.fire("La información se envió de manera correcta", "success")
-    //            console.log(res.data)
-    //          }
-    //      })
-    //     .catch(err => {
-    //       Swal.fire("Hubo un error al enviar la información.", "Comunícate con el administrador", "error")
-    //         console.log(err)
-    //       })
-    //     }
-    // })
+    Swal.fire({
+      title: "¿Deseas enviar tus respuestas?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirmar",
+      cancelButtonText: "Cancelar"
+    }).then(result => {
+      if (result.isConfirmed) {
+    answerTest.fechaHoraTermino = getCurrentDate()
+   console.log(answerTest);
+     authService.postForm(answerTest, token)
+           .then(res => {
+             if(res.data.status === 427){
+               Swal.fire("¡Acción cancelada!", "No tienes permiso para realizar esta acción", "error")
+             } else{
+           Swal.fire("La información se envió de manera correcta", "success")
+               console.log(res.data)
+             }
+         })
+        .catch(err => {
+          Swal.fire("Hubo un error al enviar la información.", "Comunícate con el administrador", "error")
+            console.log(err)
+          })
+        }
+    })
   }
 
   return (
@@ -392,7 +393,9 @@ console.log(answerTest.secciones);
                 onClick= {() => {
                   // size="large" 
                 handleFormObject()
-                 setStart(!start) }
+                 setStart(!start) 
+              
+                }
                 }
               >
                 Iniciar cuestionario
@@ -470,7 +473,7 @@ console.log(answerTest.secciones);
                     Sección anterior
                   </Button>}
                  {sectionIndex === sections.length - 1 && 
-                  <Button variant="contained" onClick={sendAnswers}>
+                  <Button variant="contained" color="success" onClick={sendAnswers}>
                     Enviar respuestas
                   </Button>}
                 {sectionIndex < sections.length - 1 &&
