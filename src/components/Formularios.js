@@ -74,11 +74,10 @@ const useStyles = makeStyles(theme => ({
 }))
 
 //PENDIENTES: 
-//reescribir envío de formulario
-//traer función ValidateText
-//Reparar Sliders
-//Enviar fecha inicio-término
 
+//reparar función ValidateText
+//Enviar fecha inicio-término
+//Probar envío con todas las respuestas
 function Formularios(props) {
   const { id } = props.match.params
   const classes = useStyles()
@@ -93,9 +92,11 @@ function Formularios(props) {
   const [answers, setAnswers] = useState([])
   const [sectionIndex, setSectionIndex] = useState(0)
   const [multiple, setMultiple] = useState([])
-  const [unique, setUnique] = useState("")
   const [form, handleInputs] = useForm()
+  const [sliderAnswer, setSlider] = useState({})
   const [answerTest, setAnswerTest] = useState({})
+  const [inputLabel, setInputLabel] = useState("")
+  const [inputType, setInputTipe] = useState("")
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
 
   useEffect(
@@ -114,32 +115,47 @@ function Formularios(props) {
           setSections(sections)
           setQuestions(questions)
           setAnswers(answers)
+        
         })
         .catch(err => {
           console.log(err)
         })
-    },
-    [token, id, changePlace, sectionIndex, ])
 
-  function handleAnswerTest(){
-    function questionsSections(val) {
-      const getQuestions = val.map(e => e = { respuesta: "", pregunta: e.pregunta, puntuacion: e.puntuacion, idTipoRespuesta: e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, urlimagenAyuda: "", comentarios: "", textoAyuda: "", urlVideoRespuesta: "" })
-      return getQuestions
-    }
-  setAnswerTest({
-  idEnvio: quiz.idEnvioUnique,
-  tipoEnvio:2, 
-  fechaHoraInicio:getCurrentDate(),  
-  nombreFormulario: quiz.nombreFormulario,
-  latitud:"",
-  longitud:"",
-  comentariosGenerales:"",
-  puntuacionInicial:"",
-  resultadoFinal:"",
-  tipoResultado:"",
-  secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsSections(e.preguntas)})
-    })
+    },
+    [token, id, changePlace, sectionIndex])
+
+  const validateText = (idText) =>{
+      switch (idText) {
+    case 1:  return (setInputLabel("Este campo sólo admite letras"), setInputTipe("text"))
+    case 2:
+      return (
+        setInputLabel("Este campo sólo admite números"), setInputTipe("number"))
+    case 3:
+      return (setInputLabel(""), setInputTipe("text"))
+    case 4:
+      return (
+        setInputLabel("Ingresa una dirección de e-mail"), setInputTipe("email"))
+    case 5:
+      return (setInputLabel(""), setInputTipe("date"))
+    case 6:
+      return (setInputLabel(""), setInputTipe("time"))
+    case 7:
+      return (setInputLabel(""), setInputTipe("datetime-local"))
+    case 8:
+      return (setInputLabel("Ingresa tu CURP"), setInputTipe("datetime-local"))
+    case 9:
+      return (setInputLabel("Ingresa tu RFC"), setInputTipe("text"))
+    case 10:
+      return (setInputLabel("Ingresa tu código postal"), setInputTipe("number"))
+    case 11:
+      return (setInputLabel("Ingresa un número telefónico activo"), setInputTipe("number"))
+    case 12:
+      return   (setInputLabel("Ingresa tu edad"), setInputTipe("number"))
+    default: 
+    return (setInputLabel(""), setInputTipe("text"))
   }
+  }
+
   const  getCurrentDate =() =>{
   const currentDate = new Date()
   const currentDayOfMonth = currentDate.getDate()
@@ -164,6 +180,7 @@ function Formularios(props) {
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
     }
+      console.log(answerTest.secciones);
   }
 
   function setRequiredAnswer(question, required) {
@@ -193,189 +210,46 @@ function Formularios(props) {
    } 
 }
 
-  const handleUniqueAnswer = (event) => {
-    setUnique(event.target.value)
+const handleSlider = event =>{
+setSlider({
+  [event.target.name] : event.target.value
+})
+}
+
+  function handleFormObject(){
+    function questionsSections(val) {
+      const getQuestions = val.map(e => e = { respuesta: "", pregunta: e.pregunta, puntuacion: e.puntuacion, idTipoRespuesta: e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, urlimagenAyuda: "", comentarios: "", textoAyuda: "", urlVideoRespuesta: "" })
+      return getQuestions
+    }
+          setAnswerTest({  
+  idEnvio: quiz.idEnvioUnique,
+  tipoEnvio:2, 
+  //fechaHoraInicio:getCurrentDate(),  
+  nombreFormulario: quiz.nombreFormulario,
+  latitud:"",
+  longitud:"",
+  comentariosGenerales:"",
+  puntuacionInicial:"",
+  resultadoFinal:"",
+  tipoResultado:"",
+  secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsSections(e.preguntas)})
+    })
   }
-
-  function validateText(id, question, index){
-
-      switch (id) {
-    case 1:
-      return (
-        <TextField
-          label="Este campo sólo admite letras"
-          pattern="[A-Za-z]"
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name="respuesta"
-          type="text"
-        />
-      )
-
-    case 2:
-      return (
-        <TextField
-          label="Este campo sólo admite números"
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          type="number"
-          name="respuesta"
-        />
-      )
-    case 3:
-      return (
-        <TextField
-          label=""
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name="respuesta"
-          type="text"
-        />
-      )
-    case 4:
-      return (
-        <TextField
-          label=""
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name="respuesta"
-          type="email"
-        />
-      )
-
-    case 5:
-      return (
-        <TextField
-          label=""
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name="respuesta"
-          type="date"
-        />
-      )
-
-    case 6:
-      return (
-        <TextField
-          label=""
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name="respuesta"
-          type="time"
-        />
-      )
-
-    case 7:
-      return (
-        <TextField
-          label=""
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name="respuesta"
-          type="datetime-local"
-        />
-      )
-    case 8:
-      return (
-        <TextField
-          label=""
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name="respuesta"
-          type="text"
-        />
-      )
-    case 9:
-      return (
-        <TextField
-          label=""
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name="respuesta"
-          type="text"
-        />
-      )
-    case 10:
-      return (
-        <TextField
-          label="Este campo sólo admite números"
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name="respuesta"
-          type="number"
-        />
-      )
-    case 11:
-      return (
-        <TextField
-          label="Este campo sólo admite números"
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name="respuesta"
-          type="number"
-        />
-      )
-
-    case 12:
-      return (
-        <TextField
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name="respuesta"
-          type="number"
-        />
-      )
-    default:
-      return (
-        <TextField
-          label=""
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name="respuesta"
-          type="text"
-        />
-      )
-  }
-  }
-//console.log(answerTest);
   const displayAnswers = index => {
     if (answers.length !== 0) {
-  
       const newArr = questions.map(id => id.idTipoRespuesta)
-      const id = questions[index].idTipoValidacion
 
-      function assignAnswer(questionName, answer){      
- 
+  function assignAnswer(questionName, answer){      
         const q = sections.map(s => s.preguntas.find(p =>  p.pregunta === questionName))
         const quests = Object.keys(answer)
-        const answs = Object.values(answer)
         const section = q.findIndex(e => e !== undefined)
         if(answerTest.secciones !== undefined){
         const assignAnswer = answerTest.secciones[section].preguntas[index]
         for (let question of quests){
           if(question === assignAnswer.pregunta){
-           return assignAnswer.respuesta = answer[questionName]
-  }
-        }
-        }
+          return assignAnswer.respuesta = answer[questionName]}
+        }}}
 
-
-       //  return assignAnswer 
-         //  console.log(answerTest.secciones[0].preguntas);
-        }
   function sliderOrRadio (answers){
       if(questions[index].catalogo.respuestas.length === 2){
       assignAnswer(questions[index].pregunta, form)
@@ -394,12 +268,13 @@ function Formularios(props) {
 })}
     </RadioGroup>
     </FormControl>)
-      } else if(questions[index].catalogo.respuestas.length > 12) {
+      } else if(questions[index].catalogo.respuestas.length > 2) {
            const marks = answers.map(e => {
              return {
              value: Number(e["nombre"]),
             label: e["nombre"]
           }})
+          assignAnswer(questions[index].pregunta, sliderAnswer)  
           return (
             <Slider
               valueLabelDisplay="auto"
@@ -409,16 +284,19 @@ function Formularios(props) {
               marks={marks}
               max={marks.length}
              step={1}
-            // onChange={(e)=>{assignQuestion(questions[index].pregunta, e.target.value)}}
+            onChange={handleSlider}
+            name={questions[index].pregunta}
             />
           )}}
  switch (newArr[index]) {
         case 1: 
-        assignAnswer(questions[index].pregunta, form)
-     
+        assignAnswer(questions[index].pregunta, form) 
+        validateText(questions[index].idTipoValidacion)
+       // console.log(questions[index].idTipoValidacion);
         return (
           <TextField
-          label="Este campo sólo admite números"
+          label={inputLabel}
+          type={inputType}
           onChange={handleInputs}
           variant="standard"
           fullWidth
@@ -430,7 +308,9 @@ function Formularios(props) {
         case 3:
           const getAnswers=questions[index].catalogo.respuestas
           const result = multiple.map(e => e.concat(" | "))
-         assignAnswer(questions[index].pregunta, result.join(""))
+          const sendObj = {[questions[index].pregunta]: result.join("")}
+        
+         assignAnswer(questions[index].pregunta, sendObj)
           return(
              <FormGroup>
             {getAnswers.map((answer, i) => {
@@ -452,7 +332,7 @@ function Formularios(props) {
 
  function sendAnswers(){
 
-console.log(answerTest.secciones[0].preguntas);
+console.log(answerTest.secciones);
 // e.preventDefault()
     // Swal.fire({
     //   title: "¿Deseas enviar tus respuestas?",
@@ -511,9 +391,8 @@ console.log(answerTest.secciones[0].preguntas);
                 variant="outlined"
                 onClick= {() => {
                   // size="large" 
-                 setStart(!start)
-                handleAnswerTest()
-                }
+                handleFormObject()
+                 setStart(!start) }
                 }
               >
                 Iniciar cuestionario
