@@ -203,35 +203,78 @@ setSlider({
   secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsSections(e.preguntas)})
     })
   }
-   const validateText = (val) =>{
-      switch (val) {
-    case 1:  setInputLabel("Este campo sólo admite letras")
+
+
+  
+
+   function ValidateText ({quest, ind}) {
+
+useEffect(()=>{
+ switch (quest) {
+    case 1:    
+      setInputLabel("Este campo sólo admite letras")
+      setInputTipe("text")
+      break
+    case 2: 
+      setInputLabel("Este campo sólo admite números")
+     setInputTipe("number")
     break
-    case 2: setInputLabel("Este campo sólo admite números")
+     case 3:
+      setInputLabel("")
+      setInputTipe("text")
+     break
+     case 4:
+      setInputLabel("Ingresa una dirección de e-mail")
+      setInputTipe("email")
+      break
+     case 5:
+      setInputLabel("")
+      setInputTipe("date")
+      break
+     case 6:
+     setInputLabel("")
+      setInputTipe("time")
+      break
+    case 7:
+    setInputLabel("")
+    setInputTipe("datetime-local")
     break
-    // case 3:
-    //   return (setInputLabel(""), setInputTipe("text"))
-    // case 4:
-    //   return (
-    //     setInputLabel("Ingresa una dirección de e-mail"), setInputTipe("email"))
-    // case 5:
-    //   return (setInputLabel(""), setInputTipe("date"))
-    // case 6:
-    //   return (setInputLabel(""), setInputTipe("time"))
-    // case 7:
-    //   return (setInputLabel(""), setInputTipe("datetime-local"))
-    // case 8:
-    //   return (setInputLabel("Ingresa tu CURP"), setInputTipe("datetime-local"))
-    // case 9:
-    //   return (setInputLabel("Ingresa tu RFC"), setInputTipe("text"))
-    // case 10:
-    //   return (setInputLabel("Ingresa tu código postal"), setInputTipe("number"))
-    // case 11:
-    //   return (setInputLabel("Ingresa un número telefónico activo"), setInputTipe("number"))
-    // case 12:
-    //   return   (setInputLabel("Ingresa tu edad"), setInputTipe("number"))
-    default: setInputLabel("")
-  }
+     case 8:
+    setInputLabel("Ingresa tu CURP")
+    setInputTipe("datetime-local")
+    break
+    case 9:
+    setInputLabel("Ingresa tu RFC")
+     setInputTipe("text")
+     break
+     case 10:
+    setInputLabel("Ingresa tu código postal")
+    setInputTipe("number")
+    break
+     case 11:
+   setInputLabel("Ingresa un número telefónico activo")
+    setInputTipe("number")
+    break
+     case 12:
+      setInputLabel("Ingresa tu edad") 
+    setInputTipe("number")
+    break
+    default: 
+    setInputLabel("")
+     setInputTipe("text")  
+   }
+})
+
+ return(
+      <TextField
+          label={inputLabel}
+          type={inputType}
+          onChange={handleInputs}
+          variant="standard"
+          fullWidth
+          name={ind}
+        />
+ )
   }
 
   const displayAnswers = index => {
@@ -291,11 +334,11 @@ setSlider({
           )}}
  switch (newArr[index]) {
         case 1: 
-      //  console.log(validateText(questions[index].idTipoValidacion));
-        assignAnswer(questions[index].pregunta, form)   
-      //  validateText(questions[index].idTipoValidacion)
-       
-        return (
+      //  <HandleInputLabel index={questions[index].idTipoValidacion}/>
+           assignAnswer(questions[index].pregunta, form) 
+
+     return ( 
+       //  <ValidateText quest={questions[index].idTipoValidacion} ind={questions[index].pregunta} />
           <TextField
           label={inputLabel}
           type={inputType}
@@ -304,7 +347,21 @@ setSlider({
           fullWidth
           name={questions[index].pregunta}
         />
-        )
+     /* </ValidateText> */
+     )
+       
+      //  validateText(questions[index].idTipoValidacion, questions[index].pregunta)
+       
+        // return (
+        //   <TextField
+        //   label={inputLabel}
+        //   type={inputType}
+        //   onChange={handleInputs}
+        //   variant="standard"
+        //   fullWidth
+        //   name={questions[index].pregunta}
+        // />
+        // )
         case 2:   
         return   sliderOrRadio(questions[index].catalogo.respuestas)
         case 3:
