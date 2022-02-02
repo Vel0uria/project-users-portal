@@ -269,24 +269,9 @@ setSlider({
           )}}
  switch (newArr[index]) {
         case 1: 
- 
-     return     <ValidateText id={questions[index].idTipoValidacion} assignAnswer={assignAnswer} quest={questions[index].pregunta}/>
-
-       
-      //  validateText(questions[index].idTipoValidacion, questions[index].pregunta)
-       
-        // return (
-        //   <TextField
-        //   label={inputLabel}
-        //   type={inputType}
-        //   onChange={handleInputs}
-        //   variant="standard"
-        //   fullWidth
-        //   name={questions[index].pregunta}
-        // />
-        // )
+        return <ValidateText id={questions[index].idTipoValidacion} assignAnswer={assignAnswer} quest={questions[index].pregunta}/>
         case 2:   
-        return   sliderOrRadio(questions[index].catalogo.respuestas)
+        return sliderOrRadio(questions[index].catalogo.respuestas)
         case 3:
           const getAnswers=questions[index].catalogo.respuestas
           const result = multiple.map(e => e.concat(" | "))
@@ -326,14 +311,16 @@ setSlider({
     }).then(result => {
       if (result.isConfirmed) {
     answerTest.fechaHoraTermino = getCurrentDate()
-   console.log(answerTest);
+    console.log(answerTest);
      authService.postForm(answerTest, token)
            .then(res => {
              if(res.data.status === 427){
                Swal.fire("¡Acción cancelada!", "No tienes permiso para realizar esta acción", "error")
              } else{
-           Swal.fire("La información se envió de manera correcta", "success")
-               console.log(res.data)
+              Swal.fire("La información se envió de manera correcta", "", "success").then(
+              props.history.push("/dashboard")
+              )
+               
              }
          })
         .catch(err => {

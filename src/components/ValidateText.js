@@ -34,7 +34,6 @@ function ValidateText({ id, assignAnswer, quest }) {
     case 3:
       return (
         <TextField
-          label=""
           onChange={handleInputs}
           variant="standard"
           fullWidth
@@ -45,7 +44,7 @@ function ValidateText({ id, assignAnswer, quest }) {
     case 4:
       return (
         <TextField
-          label=""
+          label="ingresa tu correo electrónico"
           onChange={handleInputs}
           variant="standard"
           fullWidth
@@ -57,8 +56,7 @@ function ValidateText({ id, assignAnswer, quest }) {
     case 5:
       return (
         <TextField
-          label=""
-          onChange={() => handleInputs}
+          onChange={handleInputs}
           variant="standard"
           fullWidth
           name={quest}
@@ -69,20 +67,17 @@ function ValidateText({ id, assignAnswer, quest }) {
     case 6:
       return (
         <TextField
-          label=""
-          onChange={() => handleInputs}
+          onChange={handleInputs}
           variant="standard"
           fullWidth
           name={quest}
           type="time"
         />
       )
-
     case 7:
       return (
         <TextField
-          label=""
-          onChange={() => handleInputs}
+          onChange={handleInputs}
           variant="standard"
           fullWidth
           name={quest}
@@ -92,7 +87,7 @@ function ValidateText({ id, assignAnswer, quest }) {
     case 8:
       return (
         <TextField
-          label=""
+          label="Ingresa tu CURP"
           onChange={handleInputs}
           variant="standard"
           fullWidth
@@ -103,7 +98,7 @@ function ValidateText({ id, assignAnswer, quest }) {
     case 9:
       return (
         <TextField
-          label=""
+          label="Ingresa tu RFC"
           onChange={handleInputs}
           variant="standard"
           fullWidth
@@ -114,7 +109,7 @@ function ValidateText({ id, assignAnswer, quest }) {
     case 10:
       return (
         <TextField
-          label="Este campo sólo admite números"
+          label="Ingresa tu código postal"
           onChange={handleInputs}
           variant="standard"
           fullWidth
@@ -125,7 +120,7 @@ function ValidateText({ id, assignAnswer, quest }) {
     case 11:
       return (
         <TextField
-          label="Este campo sólo admite números"
+          label="Ingresa tu número telefónico"
           onChange={handleInputs}
           variant="standard"
           fullWidth
@@ -137,6 +132,7 @@ function ValidateText({ id, assignAnswer, quest }) {
     case 12:
       return (
         <TextField
+          label="Ingresa tu edad"
           onChange={handleInputs}
           variant="standard"
           fullWidth
