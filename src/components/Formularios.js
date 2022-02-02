@@ -4,6 +4,7 @@ import Swal from "sweetalert2"
 import { MyContext } from "../services/Context"
 import AuthService from "../services/auth"
 import useForm from "./useForm"
+import ValidateText from "./ValidateText"
 import {
   Box,
   Slider,
@@ -95,8 +96,8 @@ function Formularios(props) {
   const [form, handleInputs] = useForm()
   const [sliderAnswer, setSlider] = useState({})
   const [answerTest, setAnswerTest] = useState({})
-  const [inputLabel, setInputLabel] = useState("")
-  const [inputType, setInputTipe] = useState("")
+ // const [inputLabel, setInputLabel] = useState("")
+
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
 
   useEffect(
@@ -127,14 +128,14 @@ function Formularios(props) {
 
   const  getCurrentDate =() =>{
   const currentDate = new Date()
-  const currentDayOfMonth = currentDate.getDate()
-  const currentMonth = currentDate.getMonth()
+  const currentDayOfMonth = ((currentDate.getDate())>=10)? (currentDate.getDate()) : '0' + (currentDate.getDate())
+  const currentMonth = ((currentDate.getMonth()+1)>=10)? (currentDate.getMonth()+1) : '0' + (currentDate.getMonth()+1);
   const currentYear = currentDate.getFullYear()
   const timestamp = currentDate.toLocaleTimeString()
     const dateString =
     currentYear +
     "-" +
-    (currentMonth + 1) +
+    currentMonth +
     "-" +
     currentDayOfMonth +
     " " +
@@ -149,6 +150,7 @@ function Formularios(props) {
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
     }
+    console.log(answerTest.secciones[0].preguntas);
   }
 
   function setRequiredAnswer(question, required) {
@@ -203,83 +205,16 @@ setSlider({
   secciones:sections.map(e => e = {nombreSeccion: e.nombreSeccion, comentariosGenerales:"", puntuacionInicial:0, puntuacionFinal:"", preguntas:questionsSections(e.preguntas)})
     })
   }
-
-
   
 
-   function ValidateText ({quest, ind}) {
 
-useEffect(()=>{
- switch (quest) {
-    case 1:    
-      setInputLabel("Este campo sólo admite letras")
-      setInputTipe("text")
-      break
-    case 2: 
-      setInputLabel("Este campo sólo admite números")
-     setInputTipe("number")
-    break
-     case 3:
-      setInputLabel("")
-      setInputTipe("text")
-     break
-     case 4:
-      setInputLabel("Ingresa una dirección de e-mail")
-      setInputTipe("email")
-      break
-     case 5:
-      setInputLabel("")
-      setInputTipe("date")
-      break
-     case 6:
-     setInputLabel("")
-      setInputTipe("time")
-      break
-    case 7:
-    setInputLabel("")
-    setInputTipe("datetime-local")
-    break
-     case 8:
-    setInputLabel("Ingresa tu CURP")
-    setInputTipe("datetime-local")
-    break
-    case 9:
-    setInputLabel("Ingresa tu RFC")
-     setInputTipe("text")
-     break
-     case 10:
-    setInputLabel("Ingresa tu código postal")
-    setInputTipe("number")
-    break
-     case 11:
-   setInputLabel("Ingresa un número telefónico activo")
-    setInputTipe("number")
-    break
-     case 12:
-      setInputLabel("Ingresa tu edad") 
-    setInputTipe("number")
-    break
-    default: 
-    setInputLabel("")
-     setInputTipe("text")  
-   }
-})
-
- return(
-      <TextField
-          label={inputLabel}
-          type={inputType}
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name={ind}
-        />
- )
-  }
 
   const displayAnswers = index => {
     if (answers.length !== 0) {
       const newArr = questions.map(id => id.idTipoRespuesta)
+      if(sectionIndex === 0){
+    answerTest.fechaHoraInicio = getCurrentDate()
+      }
 
   function assignAnswer(questionName, answer){   
    
@@ -295,7 +230,7 @@ useEffect(()=>{
 
   function sliderOrRadio (answers){
       if(questions[index].catalogo.respuestas.length === 2){
-          answerTest.fechaHoraInicio = getCurrentDate()
+      
       assignAnswer(questions[index].pregunta, form)
         return ( 
       <FormControl component="fieldset" style={{ display: "block" }}>
@@ -334,21 +269,9 @@ useEffect(()=>{
           )}}
  switch (newArr[index]) {
         case 1: 
-      //  <HandleInputLabel index={questions[index].idTipoValidacion}/>
-           assignAnswer(questions[index].pregunta, form) 
+ 
+     return     <ValidateText id={questions[index].idTipoValidacion} assignAnswer={assignAnswer} quest={questions[index].pregunta}/>
 
-     return ( 
-       //  <ValidateText quest={questions[index].idTipoValidacion} ind={questions[index].pregunta} />
-          <TextField
-          label={inputLabel}
-          type={inputType}
-          onChange={handleInputs}
-          variant="standard"
-          fullWidth
-          name={questions[index].pregunta}
-        />
-     /* </ValidateText> */
-     )
        
       //  validateText(questions[index].idTipoValidacion, questions[index].pregunta)
        

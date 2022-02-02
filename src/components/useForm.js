@@ -4,10 +4,10 @@ const useForm = () => {
   const [form, setForm] = useState({})
 
   const handleInputs = event => {
-    event.persist()
+    event.preventDefault()
     setForm(prevState => ({
       ...prevState,
-      [event.target.name]: event.target.value,
+      [event.target.name]: event.target.value
     }))
   }
 
