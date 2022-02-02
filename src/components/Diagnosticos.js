@@ -113,7 +113,10 @@ function Diagnosticos() {
       <TableContainer component={Paper} className={classes.tableContainer}>
         <Toolbar
           sx={{
-            mt: 1.5,
+            background:
+              "linear-gradient(to bottom, rgba(181,198,218) 0%, " +
+              "rgba(191,208,228) 70%, rgba(0,0,0,0) 100%)",
+            // mt: 1.5,
             pl: { sm: 2, md: 3, lg: 4, xl: 4 },
             pr: { xs: 1, sm: 1 },
             "& .MuiTextField-root": {
@@ -136,15 +139,18 @@ function Diagnosticos() {
             sx={{
               display: "flex",
               "& h4": {
-                p: 1,
-                fontSize: { xs: 14, s: 16, md: 18, lg: 26, xl: 22 }
+                ml: 1,
+                mt: { xs: 1.5, s: 1, md: 0.5, lg: 0.5, xl: 0.5 },
+                fontSize: { xs: 16, s: 18, md: 20, lg: 24, xl: 26 }
               }
             }}
           >
-            <FolderSharedIcon fontSize="large" color="info" />
-            <Typography variant="h4">Mi portafolio </Typography>
+            <FolderSharedIcon fontSize="large" color="secondary" />
+            <Typography variant="h4" color="black">
+              Mi portafolio{" "}
+            </Typography>
           </Box>
-          <TextField
+          {/* <TextField
             label="Buscar registros"
             variant="outlined"
             size="small"
@@ -156,7 +162,7 @@ function Diagnosticos() {
                 </InputAdornment>
               )
             }}
-          />
+          /> */}
         </Toolbar>
         <Table className={classes.table} aria-label="simple table">
           <TableHead
