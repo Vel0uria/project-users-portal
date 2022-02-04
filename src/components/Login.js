@@ -25,19 +25,8 @@ const useStyles = makeStyles(theme => ({
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
-    //pendiente: ajustar
-    height: theme.spacing(76),
-    padding: theme.spacing(1),
-
-    [theme.breakpoints.between("sm", "md")]: {
-      height: theme.spacing(120)
-    },
-    [theme.breakpoints.between("md", "lg")]: {
-      height: theme.spacing(130)
-    },
-    [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(150)
-    }
+    height: window.innerHeight,
+    padding: theme.spacing(1)
   },
 
   title: {

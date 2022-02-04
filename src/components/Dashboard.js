@@ -27,10 +27,10 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
     display: "flex",
     flexFlow: "column nowrap",
-    width: "fullWidth",
+    height: window.innerHeight,
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
-    backgroundPosition: "center",
+    backgroundPosition: "center"
 
     // [theme.breakpoints.between("sm", "md")]: {
     //   height: theme.spacing(120)
@@ -38,9 +38,9 @@ const useStyles = makeStyles(theme => ({
     // [theme.breakpoints.between("md", "lg")]: {
     //   height: theme.spacing(130)
     // },
-    [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(140)
-    }
+    // [theme.breakpoints.up("lg")]: {
+    //   height: theme.spacing(140)
+    // }
   },
   title: {
     textAlign: "center",

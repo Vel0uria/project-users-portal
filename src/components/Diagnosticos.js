@@ -12,14 +12,12 @@ import {
   Paper,
   IconButton,
   Typography,
-  TextField,
   Toolbar,
-  Box,
-  InputAdornment
+  Tooltip,
+  Box
 } from "@mui/material"
 import ForwardIcon from "@mui/icons-material/Forward"
 import FolderSharedIcon from "@mui/icons-material/FolderShared"
-import SearchTwoTone from "@mui/icons-material/SearchTwoTone"
 import { makeStyles } from "@material-ui/core/styles"
 import bgImage from "../assets/dashboard.jpg"
 import { MyContext } from "../services/Context"
@@ -30,23 +28,15 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     padding: theme.spacing(3),
     flexFlow: "column nowrap",
-    width: "windowWidth",
-    height: theme.spacing(65),
+    height: window.innerHeight,
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
-    backgroundPosition: "center",
-    [theme.breakpoints.between("sm", "md")]: {
-      height: theme.spacing(75)
-    },
-    [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(140)
-    }
+    backgroundPosition: "center"
   },
   title: {
     color: "#2383d3",
-
     [theme.breakpoints.between("sm", "md")]: {
-      fontSize: "1.5rem",
+      fontSize: [32, "!important"],
       width: 700
     },
     [theme.breakpoints.down("sm")]: {
@@ -58,7 +48,7 @@ const useStyles = makeStyles(theme => ({
   },
   table: {
     minWidth: 360,
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(1)
   },
   tableContainer: {
     marginTop: theme.spacing(5)
@@ -114,9 +104,8 @@ function Diagnosticos() {
         <Toolbar
           sx={{
             background:
-              "linear-gradient(to bottom, rgba(181,198,218) 0%, " +
-              "rgba(191,208,228) 70%, rgba(0,0,0,0) 100%)",
-            // mt: 1.5,
+              "linear-gradient(to bottom, rgb(215, 241, 250) 0%, " +
+              "rgb(226, 247, 255) 80%, rgba(0,0,0,0) 100%)",
             pl: { sm: 2, md: 3, lg: 4, xl: 4 },
             pr: { xs: 1, sm: 1 },
             "& .MuiTextField-root": {
@@ -130,7 +119,8 @@ function Diagnosticos() {
                 xl: "25ch"
               }
             }
-          }}
+          } // mt: 1.5,
+          }
         >
           <Box
             type="div"
@@ -150,19 +140,6 @@ function Diagnosticos() {
               Mi portafolio{" "}
             </Typography>
           </Box>
-          {/* <TextField
-            label="Buscar registros"
-            variant="outlined"
-            size="small"
-            type="search"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchTwoTone />
-                </InputAdornment>
-              )
-            }}
-          /> */}
         </Toolbar>
         <Table className={classes.table} aria-label="simple table">
           <TableHead
@@ -207,9 +184,11 @@ function Diagnosticos() {
                   </TableCell>
                   <TableCell align="center">
                     <Link to={`formulario/${row.idEnvioUnique}`}>
-                      <IconButton>
-                        <ForwardIcon color="warning" fontSize="large" />
-                      </IconButton>
+                      <Tooltip title="ir al formulario">
+                        <IconButton>
+                          <ForwardIcon color="warning" fontSize="large" />
+                        </IconButton>
+                      </Tooltip>
                     </Link>
                   </TableCell>
                 </TableRow>

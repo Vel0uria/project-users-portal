@@ -21,9 +21,7 @@ import {
   FormGroup,
   Divider, 
   Checkbox, 
-  TextField
 } from "@mui/material"
-
 import { makeStyles } from "@material-ui/core/styles"
 import bgImage from "../assets/dashboard.jpg"
 
@@ -31,21 +29,14 @@ import bgImage from "../assets/dashboard.jpg"
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3),
-    width: "windowWidth",
+    height:window.innerHeight,
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     display: "flex",
     flexFlow: "column nowrap",
     overflow: "hidden",
-    height: theme.spacing(120),
-    [theme.breakpoints.between("md", "lg")]: {
-      height: theme.spacing(180),
-      marginTop: 0
-    },
-    [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(145)
-    }
+
   },
   title: {
     textAlign: "center",
@@ -207,8 +198,6 @@ setSlider({
   }
   
 
-
-
   const displayAnswers = index => {
     if (answers.length !== 0) {
       const newArr = questions.map(id => id.idTipoRespuesta)
@@ -340,7 +329,8 @@ setSlider({
         sx={{
           mt: 4,
           fontSize: 14,
-          "& button": { ml: { lg: 75, md: 55, sm: 35, xs: 3 } }
+          "& button": { 
+            ml: {xl:110, lg: 75, md: 55, sm: 35, xs: 3 } }
         }}
       >
          {!start && 
@@ -375,22 +365,20 @@ setSlider({
         <Box
           component={Paper}
           sx={{
-            mt: 3,
             display: "flex",
             alignSelf: "center",
-            width: "80%",
-            overflow: "scroll"
+          overflow:"scroll"
           }}
         >
           {sections.length !== 0 &&
             <Box
               component="form"
-              m={2}
+             // m={2}
               p={4}
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                width: "100%",
+                flexShrink:3,
                 "& button": {
                   fontSize: { xs: 12, lg: 14, xl: 14 },
                   m: 2,
@@ -404,14 +392,13 @@ setSlider({
                 "& h4": {
                   textAlign: "center",
                   alignSelf: "center",
-                  fontSize: { xs: 16, lg: 22, xl: 26 },
+                  fontSize: { xs: 16, sm:18, md:20, lg: 22, xl: 26 },
                   fontWeight: "bold",
-                  width: 350,
                   color: "white",
                   borderRadius: 4,
-                  backgroundColor: "darkviolet",
+                  backgroundColor: "slateblue",
                   p: 2,
-                  mb: 6
+                 mb: 4
                 }
               }}
             >

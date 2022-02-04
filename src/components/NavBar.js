@@ -1,14 +1,14 @@
 import React, { useContext } from "react"
 import Swal from "sweetalert2"
 import { MyContext } from "../services/Context"
-import { AppBar, Toolbar, IconButton, Tooltip } from "@material-ui/core"
+import { AppBar, Toolbar, IconButton, Tooltip } from "@mui/material"
 import {
   ExitToApp,
   NotificationsActiveTwoTone,
   InboxTwoTone,
   HomeTwoTone
 } from "@material-ui/icons"
-import ArrowBackIcon from "@mui/icons-material/ArrowBack"
+import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded"
 import { makeStyles } from "@material-ui/core/styles"
 import { useHistory } from "react-router-dom"
 import { Link } from "react-router-dom"
@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
     padding: 1
   },
   backIcon: {
+    marginRight: theme.spacing(10),
     [theme.breakpoints.down("sm")]: {
       marginRight: theme.spacing(10)
     },
@@ -33,7 +34,7 @@ const useStyles = makeStyles(theme => ({
       marginRight: theme.spacing(120)
     },
     [theme.breakpoints.up("xl")]: {
-      marginRight: theme.spacing(200)
+      marginRight: theme.spacing(250)
     }
   }
 }))
@@ -60,12 +61,16 @@ const NavBar = props => {
       }
     })
   }
+
   return (
     <AppBar position="static">
       <Toolbar className={classes.toolBar}>
         {state.place !== "Dashboard" &&
-          <IconButton className={classes.backIcon} onClick={history.goBack}>
-            <ArrowBackIcon fontSize="large" color="primary" />
+          <IconButton onClick={history.goBack} color="secondary">
+            <ArrowBackRounded
+              fontSize="large"
+              sx={{ paddingRight: { xs: 9, sm: 65, md: 90, lg: 140, xl: 185 } }}
+            />
           </IconButton>}
         {state.place !== "Dashboard" &&
           <Link to="/dashboard">

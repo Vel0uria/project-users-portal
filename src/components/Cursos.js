@@ -50,39 +50,9 @@ const useStyles = makeStyles(theme => ({
     backgroundPosition: "center",
     display: "flex",
     flexFlow: "column nowrap",
-    [theme.breakpoints.between("md", "lg")]: {
-      height: theme.spacing(80),
-      marginTop: 0
-    },
-    [theme.breakpoints.up("lg")]: {
-      height: theme.spacing(140)
-    },
-    [theme.breakpoints.up("xl")]: {
-      height: theme.spacing(150)
-    },
-    "& h3": {
-      marginLeft: drawerWidth,
-      //reemplazar valores negativos
-      marginTop: -20
-    }
+    height: window.innerHeight
   },
-  title: {
-    //textAlign: "center",
-    //backgroundColor: "#FF6347DA",
-    //alignSelf: "center",
-    color: "grey",
-    padding: theme.spacing(1.5),
-    [theme.breakpoints.between("sm", "md")]: {
-      fontSize: ["1.5rem", "!important"],
-      width: 700
-    },
-    [theme.breakpoints.down("sm")]: {
-      fontSize: ["1.2rem", "!important"],
-      marginLeft: 0,
-      marginTop: 0,
-      width: 190
-    }
-  },
+
   card: {
     marginTop: theme.spacing(1),
     backgroundColor: ["#F8F8FFb3", "!important"],
@@ -107,7 +77,7 @@ const useStyles = makeStyles(theme => ({
   },
   list: {
     backgroundColor: "#b5c6da",
-    height: "100%"
+    height: window.innerHeight
   },
   permanetDrawer: {
     height: theme.spacing(80),
@@ -260,7 +230,7 @@ const Cursos = props => {
         <ListItemText
           primary="SECCIONES"
           primaryTypographyProps={{
-            color: "textSecondary",
+            color: "slateblue",
             letterSpacing: 1.5,
             fontWeight: "bolder",
             variant: "subtitle1"
@@ -315,7 +285,7 @@ const Cursos = props => {
           )
         })}
         {courses.idEnvioUnique &&
-          <Link to={`/formulario/${courses.idEnvioUnique}`} currentPath="">
+          <Link to={`/formulario/${courses.idEnvioUnique}`}>
             <ListItemButton>
               <ListItemIcon>
                 <SchoolRounded fontSize="large" color="primary" />
@@ -381,7 +351,10 @@ const Cursos = props => {
             }}
             title={courses.nombreCurso}
             avatar={<LibraryBooksIcon color="warning" fontSize="large" />}
-            titleTypographyProps={{ fontSize: "2.5rem", color: "SlateGrey" }}
+            titleTypographyProps={{
+              fontSize: { xs: 20, sm: 24, md: 28, lg: 32, xl: 36 },
+              color: "SlateBlue"
+            }}
           />
           <CardMedia
             className={classes.media}
