@@ -14,7 +14,7 @@ import {
   Paper,
   Box,
   IconButton
-} from "@material-ui/core"
+} from "@mui/material"
 import PlayCircleOutlineOutlinedIcon from "@material-ui/icons/PlayCircleOutlineOutlined"
 import QuizIcon from "@mui/icons-material/Quiz"
 import { Link } from "react-router-dom"
@@ -22,6 +22,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import bgImage from "../assets/dashboard.jpg"
 import { MyContext } from "../services/Context"
 import placeholder from "../assets/placeholder.png"
+import { fontWeight } from "@mui/system"
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
@@ -31,35 +32,19 @@ const useStyles = makeStyles(theme => ({
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center"
-
-    // [theme.breakpoints.between("sm", "md")]: {
-    //   height: theme.spacing(120)
-    // },
-    // [theme.breakpoints.between("md", "lg")]: {
-    //   height: theme.spacing(130)
-    // },
-    // [theme.breakpoints.up("lg")]: {
-    //   height: theme.spacing(140)
-    // }
   },
   title: {
     textAlign: "center",
     backgroundColor: "#FF6347",
     color: "white",
     fontSize: "1.7rem",
+    borderRadius: 6,
+    padding: 7,
     [theme.breakpoints.up("lg")]: {
-      fontSize: "2rem"
+      // fontSize: "2rem"
     },
     [theme.breakpoints.down("sm")]: {
       fontSize: "1.2rem"
-    }
-  },
-  userData: {
-    display: "flex",
-    margin: theme.spacing(0.5),
-    backgroundColor: "#FFFFFF9E",
-    [theme.breakpoints.down("sm")]: {
-      flexFlow: "column"
     }
   },
 
@@ -67,7 +52,7 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexWrap: "wrap",
     margin: theme.spacing(1),
-    marginTop: 40,
+    //  marginTop: 40,
     minWidth: 200,
     maxWidth: 300
   },
@@ -163,7 +148,6 @@ function Dashboard() {
                 return (
                   <Card className={classes.courses} variant="outlined" key={i}>
                     <CardHeader
-                      sx={{ padding: 10 }}
                       title={course.nombre}
                       subheader={`Módulo ${course.idModulo}`}
                     />
@@ -188,11 +172,6 @@ function Dashboard() {
                         </IconButton>
                       </Link>
                     </CardActions>
-                    {/* <CardContent>
-                      <Typography variant="body1">
-                        {course.descripcion}
-                      </Typography>
-                    </CardContent> */}
                   </Card>
                 )
               }
@@ -202,41 +181,50 @@ function Dashboard() {
     )
   }
 
-  const handleChange = (event, newValue) => {
+  const handleChange = newValue => {
     setValue(newValue)
   }
 
   if (!user) return <p>Cargando</p>
   return (
     <div className={classes.root}>
-      <Typography variant="h1" className={classes.title}>
+      <Typography
+        variant="h1"
+        className={classes.title}
+        sx={{
+          fontSize: { xs: 18, sm: 22, md: 26, lg: 32, xl: 38 },
+          fontWeight: "bold"
+        }}
+      >
         Dashboard
       </Typography>
-      <Card className={classes.userData}>
-        <CardContent>
-          <Avatar alt="user-image" src={user.datosPerfil.avatar} />
-        </CardContent>
-        <CardContent>
-          <Typography>
-            {user.datosPerfil.nombreUsuario}{" "}
-          </Typography>
-          <Typography>
+      <Box m={1} component="div">
+        <Card>
+          <CardActions sx={{ m: 1 }}>
+            <Avatar alt="user-image" src={user.datosPerfil.avatar} />
+            <Typography variant="h5" sx={{ pl: 1 }}>
+              {user.datosPerfil.nombreUsuario}
+            </Typography>
+          </CardActions>
+
+          <Typography variant="subtitle1" sx={{ pl: 8, mt: -2 }}>
             {user.datosPerfil.nombreCompania}
           </Typography>
-        </CardContent>
-        <CardContent>
-          <Link to="/diagnosticos">
-            <Button
-              color="primary"
-              variant="contained"
-              disableElevation
-              endIcon={<QuizIcon />}
-            >
-              Mis diagnósticos
-            </Button>
-          </Link>
-        </CardContent>
-      </Card>
+          <CardContent>
+            <Link to="/diagnosticos">
+              <Button
+                variant="contained"
+                disableElevation
+                size="large"
+                startIcon={<QuizIcon />}
+                sx={{ ml: { xs: 6.5 } }}
+              >
+                Mis diagnósticos
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </Box>
       <Paper className={classes.tabs}>
         <Typography variant="overline">Cursos por categoría</Typography>
         <Tabs

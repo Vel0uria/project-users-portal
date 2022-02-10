@@ -104,6 +104,7 @@ const Login = props => {
     ;(async () => {
       const { value: email } = await Swal.fire({
         icon: "info",
+        showCloseButton: true,
         title: "Reestablecer constraseña",
         input: "email",
         inputLabel: "Ingresa tu correo para reestablecer tu contraseña",

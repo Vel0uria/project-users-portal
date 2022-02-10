@@ -82,7 +82,6 @@ const useStyles = makeStyles(theme => ({
   permanetDrawer: {
     height: theme.spacing(80),
     backgroundColor: "#b5c6da",
-    //backgroundColor: "#3979a078",
     overflow: "scroll",
     scrollBehavior: "smooth",
     [theme.breakpoints.between("md", "lg")]: {

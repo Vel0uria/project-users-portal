@@ -373,7 +373,6 @@ setSlider({
           {sections.length !== 0 &&
             <Box
               component="form"
-             // m={2}
               p={4}
               sx={{
                 display: "flex",
