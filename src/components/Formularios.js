@@ -19,7 +19,7 @@ import {
   Radio,
   FormControl,
   FormGroup,
-  Divider, 
+
   Checkbox, 
 } from "@mui/material"
 import { makeStyles } from "@material-ui/core/styles"
@@ -67,8 +67,7 @@ const useStyles = makeStyles(theme => ({
 
 //PENDIENTES: 
 
-//reparar función ValidateText
-//Enviar fecha inicio-término
+//Validar envío de respuestas obligatorias
 //Probar envío con todas las respuestas
 function Formularios(props) {
   const { id } = props.match.params
@@ -87,7 +86,7 @@ function Formularios(props) {
   const [form, handleInputs] = useForm()
   const [sliderAnswer, setSlider] = useState({})
   const [answerTest, setAnswerTest] = useState({})
- // const [inputLabel, setInputLabel] = useState("")
+  const [disabledButton, setDisabledButton ] = useState(true)
 
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
 
@@ -107,14 +106,14 @@ function Formularios(props) {
           setSections(sections)
           setQuestions(questions)
           setAnswers(answers)
-        
+         
         })
         .catch(err => {
           console.log(err)
         })
 
     },
-    [token, id, changePlace, sectionIndex])
+    [token, id, changePlace, sectionIndex,])
 
 
   const  getCurrentDate =() =>{
@@ -141,8 +140,30 @@ function Formularios(props) {
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
     }
-    console.log(answerTest.secciones[0].preguntas);
+
+
   }
+//console.log(answerTest.secciones[0].preguntas);
+ function handleButton  () {
+      const requiredQuestions = questions.map(q => q.obligatorio  === 1 ? q.pregunta : null)
+      const getformQuestions = answerTest.secciones[sectionIndex].preguntas
+      const answersArr = []
+
+          for(let i= 0; i< requiredQuestions.length -1; i++){
+         if(requiredQuestions[i] === getformQuestions[i].pregunta){ 
+
+            answersArr.push(getformQuestions[i].respuesta)
+         } 
+       }
+      const found = answersArr.includes("")
+     //  console.log(found);
+     // setDisabledButton(found)
+
+     return(found)
+
+
+ }
+
 
   function setRequiredAnswer(question, required) {
 
@@ -201,12 +222,13 @@ setSlider({
   const displayAnswers = index => {
     if (answers.length !== 0) {
       const newArr = questions.map(id => id.idTipoRespuesta)
+
       if(sectionIndex === 0){
     answerTest.fechaHoraInicio = getCurrentDate()
       }
 
   function assignAnswer(questionName, answer){   
-   
+        handleButton()
         const q = sections.map(s => s.preguntas.find(p =>  p.pregunta === questionName))
         const quests = Object.keys(answer)
         const section = q.findIndex(e => e !== undefined)
@@ -286,9 +308,10 @@ setSlider({
     } else return <Typography>Cargando</Typography>
   }
 
+
+
  function sendAnswers(){
 
-// e.preventDefault()
     Swal.fire({
       title: "¿Deseas enviar tus respuestas?",
       icon: "question",
@@ -360,7 +383,7 @@ setSlider({
             </CardActions>
           </Card>} 
       </Box>
-      <Divider />
+
        {start && 
         <Box
           component={Paper}
@@ -417,11 +440,13 @@ setSlider({
                 )
               })}
               <div>
+                   
                 {sectionIndex !== 0 &&
                   <Button
                     variant="contained"
                     color="secondary"
                     onClick={handlePrevious}
+                    
                   >
                     Sección anterior
                   </Button>}
@@ -429,11 +454,13 @@ setSlider({
                   <Button variant="contained" color="success" onClick={sendAnswers}>
                     Enviar respuestas
                   </Button>}
-                {sectionIndex < sections.length - 1 &&
+                {sectionIndex < sections.length  -1 &&
+              
                   <Button
                     variant="contained"
                     color="secondary"
                     onClick={handleNext}
+                    disabled={handleButton()}
                   >
                     Siguiente sección
                   </Button>}
