@@ -144,25 +144,38 @@ function Formularios(props) {
 
   }
 //console.log(answerTest.secciones[0].preguntas);
- function handleButton  () {
+useEffect(()=>{
+if( answerTest.secciones !== undefined){
+ //function handleButton  () {
+console.log(form);
       const requiredQuestions = questions.map(q => q.obligatorio  === 1 ? q.pregunta : null)
       const getformQuestions = answerTest.secciones[sectionIndex].preguntas
       const answersArr = []
 
           for(let i= 0; i< requiredQuestions.length -1; i++){
          if(requiredQuestions[i] === getformQuestions[i].pregunta){ 
-
-            answersArr.push(getformQuestions[i].respuesta)
+//            answersArr.push(getformQuestions[i].respuesta)
+            if(getformQuestions[i].respuesta === ""){
+                console.log("test");
+            } else {
+              console.log("mmm");
+            }
+            //  console.log(getformQuestions[i].respuesta === "" );
+            //  setDisabledButton(getformQuestions[i].respuesta === "")
+         //  getformQuestions[i].respuesta !== "" ? disabledButton(!disabledButton) : setDisabledButton(disabledButton)
          } 
        }
-      const found = answersArr.includes("")
-     //  console.log(found);
-     // setDisabledButton(found)
+    //  const found = answersArr.includes("")
+     // disabledButton = answersArr.includes("")
+      // console.log(found);
+   //   setDisabledButton( answersArr.includes(""))
+    // return found
+ //}
+// setDisabledButton(found)
+}
 
-     return(found)
+}, [questions, answerTest, sectionIndex])
 
-
- }
 
 
   function setRequiredAnswer(question, required) {
@@ -228,7 +241,7 @@ setSlider({
       }
 
   function assignAnswer(questionName, answer){   
-        handleButton()
+       
         const q = sections.map(s => s.preguntas.find(p =>  p.pregunta === questionName))
         const quests = Object.keys(answer)
         const section = q.findIndex(e => e !== undefined)
@@ -460,7 +473,7 @@ setSlider({
                     variant="contained"
                     color="secondary"
                     onClick={handleNext}
-                    disabled={handleButton()}
+                    disabled={disabledButton}
                   >
                     Siguiente sección
                   </Button>}
