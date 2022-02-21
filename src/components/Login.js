@@ -76,6 +76,8 @@ const Login = props => {
   const [form, handleInputs] = useForm()
   const [errorState, setErrorState] = useState(false)
   const [helpText, setHelpText] = useState("")
+  const [newPassword, setNewPassword] = useState(false)
+  const [helpNewPassword, setHelpNewPassword] = useState(false)
   useEffect(
     () => {
       changePlace("Login")
@@ -88,9 +90,14 @@ const Login = props => {
       .login(form)
       .then(res => {
         if (res.data.status === 200) {
-          login(res.data.result)
-          localStorage.setItem("USER", JSON.stringify(res.data.result))
-          props.history.push("/dashboard")
+          if (res.data.result.restablecerContrasena === 1) {
+            login(res.data.result)
+            localStorage.setItem("USER", JSON.stringify(res.data.result))
+            props.history.push("/dashboard")
+          } else {
+            setNewPassword(true)
+            localStorage.setItem("USER", JSON.stringify(res.data.result))
+          }
         } else {
           setHelpText("datos incorrectos")
           setErrorState(true)
@@ -100,7 +107,7 @@ const Login = props => {
         console.log(err)
       })
   }
-  const passwordChange = () => {
+  const passwordRecover = () => {
     ;(async () => {
       const { value: email } = await Swal.fire({
         icon: "info",
@@ -111,76 +118,156 @@ const Login = props => {
         inputPlaceholder: "Correo electrónico"
       })
       if (email) {
-        Swal.fire(
-          "En breve recibirás un correo con instrucciones para reestablecer tu contraseña"
-        )
+        console.log(email)
+        authService
+          .recoverPassword({ correoElectronico: email })
+          .then(res => {
+            if (res.data.status === 200) {
+              console.log(res)
+              Swal.fire(
+                "En breve recibirás un correo con instrucciones para reestablecer tu contraseña"
+              )
+            } else if (res.data.status === 204) {
+              Swal.fire({
+                icon: "error",
+                showCloseButton: "true",
+                title: "El correo electrónico no es válido"
+              })
+              console.log(res)
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
       }
     })()
   }
-
+  const handleNewPassword = () => {
+    authService
+      .updatePassword(form)
+      .then(res => {
+        if (res.data.status === 200) {
+          props.history.push("/dashboard")
+        } else {
+          setHelpText("las contraseñas no coinciden")
+          setErrorState("true")
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
   return (
     <div className={classes.root}>
       <Paper className={classes.formControl}>
-        <FormControl>
-          <Typography variant="h4" className={classes.title}>
-            Login
-          </Typography>
-          <TextField
-            error={errorState}
-            fullWidth
-            variant="outlined"
-            id="1"
-            label="Correo electrónico"
-            name="usuario"
-            onChange={handleInputs} // helperText={helpText}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <MailOutlineIcon />
-                </InputAdornment>
-              )
-            }}
-            margin="normal"
-          />
-          <TextField
-            fullWidth
-            error={errorState}
-            variant="outlined"
-            id="2"
-            label="Contraseña"
-            name="contrasena"
-            onChange={handleInputs}
-            helperText={helpText}
-            type="password"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LockOutlinedIcon />
-                </InputAdornment>
-              )
-            }}
-            margin="normal"
-          />
-          <ButtonGroup
-            orientation="vertical"
-            color="primary"
-            aria-label="vertical contained primary button group"
-            variant="text"
-            fullWidth
-          >
-            <Button size="large" onClick={handleLogin}>
-              ENTRAR
-            </Button>
-            <Button
-              size="small"
-              onClick={() => {
-                passwordChange()
+        {!newPassword &&
+          <FormControl>
+            <Typography variant="h4" className={classes.title}>
+              Login
+            </Typography>
+            <TextField
+              error={errorState}
+              fullWidth
+              variant="outlined"
+              id="1"
+              label="Correo electrónico"
+              name="usuario"
+              onChange={handleInputs}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <MailOutlineIcon />
+                  </InputAdornment>
+                )
               }}
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              error={errorState}
+              variant="outlined"
+              id="2"
+              label="Contraseña"
+              name="contrasena"
+              onChange={handleInputs}
+              helperText={helpText}
+              type="password"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockOutlinedIcon />
+                  </InputAdornment>
+                )
+              }}
+              margin="normal"
+            />
+            <ButtonGroup
+              orientation="vertical"
+              color="primary"
+              aria-label="vertical contained primary button group"
+              variant="text"
+              fullWidth
             >
-              ¿Olvidaste tu contraseña?
+              <Button size="large" onClick={handleLogin}>
+                ENTRAR
+              </Button>
+              <Button
+                color="secondary"
+                size="small"
+                onClick={() => {
+                  passwordRecover()
+                }}
+              >
+                ¿Olvidaste tu contraseña?
+              </Button>
+            </ButtonGroup>
+          </FormControl>}
+        {newPassword &&
+          <FormControl>
+            <Typography variant="h4" className={classes.title}>
+              Nueva contraseña
+            </Typography>
+            <TextField
+              sx={{ marginTop: 2 }}
+              fullWidth
+              variant="filled"
+              label="Contraseña"
+              name="contrasena"
+              onChange={handleInputs}
+              type="password"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockOutlinedIcon />
+                  </InputAdornment>
+                )
+              }}
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              label="Confirma tu contraseña"
+              type="password"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockOutlinedIcon />
+                  </InputAdornment>
+                )
+              }}
+              margin="normal"
+            />
+            <Button
+              color="success"
+              variant="outlined"
+              size="large"
+              sx={{ marginTop: 1 }}
+              onClick={handleNewPassword}
+            >
+              GUARDAR
             </Button>
-          </ButtonGroup>
-        </FormControl>
+          </FormControl>}
       </Paper>
     </div>
   )

@@ -140,26 +140,25 @@ function Formularios(props) {
     if (sectionIndex <= sections.length) {
       setSectionIndex(sectionIndex + 1)
     }
-
-
   }
 //console.log(answerTest.secciones[0].preguntas);
 useEffect(()=>{
 if( answerTest.secciones !== undefined){
  //function handleButton  () {
-console.log(form);
+
       const requiredQuestions = questions.map(q => q.obligatorio  === 1 ? q.pregunta : null)
       const getformQuestions = answerTest.secciones[sectionIndex].preguntas
-      const answersArr = []
+    //  const answersArr = []
 
           for(let i= 0; i< requiredQuestions.length -1; i++){
          if(requiredQuestions[i] === getformQuestions[i].pregunta){ 
 //            answersArr.push(getformQuestions[i].respuesta)
-            if(getformQuestions[i].respuesta === ""){
-                console.log("test");
-            } else {
-              console.log("mmm");
-            }
+          //  if(getformQuestions[i].respuesta === ""){
+          //  console.log(getformQuestions[i].respuesta !== undefined);
+               setDisabledButton(getformQuestions[i].respuesta !== undefined)
+          //  } else {
+            //  console.log("mmm");
+          //  }
             //  console.log(getformQuestions[i].respuesta === "" );
             //  setDisabledButton(getformQuestions[i].respuesta === "")
          //  getformQuestions[i].respuesta !== "" ? disabledButton(!disabledButton) : setDisabledButton(disabledButton)
