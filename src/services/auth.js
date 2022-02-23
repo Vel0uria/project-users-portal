@@ -27,9 +27,10 @@ class AuthService {
   recoverPassword(data) {
     return this.service.post("usuarios/ReenviarCorreo", data)
   }
-  updatePassword(data) {
-    return this.service.post("usuarios/CambiaTuContrasena", data)
+  updatePassword(data, token) {
+    return this.service.post("usuarios/CambiaTuContrasena", data, {
+      headers: { Authorization: token }
+    })
   }
 }
-
 export default AuthService

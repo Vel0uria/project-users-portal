@@ -22,7 +22,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import bgImage from "../assets/dashboard.jpg"
 import { MyContext } from "../services/Context"
 import placeholder from "../assets/placeholder.png"
-import { fontWeight } from "@mui/system"
+
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
@@ -67,7 +67,6 @@ const useStyles = makeStyles(theme => ({
 //-MediaCard: corregir warning
 //-Categorías: deshabilitar Tab si la categoría viene vacía
 // - Estilos:
-// 1. Responsivo
 
 function Dashboard() {
   const classes = useStyles()

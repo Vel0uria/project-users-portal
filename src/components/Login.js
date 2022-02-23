@@ -77,7 +77,8 @@ const Login = props => {
   const [errorState, setErrorState] = useState(false)
   const [helpText, setHelpText] = useState("")
   const [newPassword, setNewPassword] = useState(false)
-  const [helpNewPassword, setHelpNewPassword] = useState(false)
+  const { show } = useState(false)
+  //  const [helpNewPassword, setHelpNewPassword] = useState("")
   useEffect(
     () => {
       changePlace("Login")
@@ -118,12 +119,10 @@ const Login = props => {
         inputPlaceholder: "Correo electrónico"
       })
       if (email) {
-        console.log(email)
         authService
           .recoverPassword({ correoElectronico: email })
           .then(res => {
             if (res.data.status === 200) {
-              console.log(res)
               Swal.fire(
                 "En breve recibirás un correo con instrucciones para reestablecer tu contraseña"
               )
@@ -143,20 +142,35 @@ const Login = props => {
     })()
   }
   const handleNewPassword = () => {
+    const user = JSON.parse(localStorage.getItem("USER"))
+    const token = user.token
+    const newPassword = form.contrasena
     authService
-      .updatePassword(form)
+      .updatePassword({ contrasena: newPassword }, token)
       .then(res => {
         if (res.data.status === 200) {
           props.history.push("/dashboard")
         } else {
           setHelpText("las contraseñas no coinciden")
-          setErrorState("true")
+          setErrorState(true)
         }
       })
       .catch(err => {
         console.log(err)
       })
   }
+  function verifyPassword() {
+    if (
+      form.contrasena !== form.confirm ||
+      form.contrasena.length < 6 ||
+      form.contrasena.length > 10
+    ) {
+      return !show
+    } else {
+      return show
+    }
+  }
+
   return (
     <div className={classes.root}>
       <Paper className={classes.formControl}>
@@ -248,7 +262,11 @@ const Login = props => {
               fullWidth
               variant="filled"
               label="Confirma tu contraseña"
+              helperText={helpText}
               type="password"
+              name="confirm"
+              onChange={handleInputs}
+              error={errorState}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -258,11 +276,15 @@ const Login = props => {
               }}
               margin="normal"
             />
+            <Typography variant="subtitle1" mt={1}>
+              La contraseña debe tener 6 caracteres como mínimo y 10 como máximo
+            </Typography>
             <Button
               color="success"
               variant="outlined"
               size="large"
-              sx={{ marginTop: 1 }}
+              sx={{ marginTop: 2 }}
+              disabled={verifyPassword()}
               onClick={handleNewPassword}
             >
               GUARDAR

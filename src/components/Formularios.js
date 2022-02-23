@@ -80,13 +80,14 @@ function Formularios(props) {
   const [quiz, setQuiz] = useState({})
   const [sections, setSections] = useState([])
   const [questions, setQuestions] = useState([])
+  const [required, setRequired] = useState([])
   const [answers, setAnswers] = useState([])
   const [sectionIndex, setSectionIndex] = useState(0)
   const [multiple, setMultiple] = useState([])
   const [form, handleInputs] = useForm()
   const [sliderAnswer, setSlider] = useState({})
   const [answerTest, setAnswerTest] = useState({})
-  const [disabledButton, setDisabledButton ] = useState(true)
+
 
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
 
@@ -102,11 +103,12 @@ function Formularios(props) {
           const sections = data.result.secciones
           const questions = sections[sectionIndex].preguntas
           const answers = questions.map(a => a.catalogo.respuestas)
+          const required = questions.map(q => q.obligatorio  === 1 ? q.pregunta : null)
           setQuiz(quiz)
           setSections(sections)
           setQuestions(questions)
           setAnswers(answers)
-         
+          setRequired(required)
         })
         .catch(err => {
           console.log(err)
@@ -136,46 +138,22 @@ function Formularios(props) {
   function handlePrevious() {
     setSectionIndex(sectionIndex - 1)
   }
-  function handleNext() {
-    if (sectionIndex <= sections.length) {
-      setSectionIndex(sectionIndex + 1)
-    }
-  }
-//console.log(answerTest.secciones[0].preguntas);
-useEffect(()=>{
-if( answerTest.secciones !== undefined){
- //function handleButton  () {
 
-      const requiredQuestions = questions.map(q => q.obligatorio  === 1 ? q.pregunta : null)
+    function validateUserAnswers(){
+  if(answerTest.secciones !== undefined){
+
       const getformQuestions = answerTest.secciones[sectionIndex].preguntas
-    //  const answersArr = []
-
-          for(let i= 0; i< requiredQuestions.length -1; i++){
-         if(requiredQuestions[i] === getformQuestions[i].pregunta){ 
-//            answersArr.push(getformQuestions[i].respuesta)
-          //  if(getformQuestions[i].respuesta === ""){
-          //  console.log(getformQuestions[i].respuesta !== undefined);
-               setDisabledButton(getformQuestions[i].respuesta !== undefined)
-          //  } else {
-            //  console.log("mmm");
-          //  }
-            //  console.log(getformQuestions[i].respuesta === "" );
-            //  setDisabledButton(getformQuestions[i].respuesta === "")
-         //  getformQuestions[i].respuesta !== "" ? disabledButton(!disabledButton) : setDisabledButton(disabledButton)
-         } 
-       }
-    //  const found = answersArr.includes("")
-     // disabledButton = answersArr.includes("")
-      // console.log(found);
-   //   setDisabledButton( answersArr.includes(""))
-    // return found
- //}
-// setDisabledButton(found)
-}
-
-}, [questions, answerTest, sectionIndex])
-
-
+       for(let i= 0; i< required.length -1; i++){
+          if(required[i] === getformQuestions[i].pregunta){
+             if(getformQuestions[i].respuesta === ""){
+               Swal.fire("responde todas las respuestas obligatorias antes de continuar")
+             } else if(getformQuestions[i].respuesta !== "" && sectionIndex < sections.length -1){
+                setSectionIndex(sectionIndex + 1)
+             } else if(getformQuestions[i].respuesta !== "" && sectionIndex === sections.length - 1){
+                sendAnswers()
+             }
+            }
+       }}}
 
   function setRequiredAnswer(question, required) {
 
@@ -212,13 +190,13 @@ setSlider({
 
   function handleFormObject(){
     function questionsSections(val) {
-      const getQuestions = val.map(e => e = { respuesta: "", pregunta: e.pregunta, puntuacion: e.puntuacion, idTipoRespuesta: e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, urlimagenAyuda: "", comentarios: "", textoAyuda: "", urlVideoRespuesta: "" })
+      const getQuestions = val.map(e => e = {respuesta:"", pregunta: e.pregunta, puntuacion: e.puntuacion, idTipoRespuesta: e.idTipoRespuesta, idTipoValidacion: e.idTipoValidacion, urlimagenAyuda: "", comentarios: "", textoAyuda: "", urlVideoRespuesta: "" })
       return getQuestions
     }
-          setAnswerTest({  
+
+  setAnswerTest({
   idEnvio: quiz.idEnvioUnique,
   tipoEnvio:2, 
-  //fechaHoraInicio:getCurrentDate(),  
   nombreFormulario: quiz.nombreFormulario,
   latitud:"",
   longitud:"",
@@ -240,7 +218,6 @@ setSlider({
       }
 
   function assignAnswer(questionName, answer){   
-       
         const q = sections.map(s => s.preguntas.find(p =>  p.pregunta === questionName))
         const quests = Object.keys(answer)
         const section = q.findIndex(e => e !== undefined)
@@ -248,7 +225,10 @@ setSlider({
         const assignAnswer = answerTest.secciones[section].preguntas[index]
         for (let question of quests){
           if(question === assignAnswer.pregunta){
-          return assignAnswer.respuesta = answer[questionName]}
+   
+          //setUserAnswer(prevState => (answer[questionName])
+            assignAnswer.respuesta = answer[questionName]
+        }
         }}}
 
   function sliderOrRadio (answers){
@@ -320,8 +300,6 @@ setSlider({
     } else return <Typography>Cargando</Typography>
   }
 
-
-
  function sendAnswers(){
 
     Swal.fire({
@@ -354,6 +332,8 @@ setSlider({
         }
     })
   }
+
+
 
   return (
     <div className={classes.root}>
@@ -463,7 +443,7 @@ setSlider({
                     Sección anterior
                   </Button>}
                  {sectionIndex === sections.length - 1 && 
-                  <Button variant="contained" color="success" onClick={sendAnswers}>
+                  <Button variant="contained" color="success" onClick={validateUserAnswers} >
                     Enviar respuestas
                   </Button>}
                 {sectionIndex < sections.length  -1 &&
@@ -471,8 +451,8 @@ setSlider({
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick={handleNext}
-                    disabled={disabledButton}
+                    onClick={validateUserAnswers}
+                   // disabled={validateData()}
                   >
                     Siguiente sección
                   </Button>}
