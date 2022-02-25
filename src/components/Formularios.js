@@ -65,8 +65,6 @@ const useStyles = makeStyles(theme => ({
 }))
 
 //PENDIENTES: 
-
-
 //Probar envío con todas las respuestas
 function Formularios(props) {
   const { id } = props.match.params
@@ -119,7 +117,6 @@ function Formularios(props) {
 
     },
     [token, id, changePlace, sectionIndex])
-
 
   const  getCurrentDate =() =>{
   const currentDate = new Date()
@@ -185,8 +182,7 @@ function Formularios(props) {
         <div>
           <Card>
             <CardContent>
-              <Typography variant="h4" align="center">El formulario no se encuentra disponible</Typography>
-
+              <Typography variant="h4" align="center">El formulario no está disponible</Typography>
             </CardContent>
           </Card>
         </div>
