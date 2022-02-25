@@ -160,14 +160,16 @@ const Login = props => {
       })
   }
   function verifyPassword() {
-    if (
-      form.contrasena !== form.confirm ||
-      form.contrasena.length < 6 ||
-      form.contrasena.length > 10
-    ) {
-      return !show
-    } else {
-      return show
+    if (form.contrasena) {
+      if (
+        form.contrasena !== form.confirm ||
+        form.contrasena.length < 6 ||
+        form.contrasena.length > 10
+      ) {
+        return !show
+      } else {
+        return show
+      }
     }
   }
 

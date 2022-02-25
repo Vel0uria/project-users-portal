@@ -80,7 +80,7 @@ const useStyles = makeStyles(theme => ({
     height: window.innerHeight
   },
   permanetDrawer: {
-    height: theme.spacing(80),
+    // height: theme.spacing(80),
     backgroundColor: "#b5c6da",
     overflow: "scroll",
     scrollBehavior: "smooth",
@@ -145,7 +145,6 @@ const Cursos = props => {
         })
         .then(({ data }) => {
           const courses = data.result
-
           setCourses(courses)
           setSections(courses.listaContenido)
           setFiles(courses.listaArchivos)

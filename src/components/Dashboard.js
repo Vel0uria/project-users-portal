@@ -49,10 +49,9 @@ const useStyles = makeStyles(theme => ({
   },
 
   courses: {
-    display: "flex",
-    flexWrap: "wrap",
+     display: "flex",
+     flexWrap: "wrap",
     margin: theme.spacing(1),
-    //  marginTop: 40,
     minWidth: 200,
     maxWidth: 300
   },
@@ -64,9 +63,6 @@ const useStyles = makeStyles(theme => ({
 
 // PENDIENTES DASHBOARD:
 
-//-MediaCard: corregir warning
-//-Categorías: deshabilitar Tab si la categoría viene vacía
-// - Estilos:
 
 function Dashboard() {
   const classes = useStyles()
@@ -88,6 +84,7 @@ function Dashboard() {
         })
         .then(({ data }) => {
           const category = data.result
+          // console.log(category)
           setCategory(category)
         })
         .catch(err => {
@@ -101,7 +98,6 @@ function Dashboard() {
     () => {
       if (categories.length !== 0) {
         const id = categories[value].idCategoria
-
         axios
           .get(`${baseURL}/api/listadoUsuariosCursos/${id}`, {
             headers: {
@@ -124,27 +120,22 @@ function Dashboard() {
   }
 
   function TabPanel(props) {
-    const { value, index } = props
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-      >
-        {value === index &&
-          <Box
-            sx={{
+    const { value } = props
+
+
+  return(
+      <Box component="div" 
+          sx={{
               display: "flex",
               justifyContent: "space-evenly",
               backgroundColor: "#FFFFFF80",
-              flexWrap: { xs: "wrap", md: "wrap", lg: "nowrap" }
+              flexWrap: { xs: "wrap", md: "wrap", lg: "nowrap" },   
             }}
-          >
-            {courses.map((course, i) => {
-              if (!courses) return <Typography>Cargando</Typography>
-              else {
-                return (
+      >
+        {courses.map((course, i)=>{
+              return(
+                  <>
+                 {value === course.categoria && 
                   <Card className={classes.courses} variant="outlined" key={i}>
                     <CardHeader
                       title={course.nombre}
@@ -171,16 +162,14 @@ function Dashboard() {
                         </IconButton>
                       </Link>
                     </CardActions>
-                  </Card>
-                )
-              }
-            })}
-          </Box>}
-      </div>
-    )
+                  </Card>}
+               </>
+        )})}
+      </Box>
+ 
+  )
   }
-
-  const handleChange = newValue => {
+  const handleChange = (event, newValue) => {
     setValue(newValue)
   }
 
@@ -234,6 +223,7 @@ function Dashboard() {
           scrollButtons="auto"
         >
           {categories.map((category, i) => {
+            //  console.log(categories[i].categoria)
             if (!categories) return <Typography>Cargando</Typography>
             else {
               return (
@@ -247,7 +237,8 @@ function Dashboard() {
           })}
         </Tabs>
       </Paper>
-      <TabPanel value={value} index={0} />
+     {categories.length !== 0 &&
+      <TabPanel value={categories[value].categoria}/> }
     </div>
   )
 }

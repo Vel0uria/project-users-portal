@@ -19,7 +19,6 @@ import {
   Radio,
   FormControl,
   FormGroup,
-
   Checkbox, 
 } from "@mui/material"
 import { makeStyles } from "@material-ui/core/styles"
@@ -67,7 +66,7 @@ const useStyles = makeStyles(theme => ({
 
 //PENDIENTES: 
 
-//Validar envío de respuestas obligatorias
+
 //Probar envío con todas las respuestas
 function Formularios(props) {
   const { id } = props.match.params
@@ -87,8 +86,7 @@ function Formularios(props) {
   const [form, handleInputs] = useForm()
   const [sliderAnswer, setSlider] = useState({})
   const [answerTest, setAnswerTest] = useState({})
-
-
+  const [errorState, setErrorState] = useState(false)
   const baseURL = "https://impulsorintelectualhumanista.com/capacitacion"
 
   useEffect(
@@ -99,7 +97,9 @@ function Formularios(props) {
           headers: { Authorization: token }
         })
         .then(({ data }) => {
+      
           const quiz = data.result
+         if(data.status === 200) {
           const sections = data.result.secciones
           const questions = sections[sectionIndex].preguntas
           const answers = questions.map(a => a.catalogo.respuestas)
@@ -108,14 +108,17 @@ function Formularios(props) {
           setSections(sections)
           setQuestions(questions)
           setAnswers(answers)
-          setRequired(required)
+          setRequired(required)} else{
+            console.log(data);
+            setErrorState(true)
+          }
         })
         .catch(err => {
           console.log(err)
         })
 
     },
-    [token, id, changePlace, sectionIndex,])
+    [token, id, changePlace, sectionIndex])
 
 
   const  getCurrentDate =() =>{
@@ -175,6 +178,64 @@ function Formularios(props) {
       )
     }
   }
+
+  function HandleNoForm(){
+    if(errorState){
+      return(
+        <div>
+          <Card>
+            <CardContent>
+              <Typography variant="h4" align="center">El formulario no se encuentra disponible</Typography>
+
+            </CardContent>
+          </Card>
+        </div>
+      )
+    } else {
+      return(
+    <div>
+      <Typography variant="h3" className={classes.title}>
+        {quiz.nombreFormulario}
+      </Typography>
+      <Box
+        sx={{
+          mt: 4,
+          fontSize: 14,
+          "& button": { 
+            ml: {xl:110, lg: 75, md: 55, sm: 35, xs: 3 } }
+        }}
+      >
+         {!start && 
+          <Card className={classes.card}>
+            <Typography variant="h6" component="div">
+              Instrucciones:
+            </Typography>
+            <CardContent>
+              <Typography variant="body1">
+                {quiz.indicaciones}
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                color="info"
+                variant="outlined"
+                onClick= {() => {
+                handleFormObject()
+                 setStart(!start) 
+                }
+                }
+              >
+                Iniciar cuestionario
+              </Button>
+            </CardActions>
+          </Card>} 
+      </Box>
+      </div>
+      )
+  
+    }
+  }
+
    const handleMultipleAnswers = (event) => {
     setMultiple(multiple.concat(event.target.value)) 
     if(event.target.checked === false) {
@@ -333,49 +394,16 @@ setSlider({
     })
   }
 
-
-
   return (
+  
     <div className={classes.root}>
-      <Typography variant="h3" className={classes.title}>
-        {quiz.nombreFormulario}
-      </Typography>
-      <Box
-        sx={{
-          mt: 4,
-          fontSize: 14,
-          "& button": { 
-            ml: {xl:110, lg: 75, md: 55, sm: 35, xs: 3 } }
-        }}
-      >
-         {!start && 
-          <Card className={classes.card}>
-            <Typography variant="h6" component="div">
-              Instrucciones:
-            </Typography>
-            <CardContent>
-              <Typography variant="body1">
-                {quiz.indicaciones}
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button
-                color="info"
-                variant="outlined"
-                onClick= {() => {
-                  // size="large" 
-                handleFormObject()
-                 setStart(!start) 
-              
-                }
-                }
-              >
-                Iniciar cuestionario
-              </Button>
-            </CardActions>
-          </Card>} 
-      </Box>
-
+         {   
+            Object.keys(quiz).length === 0 && errorState === false ?
+            <div>
+             <Typography>Cargando información</Typography> 
+             </div>
+            : <><HandleNoForm/>
+            
        {start && 
         <Box
           component={Paper}
@@ -431,8 +459,7 @@ setSlider({
                   </div>
                 )
               })}
-              <div>
-                   
+              <div> 
                 {sectionIndex !== 0 &&
                   <Button
                     variant="contained"
@@ -452,13 +479,13 @@ setSlider({
                     variant="contained"
                     color="secondary"
                     onClick={validateUserAnswers}
-                   // disabled={validateData()}
                   >
                     Siguiente sección
                   </Button>}
               </div>
             </Box>}
-        </Box>} 
+        </Box>}   
+               </> }
     </div>
   )
 }
