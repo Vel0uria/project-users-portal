@@ -168,7 +168,7 @@ const Cursos = props => {
       })
       .catch(err => console.log(err))
   }
-
+  console.log(courses.idEnvioUnique)
   const handleNewComment = (id, e) => {
     form.idLeccion = id
 
@@ -366,7 +366,7 @@ const Cursos = props => {
             <CardActions>
               <TextField
                 fullWidth
-                variant="filled"
+                variant="outlined"
                 id="1"
                 label="Agrega un comentario"
                 name="comentario"

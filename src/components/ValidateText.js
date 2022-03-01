@@ -1,19 +1,46 @@
 import { TextField } from "@mui/material"
-
 import useForm from "./useForm"
-
+import React, { useState } from "react"
 function ValidateText({ id, assignAnswer, quest }) {
   const [form, handleInputs] = useForm()
+  const [helperText, setHelpText] = useState("")
+  const [curpState, setCurpState] = useState("")
+  const [rfcState, setRfcState] = useState("")
+  const [errorState, setErrorState] = useState(false)
   assignAnswer(quest, form)
-  function phoneValidation(event) {
-    const phoneno = new RegExp("^d{10}$/")
-    //console.log(event.target.value, form)
-
-    if (event.target.value.match(phoneno)) {
-      return true
-    } else return false
+  function CurpValidation(event) {
+    var re = /^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/,
+      validado = event.target.value.match(re)
+    if (!validado) {
+      setCurpState("CURP no válido")
+      setErrorState(true)
+    } else {
+      setErrorState(false)
+      setCurpState("CURP válido")
+    }
   }
-  //console.log(phoneValidation())
+  function phoneValidation(event) {
+    if (event.target.value.length === 10) {
+      setErrorState(false)
+      setHelpText("")
+    } else {
+      setHelpText("teléfono no válido")
+      setErrorState(true)
+    }
+  }
+
+  function rfcValidation(event) {
+    const re = /^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/
+    const validado = event.target.value.match(re)
+    if (!validado) {
+      setRfcState("RFC no válido")
+      setErrorState(true)
+    } else {
+      setErrorState(false)
+      setRfcState("RFC válido")
+    }
+  }
+
   switch (id) {
     case 1:
       return (
@@ -37,8 +64,8 @@ function ValidateText({ id, assignAnswer, quest }) {
           fullWidth
           type="number"
           min="0"
+          onKeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57"
           name={quest}
-          onInput="this.value = Math.abs(this.value)"
         />
       )
     case 3:
@@ -98,22 +125,32 @@ function ValidateText({ id, assignAnswer, quest }) {
       return (
         <TextField
           label="Ingresa tu CURP"
-          onChange={handleInputs}
+          onChange={e => {
+            handleInputs(e)
+            CurpValidation(e)
+          }}
           variant="standard"
           fullWidth
           name={quest}
           type="text"
+          helperText={curpState}
+          error={errorState}
         />
       )
     case 9:
       return (
         <TextField
           label="Ingresa tu RFC"
-          onChange={handleInputs}
+          onChange={e => {
+            handleInputs(e)
+            rfcValidation(e)
+          }}
           variant="standard"
           fullWidth
           name={quest}
           type="text"
+          helperText={rfcState}
+          error={errorState}
         />
       )
     case 10:
@@ -131,7 +168,7 @@ function ValidateText({ id, assignAnswer, quest }) {
     case 11:
       return (
         <TextField
-          label="Ingresa tu número telefónico de 10 dígitos"
+          label="Ingresa un número telefónico de 10 dígitos"
           onChange={e => {
             handleInputs(e)
             phoneValidation(e)
@@ -141,7 +178,8 @@ function ValidateText({ id, assignAnswer, quest }) {
           name={quest}
           type="number"
           min="0"
-          // onInput={phoneValidation}
+          error={errorState}
+          helperText={helperText}
         />
       )
 

@@ -132,11 +132,11 @@ function Dashboard() {
               flexWrap: { xs: "wrap", md: "wrap", lg: "nowrap" },   
             }}
       >
-        {courses.map((course, i)=>{
+        {courses.map((course)=>{
               return(
                   <>
                  {value === course.categoria && 
-                  <Card className={classes.courses} variant="outlined" key={i}>
+                  <Card className={classes.courses} variant="outlined" key={course.nombre}>
                     <CardHeader
                       title={course.nombre}
                       subheader={`Módulo ${course.idModulo}`}
